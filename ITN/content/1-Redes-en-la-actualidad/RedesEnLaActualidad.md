@@ -1,17 +1,3 @@
-## Las Redes nos Conectan
-
-Entre todos los elementos esenciales para la existencia humana, la necesidad de interactuar está justo después de la necesidad de sustentar la vida. La comunicación es casi tan importante para nosotros como el aire, el agua, los alimentos y un lugar para vivir.
-
-En el mundo actual, estamos conectados como nunca antes gracias al uso de redes. Las personas que tienen alguna idea pueden comunicarse de manera instantánea con otras personas para hacer esas ideas realidad. Las noticias y los descubrimientos se conocen en todo el mundo en cuestión de segundos. Incluso, las personas pueden conectarse y jugar con amigos que estén del otro lado del océano y en otros continentes.
-## No hay limites
-
-Los avances en tecnologías de red son, quizá, los agentes de cambio más significativos en el mundo actual. Gracias a estos avances, podemos crear un mundo en el que las fronteras nacionales, las distancias geográficas y las limitaciones físicas se vuelven menos importantes y se convierten en obstáculos cada vez más fáciles de sortear.
-
-Internet cambió la manera en la que se producen las interacciones sociales, comerciales, políticas y personales. La naturaleza inmediata de las comunicaciones en Internet alienta la formación de comunidades mundiales. Estas comunidades permiten una interacción social que no depende de la ubicación ni de la zona horaria.
-
-La creación de comunidades en línea para el intercambio de ideas e información tiene el potencial de aumentar las oportunidades de productividad en todo el planeta.
-
-La creación de la nube nos permite almacenar documentos e imágenes y acceder a ellos en cualquier lugar y en cualquier momento. Así que ya sea que estemos en un tren, en un parque o en la cima de una montaña, podemos acceder sin problemas a nuestros datos y aplicaciones desde cualquier dispositivo.
 ## Roles de Host
 
 Cada computadora en una red se llama host o dispositivo final.
