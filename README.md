@@ -8,5 +8,7 @@ Guia personalizada para la certificación CCNA, con notas que utilizo para las c
 
 ## [Redes empresariales, Seguridad y Automatización](ENSA/index.md)
 
+## [Bridging](Bridging/index.md)
+
 
 Seguimos trabajando :)
