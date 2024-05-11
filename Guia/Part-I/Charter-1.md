@@ -179,7 +179,7 @@ La transferencia de datos UDP difiere de la transferencia de datos TCP en que no
 
 La Figura 1-10 muestra el formato de encabezado UDP. Lo más importante es tener en cuenta que el encabezado incluye campos de puerto de origen y destino, con el mismo propósito que TCP. Sin embargo, el UDP tiene solo 8 bytes, en comparación con el encabezado TCP de 20 bytes que se muestra en la Figura 1-1. UDP necesita un encabezado más corto que TCP simplemente porque UDP tiene menos trabajo que hacer.
 
-![[1.10.png]]
+![[img/1.10.png]]
 
 ### Aplicaciones TCP/IP
 
@@ -199,7 +199,7 @@ En el habla común, muchas personas usan los términos _dirección web_ o térmi
 
 Desde una perspectiva práctica, los URI utilizados para conectarse a un servidor web incluyen tres componentes clave, como se indica en la Figura 1-11. En la figura se muestran los nombres formales de los campos de URI. Más importante para esta discusión, tenga en cuenta que el texto antes de :// identifica el protocolo utilizado para conectarse al servidor, el texto entre // y / identifica el servidor por su nombre, y el texto después de / identifica la página web.
 
-![[1.11.png]]
+![[img/1.11.png]]
 
 **Encontrar el servidor web mediante DNS**
 
@@ -209,7 +209,7 @@ Los URI suelen mostrar el nombre del servidor, un nombre que se puede usar para 
 
 Para reunir varios conceptos, en la figura 1-12 se muestra el proceso DNS iniciado por un explorador web, así como otra información relacionada. Desde una perspectiva básica, el usuario ingresa el URI (en este caso, [http://www.cisco.com/go/learningnetwork),](http://www.cisco.com/go/learningnetwork) resuelve el nombre del [www.cisco.com](http://www.cisco.com/) en la dirección IP correcta y comienza a enviar paquetes al servidor web.
 
-![[1.12.png]]
+![[img/1.12.png]]
 
 Los pasos que se muestran en la figura son los siguientes:
 
@@ -222,7 +222,7 @@ El ejemplo de la Figura 1-12 muestra lo que sucede cuando el host cliente no con
 
 Cuando el DNS local no conoce la dirección asociada a un nombre de host, debe pedir ayuda. En la figura 1-13 se muestra un ejemplo con el mismo cliente que en la figura 1-12. En este caso, el DNS de la empresa actúa como un servidor DNS recursivo, enviando mensajes DNS repetidos en un esfuerzo por identificar el servidor DNS autoritativo.
 
-![[1.13.png]]
+![[img/1.13.png]]
 
 Los pasos que se muestran en la figura son los siguientes:
 
@@ -240,7 +240,7 @@ HTTP define varios comandos y respuestas, siendo la más utilizada la solicitud 
 
 Las páginas web suelen constar de varios archivos, denominados  _objetos_. La mayoría de las páginas web contienen texto, así como varias imágenes gráficas, anuncios animados y, posiblemente, voz o video. Cada uno de estos componentes se almacena como un objeto (archivo) diferente en el servidor web. Para obtenerlos todos, el navegador web obtiene el primer archivo. Este archivo puede incluir (y normalmente lo hace) referencias a otros URI, por lo que el navegador también solicita los otros objetos. La Figura 1-14 muestra la idea general, con el navegador obteniendo el primer archivo y luego otros dos.
 
-![[1.14.png]]
+![[img/1.14.png]]
 
 En este caso, después de que el navegador web obtiene el primer archivo, el que se llama "/go/ccna" en el URI, el navegador lee e interpreta ese archivo. Además de contener partes de la página web, el archivo hace referencia a otros dos archivos, por lo que el navegador emite dos solicitudes HTTP GET adicionales. Tenga en cuenta que, aunque no se muestra en la figura, todos estos comandos fluyen a través de una (o posiblemente más) conexión TCP entre el cliente y el servidor. Esto significa que TCP proporcionaría recuperación de errores, asegurando que los datos se entregaron.
 
@@ -250,13 +250,13 @@ Este capítulo se cierra con una discusión del proceso por el cual un host, al 
 
 Como ejemplo, considere el host A que se muestra en el lado izquierdo de la Figura 1-15. El host tiene abiertas tres ventanas diferentes del navegador web, cada una de las cuales utiliza un puerto TCP único. El host A también tiene un cliente de correo electrónico y una ventana de chat abierta, los cuales usan TCP. Tanto las aplicaciones de correo electrónico como las de chat utilizan un número de puerto TCP único en el host A, como se muestra en la figura.
 
-![[1.15.png]]
+![[img/1.15.png]]
 
 En este capítulo se han mostrado varios ejemplos de cómo los protocolos de la capa de transporte utilizan el campo de número de puerto de destino en el encabezado TCP o UDP para identificar la aplicación receptora. Por ejemplo, si el valor del puerto TCP de destino en la figura 1-15 es 49124, el host A sabrá que los datos están destinados a la primera de las tres ventanas del explorador web.
 
 Antes de que un host receptor pueda examinar el encabezado TCP o UDP y encontrar el campo de puerto de destino, primero debe procesar los encabezados externos del mensaje. Si el mensaje entrante es una trama Ethernet que encapsula un paquete IPv4, los encabezados se parecen a los detalles de la Figura 1-16.
 
-![[1.16.png]]
+![[img/1.16.png]]
 
 El host receptor debe examinar varios campos, uno por encabezado, para identificar el siguiente encabezado o campo del mensaje recibido. Por ejemplo, el host A utiliza una NIC Ethernet para conectarse a la red, por lo que el mensaje recibido es una trama Ethernet. El campo Tipo de Ethernet identifica el tipo de encabezado que sigue al encabezado de Ethernet, en este caso, con un valor de hexadecimal 0800, un encabezado IPv4.
 
