@@ -5,6 +5,6 @@ lo dividiré en los módulos que debemos conocer ITN, SRWE y ENSA, agregare una 
 Luego desarrollare una guia de estudio que abarque lo necesario para poder aprobar el examen.
 
 
-# [Guia](Guia/Part-I/index.md)
+# [Guia](Guia/index.md)
 
 Seguimos trabajando :)
