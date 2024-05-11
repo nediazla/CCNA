@@ -256,7 +256,7 @@ En este capítulo se han mostrado varios ejemplos de cómo los protocolos de la 
 
 Antes de que un host receptor pueda examinar el encabezado TCP o UDP y encontrar el campo de puerto de destino, primero debe procesar los encabezados externos del mensaje. Si el mensaje entrante es una trama Ethernet que encapsula un paquete IPv4, los encabezados se parecen a los detalles de la Figura 1-16.
 
-![[img/1.16.png]]
+![][img/1.16.png]
 
 El host receptor debe examinar varios campos, uno por encabezado, para identificar el siguiente encabezado o campo del mensaje recibido. Por ejemplo, el host A utiliza una NIC Ethernet para conectarse a la red, por lo que el mensaje recibido es una trama Ethernet. El campo Tipo de Ethernet identifica el tipo de encabezado que sigue al encabezado de Ethernet, en este caso, con un valor de hexadecimal 0800, un encabezado IPv4.
 
