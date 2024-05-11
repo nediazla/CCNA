@@ -234,15 +234,16 @@ R2# configure terminal //Enter configuration commands, one per line. End with CN
 R2(config)# access-list 1 permit 10.1.1.1
 R2(config)# access-list 1 deny 10.1.1.0 0.0.0.255
 R2(config)# access-list 1 permit 10.0.0.0 0.255.255.255
-
 R2(config)# interface S0/0/1 
 R2(config-if)# ip access-group 1 in
-
 R2(config-if)# ^Z
+R2# show running-config 
 
-R2# show running-config ! Lines omitted for brevity
+! Lines omitted for brevity
 
-access-list 1 permit 10.1.1.1 access-list 1 deny 10.1.1.0 0.0.0.255 access-list 1 permit 10.0.0.0 0.255.255.255
+access-list 1 permit 10.1.1.1 
+access-list 1 deny 10.1.1.0 0.0.0.255 
+access-list 1 permit 10.0.0.0 0.255.255.255
 ```
 
 En primer lugar, preste mucha atención al proceso de configuración que aparece en la parte superior del ejemplo. Tenga en cuenta que el  `comando access-list` no cambia el símbolo del sistema del símbolo del sistema del modo de configuración global, ya que el  `comando access-list` es un comando de configuración global. Luego, compare eso con el resultado del  comando `show running-config`: los detalles son idénticos en comparación con los comandos que se agregaron en el modo de configuración. Finalmente, asegúrese de anotar el `ip access-group 1` en el  comando, en la `interfaz S0/0/1` de R2, que habilita la lógica ACL (tanto la ubicación como la dirección).
@@ -254,10 +255,8 @@ R2# show ip access-lists
 
 Standard IP access list 1
 
-    10 permit 10.1.1.1 (**107 matches**)
-
+    10 permit 10.1.1.1 (107 matches)
     20 deny   10.1.1.0, wildcard bits 0.0.0.255 (4 matches)
-
 	30 permit 10.0.0.0, wildcard bits 0.255.255.255 (10 matches)
 
 R2# show access-lists
@@ -265,8 +264,8 @@ R2# show access-lists
 Standard IP access list 1
 
     10 permit 10.1.1.1 (107 matches)
-
-    20 deny   10.1.1.0, wildcard bits 0.0.0.255 (4 matches)     30 permit 10.0.0.0, wildcard bits 0.255.255.255 (10 matches)
+    20 deny   10.1.1.0, wildcard bits 0.0.0.255 (4 matches)     
+    30 permit 10.0.0.0, wildcard bits 0.255.255.255 (10 matches)
 
 R2# show ip interface s0/0/1
 
@@ -280,10 +279,10 @@ Internet address is 10.1.2.2/24
 
   Helper address is not set
 
-  Directed broadcast forwarding is disabled   Multicast reserved groups joined: 224.0.0.9
+  Directed broadcast forwarding is disabled   
+  Multicast reserved groups joined: 224.0.0.9
 
   Outgoing access list is not set
-
   Inbound access list is 1
 
 ! Lines omitted for brevity
@@ -341,12 +340,11 @@ En primer lugar, puede saber si el router está haciendo coincidir los paquetes 
 Por ejemplo, el Ejemplo 2-4 muestra una versión actualizada de ACL 2 del Ejemplo 2-3, esta vez con la  palabra clave log agregada. A continuación, la parte inferior del ejemplo muestra un mensaje de registro típico, que muestra la coincidencia resultante basada en un paquete con la dirección IP de origen 10.2.2.1 (coincidente con la ACL) con la dirección de destino 10.1.1.1 .
 
 ```
-R1# show running-config ! lines removed for brevity access-list 2 remark This ACL permits server S1 traffic to host A's subnet access-list 2 permit 10.2.2.1 log
+R1# show running-config 
+!lines removed for brevity access-list 2 remark This ACL permits server S1 traffic to host A's subnet access-list 2 permit 10.2.2.1 log!
 
-!
-
-interface F0/0  ip 
-access-group 2 out
+interface F0/0  
+ip access-group 2 out
 
 R1#
 
@@ -398,9 +396,11 @@ Bajo ciertas suposiciones que son razonables para las certificaciones CCNA, calc
 
 Por ejemplo, con el comando **access-list 1 permit 172.16.200.0 0.0.7.255**, el extremo inferior del rango es simplemente 172.16.200.0, tomado directamente del propio comando. Luego, para encontrar el extremo superior del rango, simplemente agregue este número a la máscara de WC, de la siguiente manera:
 
-  172.16. 200.0
-   +0.   0.      7.255
-=172.16.207.255
+```
+ 172.16.200.0
++  0. 0.  7.255
+ 172.16.207.255
+```
 
 Para esta última práctica, observe los  comandos **de lista de acceso existentes**  en la Tabla 2-3. En cada caso, haga una anotación sobre la dirección IP exacta, o el rango de direcciones IP, que coincida con el comando.
 
@@ -414,20 +414,18 @@ Para esta última práctica, observe los  comandos **de lista de acceso existen
 | 6           | **access-list 6 permit 10.1.192.0 0.0.0.31**               |
 | 7           | **access-list 7 permit 10.1.192.0 0.0.1.255**              |
 | 8           | **access-list 8 permit 10.1.192.0 0.0.63.255**             |
+
 Curiosamente, IOS permite al usuario de CLI escribir un  **comando access-list** en modo de configuración, e IOS potencialmente cambiará el parámetro de dirección antes de colocar el comando en el archivo running-config. Este proceso de solo encontrar el rango de direcciones que coinciden con el  `comando access-list` espera que el  comando `access-list` provenga del router, de modo que dichos cambios se hayan completado.
 
 El cambio que IOS puede hacer con un  `comando access-list` es convertir a 0 cualquier octeto de una dirección para la cual el octeto de la máscara comodín sea 255. Por ejemplo, con una máscara comodín de 0.0.255.255, IOS ignora los dos últimos octetos. IOS espera que el campo de dirección termine con dos ceros. De lo contrario, IOS aún acepta el  `comando access-list`, pero IOS cambia los dos últimos octetos de la dirección a 0s. El ejemplo 2-5 muestra un ejemplo, donde la configuración muestra la dirección 10.1.1.1, pero la máscara comodín 0.0.255.255.
 
 ```
-R2# **configure terminal** Enter configuration commands, one per line. End with CNTL/Z. 
+R2# configure terminal 
+//Enter configuration commands, one per line. End with CNTL/Z. 
 R2(config)# access-list 21 permit 10.1.1.1 0.0.255.255
 R2(config)# ^Z
 R2#
-R2# show ip access-lists
-
-Standard IP access list 21
-
-10 permit 10.1.0.0, wildcard bits 0.0.255.255
+R2# show ip access-lists Standard IP access list 21 permit 10.1.0.0, wildcard bits 0.0.255.255
 ```
 
 Las matemáticas para encontrar el rango de direcciones se basan en el hecho de que el comando es completamente correcto o que IOS ya ha establecido estos octetos de direcciones en 0, como se muestra en el ejemplo.
