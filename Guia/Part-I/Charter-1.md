@@ -263,5 +263,5 @@ El host receptor debe examinar varios campos, uno por encabezado, para identific
 
 El encabezado IPv4 tiene un campo similar llamado campo Protocolo IP. El campo Protocolo IPv4 tiene una lista estándar de valores que identifican el siguiente encabezado, con el decimal 6 utilizado para TCP y el decimal 17 utilizado para UDP. En este caso, el valor de 6 identifica el encabezado TCP que sigue al encabezado IPv4. Una vez que el host receptor se da cuenta de que existe un encabezado TCP, puede procesar el campo de puerto de destino para determinar qué proceso de aplicación local debe recibir el.
 
-### [index](CCNA/Guia/index.md)
+### [index](/CCNA/Guia/index.md)
 ### [Charter 2](Charter-2.md)
