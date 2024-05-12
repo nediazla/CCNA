@@ -1,1 +1,1 @@
-# [Redes en la actualidad](CCNA/Modulos/ITN/content/01-Redes-en-la-actualidad/Resumen.md)
+# [Redes en la actualidad](content/01-Redes-en-la-actualidad/Resumen.md)
