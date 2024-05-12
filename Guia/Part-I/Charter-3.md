@@ -1,3 +1,4 @@
+![](switch-1.png)
 # Listas avanzadas de control de acceso IPv4
 
 **En este capítulo se tratan los siguientes temas del examen:**
@@ -195,3 +196,180 @@ Puede aprender fácilmente la configuración de ACL con nombre simplemente convi
 
 ![](img/3.10.png)
 
+La única parte verdaderamente nueva de la configuración de ACL nombrada es el comando de configuración global `ip access-list`. Este comando define si una ACL es una ACL estándar o extendida y define el nombre. También mueve al usuario al modo de configuración de ACL, como se muestra en el próximo Ejemplo 3-4. Una vez en el modo de configuración de ACL, configura los comandos `permit`, `deny` y `remark` que reflejan la sintaxis de los comandos numerados de ACL `access-list`. Si está configurando una ACL estándar denominada, estos comandos coinciden con la sintaxis de las ACL numeradas estándar; si está configurando ACL con nombre extendidas, coinciden con la sintaxis de las ACL numeradas extendidas.
+
+El ejemplo 3-4 muestra la configuración de una ACL extendida con nombre. Preste especial atención a las indicaciones del modo de configuración, que muestran el modo de configuración de ACL.
+
+```
+|Router# configure terminal 
+Enter configuration commands, one per line. End with CNTL/Z.
+Router(config)# ip access-list extended barney
+Router(config-ext-nacl)# permit tcp host 10.1.1.2 eq www any
+Router(config-ext-nacl)# deny udp host 10.1.1.1 10.1.2.0 0.0.0.255
+Router(config-ext-nacl)# deny ip 10.1.3.0 0.0.0.255 10.1.2.0 0.0.0.255
+Router(config-ext-nacl)# deny ip 10.1.2.0 0.0.0.255 10.2.3.0 0.0.0.255
+Router(config-ext-nacl)# permit ip any any
+Router(config-ext-nacl)# interface serial1
+Router(config-if)# ip access-group barney out
+Router(config-if)# ^Z
+Router# show running-config 
+Building configuration... 
+Current configuration: 
+! lines omitted for brevity
+interface serial 1  
+ip access-group barney out 
+! 
+ip access-list extended barney 
+permit tcp host 10.1.1.2 eq www any  
+deny udp host 10.1.1.1 10.1.2.0 0.0.0.255  
+deny ip 10.1.3.0 0.0.0.255 10.1.2.0 0.0.0.255  
+deny ip 10.1.2.0 0.0.0.255 10.2.3.0 0.0.0.255  
+permit ip any any
+```
+
+El ejemplo 3-4 comienza con la creación de una ACL denominada barney. El comando `ip access-list extended barney` crea la ACL, nombrándola barney y colocando al usuario en el modo de configuración de ACL. Este comando también le dice al IOS que barney es una ACL extendida. A continuación, cinco instrucciones diferentes de "permitir" y "denegar" definen la lógica de coincidencia y la acción que se debe realizar en caso de coincidencia. El resultado del comando `show running-config` enumera la configuración de ACL nombrada antes de que se elimine la entrada única.
+
+Las ACL con nombre permiten al usuario eliminar y agregar nuevas líneas a la ACL desde el modo de configuración de ACL. El ejemplo 3-5 muestra cómo, con la opción `no deny ip...` que elimina una sola entrada de la ACL. Tenga en cuenta que el resultado del comando `show access-list` al final del ejemplo todavía enumera la ACL, con cuatro comandos `permit` y `deny` en lugar de cinco.
+
+```
+Router# configure terminal 
+Enter configuration commands, one per line. End with CNTL/Z.
+Router(config)# ip access-list extended barney
+Router(config-ext-nacl)# no deny ip 10.1.2.0 0.0.0.255 10.2.3.0 0.0.0.255
+Router(config-ext-nacl)# ^Z
+Router# show access-list
+
+Extended IP access list barney
+	10 permit tcp host 10.1.1.2 eq www any
+	20 deny   udp host 10.1.1.1 10.1.2.0 0.0.0.255     
+	30 deny   ip 10.1.3.0 0.0.0.255 10.1.2.0 0.0.0.255
+	50 permit ip any any
+```
+
+### Edición de ACL mediante números de secuencia
+
+Las ACL numeradas han existido en IOS desde los primeros días de los routers Cisco y el IOS; sin embargo, durante muchos años, a través de muchas versiones de IOS, la capacidad de editar una ACL IP numerada era deficiente. Por ejemplo, para simplemente eliminar una línea de la ACL, el usuario tenía que eliminar toda la ACL y, a continuación, volver a configurarla.
+
+La función de edición de ACL utiliza un número de secuencia de ACL que se agrega a cada instrucción de `permit` o `deny` de ACL, y los números representan la secuencia de instrucciones en la ACL.
+
+Los números de secuencia de ACL proporcionan las siguientes características para las ACL numeradas y con nombre:
+
+**Nuevo estilo de configuración para las ACL numeradas:** las ACL numeradas utilizan un estilo de configuración como las ACL con nombre, así como el estilo tradicional, para la misma ACL; el nuevo estilo es necesario para realizar la edición avanzada de ACL.
+
+**Eliminación de líneas individuales:** Se puede eliminar una instrucción "permit" o "deny" de ACL individual con un  **subcomando** _sin_ número de secuencia.
+
+**Inserción de nuevas líneas:** Los comandos `permit` y `deny` recién agregados se pueden configurar con un número de secuencia antes del comando `deny` o `permit` , dictando la ubicación de la instrucción dentro de la ACL.
+
+**Numeración automática de secuencias:** IOS agrega números de secuencia a los comandos a medida que los configura, incluso si no incluye los números de secuencia.
+
+Para aprovechar la capacidad de eliminar e insertar líneas en una ACL, tanto las ACL numeradas como las nombradas deben utilizar el mismo estilo de configuración general y los mismos comandos que se utilizan para las ACL con nombre. La única diferencia en la sintaxis es si se usa un nombre o un número. El Ejemplo 3-6 muestra la configuración de una ACL IP numerada estándar, utilizando este estilo de configuración alternativo. El ejemplo muestra la potencia del número de secuencia de ACL para la edición. En este ejemplo, ocurre lo siguiente:
+
+| **Step 1.** | Numbered ACL 24 is configured using this new-style configuration, with three  **permit** commands.                                     |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Step 2.** | The  **show ip access-lists** command shows the three **permit** commands with sequence numbers 10, 20, and 30.                        |
+| **Step 3.** | The engineer deletes only the second **permit** command using the **no 20** ACL subcommand, which simply refers to sequence number 20. |
+| **Step 4.** | The  **show ip access-lists** command confirms that the ACL now has only two lines (sequence numbers 10 and 30).                       |
+| **Step 5.** | The engineer adds a new  **deny** command to the beginning of the ACL, using the **5 deny 10.1.1.1** ACL subcommand.                   |
+| **Step 6.** | The  **show ip access-lists** command again confirms the changes, this time listing three commands, sequence numbers 5, 10, and 30.    |
+```
+! Step 1: The 3-line Standard Numbered IP ACL is configured.
+R1# configure terminal
+Enter configuration commands, one per line. End with CNTL/Z.
+R1(config)# ip access-list standard 24
+R1(config-std-nacl)# permit 10.1.1.0 0.0.0.255
+R1(config-std-nacl)# permit 10.1.2.0 0.0.0.255
+R1(config-std-nacl)# permit 10.1.3.0 0.0.0.255
+
+! Step 2: Displaying the ACL`s contents, without leaving configuration mode. R1(config-std-nacl)# do show ip access-lists 24
+Standard IP access list 24
+	10 permit 10.1.1.0, wildcard bits 0.0.0.255
+	20 permit 10.1.2.0, wildcard bits 0.0.0.255
+	30 permit 10.1.3.0, wildcard bits 0.0.0.255
+	
+! Step 3: Still in ACL 24 configuration mode, the line with sequence number 20 is deleted. 
+R1(config-std-nacl)# no 20
+
+! Step 4: Displaying the ACL`s contents again, without leaving configuration mode.
+! Note that line number 20 is no longer listed. 
+R1(config-std-nacl)#do show ip access-lists 24
+Standard IP access list 24
+	10 permit 10.1.1.0, wildcard bits 0.0.0.255
+	30 permit 10.1.3.0, wildcard bits 0.0.0.255
+	
+! Step 5: Inserting a new first line in the ACL.
+R1(config-std-nacl)# 5 deny 10.1.1.1
+
+! Step 6: Displaying the ACL`s contents one last time, with the new statement 
+!(sequence number 5) listed first. 
+R1(config-std-nacl)# do show ip access-lists 24
+Standard IP access list 24
+	5 deny 10.1.1.1
+	10 permit 10.1.1.0, wildcard bits 0.0.0.255
+	30 permit 10.1.3.0, wildcard bits 0.0.0.255
+```
+
+Tenga en cuenta que, aunque el Ejemplo 3-6 utiliza una ACL numerada, las ACL con nombre utilizan el mismo proceso para editar (agregar y eliminar) entradas.
+### Configuración de ACL numerada frente a configuración de ACL con nombre
+
+Como breve comentario sobre las ACL numeradas, tenga en cuenta que IOS en realidad permite dos formas de configurar ACL numeradas en las versiones más recientes de IOS. En primer lugar, IOS admite el método tradicional, utilizando los  **comandos globales access-list** mostrados anteriormente en los Ejemplos 3-1, 3-2 y 3-3. IOS también admite la configuración de ACL numerada con comandos como ACL con nombre, como se muestra en el Ejemplo 3-6.
+
+Curiosamente, IOS siempre almacena ACL numeradas con el estilo original de configuración, como  comandos **de lista de acceso global**  , sin importar qué método se utilice para configurar la ACL. En el ejemplo 3-7 se muestran estos hechos, retomando donde terminaba el ejemplo 3-6, con los siguientes pasos adicionales:
+
+| **Paso 7.**  | El ingeniero enumera la configuración (`show running-config`), que enumera los comandos de configuración de estilo antiguo, aunque la ACL se creó con los comandos de estilo nuevo. |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Paso 8.**  | El ingeniero agrega una nueva instrucción al final de la ACL mediante el  comando de configuración global `access-list 24 permit 10.1.4.0 0.0.0.255` de estilo antiguo.             |
+| **Paso 9.**  | El  comando `show ip access-lists` confirma que el  comando `access-list` de estilo antiguo  del paso anterior siguió la regla de agregarse solo al final de la ACL.                |
+| **Paso 10.** | El ingeniero muestra la configuración para confirmar que las partes de ACL 24                                                                                                       |
+configurados con comandos de estilo nuevo y comandos de estilo antiguo se enumeran en la misma ACL de estilo antiguo (`show running-config`).
+
+```
+! Step 7: A configuration snippet for ACL 24.
+R1#  show running-config
+! The only lines shown are the lines from ACL 24 
+access-list 24 deny 10.1.1.1 
+access-list 24 permit 10.1.1.0 0.0.0.255 
+access-list 24 permit 10.1.3.0 0.0.0.255
+
+! Step 8: Adding a new access-list 24 global command
+
+R1# configure terminal
+Enter configuration commands, one per line. End with CNTL/Z. 
+R1(config)# access-list 24 permit 10.1.4.0 0.0.0.255
+R1(config)# ^Z
+
+! Step 9: Displaying the ACL`s contents again, with sequence numbers. Note that even ! the new statement has been automatically assigned a sequence number.
+R1#  show ip access-lists 24
+Standard IP access list 24
+     5 deny 10.1.1.1
+    10 permit 10.1.1.0, wildcard bits 0.0.0.255
+    30 permit 10.1.3.0, wildcard bits 0.0.0.255
+    40 permit 10.1.4.0, wildcard bits 0.0.0.255
+
+! Step 10: The numbered ACL config remains in old-style configuration commands.
+
+R1# show running-config
+! The only lines shown are the lines from ACL 24
+access-list 24 deny   10.1.1.1 
+access-list 24 permit 10.1.1.0 0.0.0.255 
+access-list 24 permit 10.1.3.0 0.0.0.255 
+access-list 24 permit 10.1.4.0 0.0.0.255
+```
+
+### Consideraciones sobre la implementación de ACL
+
+Las ACL pueden ser una gran herramienta para mejorar la seguridad de una red, pero los ingenieros deben pensar en algunos problemas más amplios antes de simplemente configurar una ACL para solucionar un problema. Para ayudar, Cisco hace las siguientes recomendaciones generales en los cursos en los que se basa el examen CCNA:
+
+- Coloque las ACL extendidas lo más cerca posible de la fuente del paquete. Esta estrategia permite que las ACL descarten los paquetes antes de tiempo.
+- Coloque las ACL estándar lo más cerca posible del destino del paquete. Esta estrategia evita el error con las ACL estándar (que solo coinciden con la dirección IPv4 de origen) de descartar involuntariamente paquetes que no necesitaban ser descartados.
+- Coloque declaraciones más específicas al principio de la LCA.
+- Inhabilite una ACL desde su interfaz (utilizando el subcomando de interfaz `no ip access-group`) antes de realizar cambios en la ACL.
+
+El primer punto tiene que ver con el concepto de dónde ubicar las ACL. Si tiene la intención de filtrar un paquete, filtrar más cerca de la fuente del paquete significa que el paquete ocupa menos ancho de banda en la red, lo que parece ser más eficiente, y lo es. Por lo tanto, Cisco sugiere ubicar las ACL extendidas lo más cerca posible de la fuente.
+
+Sin embargo, el segundo punto parece contradecir el primero, al menos para las ACL estándar, para ubicarlas cerca del destino. ¿Por qué? Bueno, debido a que las ACL estándar solo miran la dirección IP de origen, tienden a filtrar más de lo que desea filtrar cuando se colocan cerca de la fuente. Por ejemplo, imagina que Fred y Barney están separados por cuatro routers. Si filtra el tráfico de Barney enviado a Fred en el primer router, Barney no puede llegar a ningún host cerca de los otros tres routers. Por lo tanto, los cursos de Cisco hacen una recomendación general para ubicar las ACL estándar más cerca del destino para evitar filtrar el tráfico que no desea filtrar.
+
+Para el tercer elemento de la lista, al colocar parámetros coincidentes más específicos al principio de cada lista, es menos probable que cometa errores en la ACL. Por ejemplo, imagine que la ACL primero enumeró un comando que permitía el tráfico que iba a 10.1.1.0/24, y el segundo comando denegaba el tráfico que iba al host 10.1.1.1. Los paquetes enviados al host 10.1.1.1 coincidirán con el primer comando y nunca coincidirán con el segundo comando más específico. Tenga en cuenta que las versiones posteriores de IOS evitan este error durante la configuración en algunos casos.
+
+Finalmente, Cisco recomienda que inhabilite las ACL en las interfaces antes de cambiar las instrucciones de la lista. Al hacerlo, evita problemas con la ACL durante un estado intermedio. En primer lugar, si elimina una ACL completa y deja la ACL IP habilitada en una interfaz con el comando `ip access-group`, IOS no filtra ningún paquete (eso no siempre era el caso en versiones anteriores de IOS). Sin embargo, tan pronto como agrega un comando ACL a esa ACL habilitada, IOS comienza a filtrar paquetes basados en esa ACL. Esas configuraciones provisionales de ACL podrían causar problemas.
+
+Por ejemplo, supongamos que tiene ACL 101 habilitado en S0/0/0 para paquetes de salida. Elimine la lista 101 para que se permita el paso de todos los paquetes. A continuación, introduzca un único comando `access-list 101`. Tan pronto como presione Enter, la lista existe y el router filtra todos los paquetes que salen de S0/0/0 en función de la lista de una línea. Si desea introducir una ACL larga, puede filtrar temporalmente los paquetes que no desea filtrar. Por lo tanto, la mejor manera es deshabilitar la lista de la interfaz, realizar los cambios en la lista y luego volver a habilitarla en la interfaz.
