@@ -103,3 +103,95 @@ En la tabla 3-4 se enumeran varios ejemplos de comandos de 'lista de acceso' que
 
 Debido a que las ACL extendidas pueden coincidir con tantos campos diferentes en los distintos encabezados de un paquete IP, la sintaxis del comando no se puede resumir fácilmente en un solo comando genérico. Sin embargo, los dos comandos de la Tabla 3-5 resumen las opciones de sintaxis que se tratan en este resumen.
 
+| **Command**                                                                                                                                                                                                           | **Configuration Mode and Description**                                                                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **access-list** _access-list-number_ {**deny** \| **permit**} _protocol source source-wildcard destination_ _destination-wildcard_ [**log** \| **log-input**]                                                         | Global command for extended numbered access lists. Use a number between 100 and 199 or 2000 and 2699, inclusive. |
+| **access-list** _access-list-number_ {**deny** \| **permit**} {**tcp** \| **udp**} _source source-wildcard_ [_operator_ [_port_]] _destination destination-wildcard_ [_operator_[_port_]] [**established**] [**log**] | A version of the **access-list** command with parameters specific to TCP and/or UDP.                             |
+El proceso de configuración de las ACL extendidas coincide en su mayoría con el mismo proceso utilizado para las ACL estándar. Debe elegir la ubicación y la dirección en la que desea habilitar la ACL, en particular la dirección, para que pueda caracterizar si determinadas direcciones y puertos serán el origen o el destino. Configure la ACL mediante los comandos 'access-list' y, cuando haya terminado, habilite la ACL con el mismo comando 'ip access-group' que se utiliza con las ACL estándar. Todos estos pasos reflejan lo que se hace con las ACL estándar; Sin embargo, a la hora de configurar, tenga en cuenta las siguientes diferencias:
+
+- Coloque las ACL extendidas lo más cerca posible de la fuente de los paquetes que se filtrarán. El filtrado cerca de la fuente de los paquetes ahorra algo de ancho de banda.
+- Recuerde que todos los campos de un comando 'access-list' deben coincidir con un paquete para que se considere que el paquete coincide con esa instrucción 'access-list'.
+- Utilice números del 100 al 199 y del 2000 al 2699 en los comandos de la 'lista de acceso'; ningún número es inherentemente mejor que otro.
+### Listas de acceso IP extendidas: Ejemplo 1
+
+Este ejemplo se centra en la comprensión de la sintaxis básica. En este caso, la ACL deniega a Bob el acceso a todos los servidores FTP en la Ethernet de R1 y deniega a Larry el acceso al servidor web de Server1. La Figura 3-8 muestra la topología de red; El ejemplo 3-1 muestra la configuración en R1.
+
+![](img/3.8.png)
+
+```
+interface Serial0  ip address 172.16.12.1 255.255.255.0  ip access-group 101 in ! interface Serial1  ip address 172.16.13.1 255.255.255.0  ip access-group 101 in !
+
+access-list 101 remark Stop Bob to FTP servers, and Larry to Server1 web 
+access-list 101 deny tcp host 172.16.3.10 172.16.1.0 0.0.0.255 eq ftp 
+access-list 101 deny tcp host 172.16.2.10 host 172.16.1.100 eq www 
+access-list 101 permit ip any any
+```
+
+La primera instrucción ACL impide el acceso de Bob a los servidores FTP en la subred 172.16.1.0. La segunda instrucción impide el acceso de Larry a los servicios web en Server1. La declaración final permite el resto del tráfico.
+
+Si nos centramos en la sintaxis por un momento, podemos ver varios elementos nuevos para revisar. En primer lugar, el número de lista de acceso para las listas de acceso ampliadas se encuentra en el rango de 100 a 199 o de 2000 a 2699. Después de la acción 'permitir' o 'denegar', el  _parámetro de protocolo_ define si desea verificar todos los paquetes IP o encabezados específicos, como encabezados TCP o UDP. Al comprobar los números de puerto TCP o UDP, debe especificar el protocolo TCP o UDP. Tanto FTP como la web utilizan TCP.
+
+En este ejemplo se utiliza el parámetro 'eq', que significa "es igual a", para comprobar los números de puerto de destino para el control FTP (palabra clave **ftp**) y el tráfico HTTP (palabra clave **www**). Puede utilizar los valores numéricos o, para las opciones más populares, es válida una versión de texto más obvia. (Si tuvieras que escribir 'eq **80'**, la configuración mostraría 'eq www'.)
+
+Este ejemplo habilita la ACL en dos lugares en R1: entrante en cada interfaz serial. Estas ubicaciones logran el objetivo de la ACL. Sin embargo, esa ubicación inicial se hizo para señalar que Cisco sugiere que los ubique lo más cerca posible del origen del paquete. Por lo tanto, el Ejemplo 3-2 logra el mismo objetivo que el Ejemplo 3-1 de detener el acceso de Bob a los servidores FTP en el sitio principal, y lo hace con una ACL en R3.
+
+```
+interface Ethernet0  ip address 172.16.3.1 255.255.255.0  ip access-group 103 in
+
+access-list 103 remark deny Bob to FTP servers in subnet 172.16.1.0/24 
+access-list 103 deny tcp host 172.16.3.10 172.16.1.0 0.0.0.255 eq ftp 
+access-list 103 permit ip any any
+```
+
+La nueva configuración en R3 cumple con los objetivos de filtrar el tráfico de Bob, al mismo tiempo que cumple con el objetivo de diseño general de mantener la ACL cerca del origen de los paquetes. La ACL 103 en R3 se parece mucho a la ACL 101 en R1 del Ejemplo 3-1, pero esta vez, la ACL no se molesta en verificar los criterios para que coincidan con el tráfico de Larry, porque el tráfico de Larry nunca ingresará a la interfaz Ethernet 0 de R3. ACL 103 filtra el tráfico FTP de Bob a destinos en la subred 172.16.1.0/24, y todo el resto del tráfico que ingresa a la interfaz E0 de R3 llega a la red.
+
+Listas de acceso IP extendidas: Ejemplo 2
+
+El ejemplo 3-3, basado en la red que se muestra en la Figura 3-9, muestra otro ejemplo de cómo utilizar listas de acceso IP extendidas. En este ejemplo se utilizan los siguientes criterios:
+
+- A Sam no se le permite el acceso a la subred de Bugs o Lucas.
+- A los hosts de la Ethernet de Sevilla no se les permite el acceso a los hosts de la Ethernet de Yosemite.
+- Todas las demás combinaciones están permitidas.
+
+![](img/3.9.png)
+
+```
+interface ethernet 0  ip access-group 110 in !
+
+access-list 110 deny ip host 10.1.2.1 10.1.1.0 0.0.0.255 
+access-list 110 deny ip 10.1.2.0 0.0.0.255 10.1.3.0 0.0.0.255 
+access-list 110 permit ip any any
+```
+
+Esta configuración resuelve el problema con pocas instrucciones mientras se mantiene la directriz de diseño de Cisco de colocar las ACL extendidas lo más cerca posible de la fuente del tráfico. La ACL filtra los paquetes que ingresan a la interfaz E0 de Yosemite, que es la primera interfaz de enrutador a la que ingresan los paquetes enviados por Sam. Si la ruta entre Yosemite y las otras subredes cambia con el tiempo, la ACL sigue aplicándose. Además, el filtrado exigido por el segundo requisito (no permitir que los hosts LAN de Sevilla accedan a los de Yosemite) se cumple con la segunda  **declaración de lista de acceso**. Detener el flujo de paquetes desde la subred LAN de Yosemite a la subred LAN de Sevilla detiene la comunicación efectiva entre las dos subredes. Alternativamente, la lógica contraria podría haberse configurado en Sevilla.
+
+### Práctica Creación de comandos de lista de acceso
+
+En la tabla 3-6 se proporciona un ejercicio de práctica que le ayudará a familiarizarse con la sintaxis del comando de **lista de acceso extendida**  , especialmente con la elección de la lógica de coincidencia correcta. Su trabajo: crear una ACL extendida de una línea que coincida con los paquetes. Las respuestas se encuentran en la sección "Respuestas a problemas de práctica anteriores", más adelante en este capítulo. Tenga en cuenta que si los criterios mencionan un protocolo de aplicación en particular, por ejemplo, "cliente web", eso significa que debe coincidir específicamente con ese protocolo de aplicación.
+
+| **Problem** | **Criteria**                                                                                                                       |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| 1           | From web client 10.1.1.1, sent to a web server in subnet 10.1.2.0/24.                                                              |
+| 2           | From Telnet client 172.16.4.3/25, sent to a Telnet server in subnet 172.16.3.0/25. Match all hosts in the client’s subnet as well. |
+| 3           | ICMP messages from the subnet in which 192.168.7.200/26 resides to all hosts in the subnet where 192.168.7.14/29 resides.          |
+| 4           | From web server 10.2.3.4/23’s subnet to clients in the same subnet as host 10.4.5.6/22.                                            |
+| 5           | From Telnet server 172.20.1.0/24’s subnet, sent to any host in the same subnet as host 172.20.44.1/23.                             |
+| 6           | From web client 192.168.99.99/28, sent to a web server in subnet 192.168.176.0/28. Match all hosts in the client’s subnet as well. |
+| 7           | ICMP messages from the subnet in which 10.55.66.77/25 resides to all hosts in the subnet where 10.66.55.44/26 resides.             |
+| 8           | Any and every IPv4 packet.                                                                                                         |
+### ACL con nombre y edición de ACL
+
+Ahora que tiene una buena comprensión de los conceptos básicos de las ACL IP de IOS, esta sección examina algunas mejoras en el soporte de IOS para ACL: ACL con nombre y edición de ACL con números de secuencia. Aunque ambas características son útiles e importantes, ninguna agrega ninguna función en cuanto a lo que un enrutador puede y no puede filtrar. En cambio, las ACL con nombre y los números de secuencia de ACL facilitan la memoria de los nombres de las ACL y la edición de las ACL existentes cuando es necesario cambiar una ACL.
+### Listas de acceso de IP con nombre
+
+Las ACL de IP con nombre tienen muchas similitudes con las ACL de IP numeradas. Se pueden utilizar para filtrar paquetes, además de para muchos otros fines. También pueden coincidir con los mismos campos: las ACL numeradas estándar pueden coincidir con los mismos campos que una ACL con nombre estándar, y las ACL con número extendido pueden coincidir con los mismos campos que una ACL con nombre extendida.
+
+Por supuesto, existen diferencias entre las ACL con nombre y las numeradas. Las ACL con nombre originalmente tenían tres grandes diferencias en comparación con las ACL numeradas:
+- Usar nombres en lugar de números para identificar la LCA, lo que facilita recordar el motivo de la LCA
+- Uso de subcomandos de ACL, no comandos globales, para definir la acción y los parámetros coincidentes
+- Uso de funciones de edición de ACL que permiten al usuario de la CLI eliminar líneas individuales de la ACL e insertar nuevas líneas
+
+Puede aprender fácilmente la configuración de ACL con nombre simplemente convirtiendo las ACL numeradas para usar la configuración de ACL con nombre equivalente. La Figura 3-10 muestra una conversión de este tipo, utilizando una ACL estándar simple de tres líneas número 1. Para crear los tres **subcomandos  de permiso** para la ACL nombrada, copie literalmente partes de los tres comandos de ACL numerados, comenzando con la  **palabra clave** permit .
+
+![](img/3.10.png)
+
