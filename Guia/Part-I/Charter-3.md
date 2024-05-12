@@ -92,6 +92,7 @@ Al examinar las ACL que coinciden con los números de puerto, primero considere 
 | 443                | TCP          | SSL                | **—**                           |
 | 514                | UDP          | Syslog             | **—**                           |
 | 16,384–32,767      | UDP          | RTP (voice, video) | **—**                           |
+
 En la tabla 3-4 se enumeran varios ejemplos de comandos de `lista de acceso` que coinciden en función de los números de puerto. Cubra el lado derecho de la tabla e intente caracterizar los paquetes que coinciden con cada comando. A continuación, compruebe el lado derecho de la tabla para ver si está de acuerdo con la evaluación.
 
 | **access-list Statement**                                          | **What It Matches**                                                                                                                                                                  |
