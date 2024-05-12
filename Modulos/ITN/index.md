@@ -1,1 +1,1 @@
-# [Redes en la actualidad](1-Redes-en-la-actualidad/Resumen.md)
+# [Redes en la actualidad](content/1-Redes-en-la-actualidad/Resumen.md)
