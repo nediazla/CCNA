@@ -57,3 +57,49 @@ Cuando un comando de ACL extendido incluye la  palabra clave **tcp** o **udp**,
 
 ![](img/3.5.png)
 
+Por ejemplo, considere la red simple que se muestra en la Figura 3-6. El servidor FTP se encuentra a la derecha, con el cliente a la izquierda. La figura muestra la sintaxis de una ACL que coincide con lo siguiente:
+
+- Paquetes que incluyen un encabezado TCP
+- Paquetes enviados desde la subred del cliente
+- Paquetes enviados a la subred del servidor
+- Paquetes con puerto de destino TCP 21 (puerto de control del servidor FTP)
+
+![](img/3.6.png)
+
+Para apreciar completamente la coincidencia del puerto de destino con los parámetros `eq 21`, considere los paquetes que se mueven de izquierda a derecha, de PC1 al servidor. Suponiendo que el servidor utiliza el conocido puerto 21 (puerto de control FTP), el encabezado TCP del paquete tiene un valor de puerto de destino de 21. La sintaxis de ACL incluye los parámetros `eq 21` después de la dirección IP de destino. La posición después de los parámetros de la dirección de destino es importante: esa posición identifica el hecho de que los parámetros `eq 21` deben compararse con el puerto de destino del paquete. Como resultado, la instrucción ACL que se muestra en la Figura 3-6 coincidiría con este paquete y el puerto de destino de 21 si se utiliza en cualquiera de las cuatro ubicaciones implicadas en las cuatro líneas con flechas discontinuas de la figura.
+
+Por el contrario, la Figura 3-7 muestra el flujo inverso, con un paquete enviado por el servidor hacia PC1. En este caso, el encabezado TCP del paquete tiene un puerto de origen de 21, por lo que la ACL debe verificar el valor del puerto de origen de 21 y la ACL debe ubicarse en diferentes interfaces. En este caso, los parámetros `eq 21` siguen el campo de dirección de origen, pero vienen antes del campo de dirección de destino.
+
+![](img/3.7.png)
+
+Al examinar las ACL que coinciden con los números de puerto, primero considere la ubicación y la dirección en la que se aplicará la ACL. Esa dirección determina si el paquete se envía al servidor o desde el servidor. En ese momento, puede decidir si necesita verificar el puerto de origen o de destino en el paquete. Como referencia, la Tabla 3-3 enumera muchos de los números de puerto populares y sus protocolos y aplicaciones de capa de transporte. Tenga en cuenta que la sintaxis de los comandos 'access-list' acepta tanto los números de puerto como una versión abreviada del nombre de la aplicación.
+
+| **Port Number(s)** | **Protocol** | **Application**    | **access-list Command Keyword** |
+| ------------------ | ------------ | ------------------ | ------------------------------- |
+| 20                 | TCP          | FTP data           | **ftp-data**                    |
+| 21                 | TCP          | FTP control        | **ftp**                         |
+| 22                 | TCP          | SSH                | **—**                           |
+| 23                 | TCP          | Telnet             | **telnet**                      |
+| 25                 | TCP          | SMTP               | **smtp**                        |
+| 53                 | UDP, TCP     | DNS                | **domain**                      |
+| 67                 | UDP          | DHCP Server        | **bootps**                      |
+| 68                 | UDP          | DHCP Client        | **bootpc**                      |
+| 69                 | UDP          | TFTP               | **tftp**                        |
+| 80                 | TCP          | HTTP (WWW)         | **www**                         |
+| 110                | TCP          | POP3               | **pop3**                        |
+| 161                | UDP          | SNMP               | **snmp**                        |
+| 443                | TCP          | SSL                | **—**                           |
+| 514                | UDP          | Syslog             | **—**                           |
+| 16,384–32,767      | UDP          | RTP (voice, video) | **—**                           |
+En la tabla 3-4 se enumeran varios ejemplos de comandos de 'lista de acceso' que coinciden en función de los números de puerto. Cubra el lado derecho de la tabla e intente caracterizar los paquetes que coinciden con cada comando. A continuación, compruebe el lado derecho de la tabla para ver si está de acuerdo con la evaluación.
+
+| **access-list Statement**                                          | **What It Matches**                                                                                                                                                                  |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **access-list 101 deny tcp any gt 49151 host 10.1.1.1 eq 23**      | Packets with a TCP header, any source IP address, with a source port greater than (gt) 49151, a destination IP address of exactly 10.1.1.1, and a destination port equal to (eq) 23. |
+| **access-list 101 deny tcp any host 10.1.1.1 eq 23**               | The same as the preceding example, but any source port matches, because that parameter is omitted in this case.                                                                      |
+| **access-list 101 deny tcp any host 10.1.1.1 eq telnet**           | The same as the preceding example. The **telnet** keyword is used instead of port 23.                                                                                                |
+| **access-list 101 deny udp 1.0.0.0** **0.255.255.255 lt 1023 any** | A packet with a source in network 1.0.0.0/8, using UDP with a source port less than (lt) 1023, with any destination  IP address .                                                    |
+### Configuración de ACL IP extendida
+
+Debido a que las ACL extendidas pueden coincidir con tantos campos diferentes en los distintos encabezados de un paquete IP, la sintaxis del comando no se puede resumir fácilmente en un solo comando genérico. Sin embargo, los dos comandos de la Tabla 3-5 resumen las opciones de sintaxis que se tratan en este resumen.
+

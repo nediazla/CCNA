@@ -48,7 +48,7 @@ La Figura 2-2 muestra una ACL de dos líneas en un rectángulo en la parte infer
 
 Cuando se utilizan ACL IP para filtrar paquetes, solo se puede elegir una de las dos acciones. Los comandos de configuración utilizan las palabras clave  **deny** y  **permit**, y significan (respectivamente) descartar el paquete o permitir que siga funcionando como si la ACL no existiera.
 
-Este libro se centra en el uso de ACL para filtrar paquetes, pero IOS utiliza ACL para muchas más funciones. Esas características suelen usar la misma lógica de coincidencia. Sin embargo, en otros casos, las  **palabras clave deny** o **allow** implican alguna otra acción.
+Este resumen se centra en el uso de ACL para filtrar paquetes, pero IOS utiliza ACL para muchas más funciones. Esas características suelen usar la misma lógica de coincidencia. Sin embargo, en otros casos, las  **palabras clave deny** o **allow** implican alguna otra acción.
 
 ### Tipos de ACL IP
 
@@ -123,7 +123,7 @@ Hacer coincidir un subconjunto de la dirección con comodines
 
 A menudo, los objetivos comerciales que desea implementar con una ACL no coinciden con una sola dirección IP en particular, sino con un rango de direcciones IP. Tal vez desee hacer coincidir todas las direcciones IP de una subred. Tal vez desee hacer coincidir todas las direcciones IP en un rango de subredes. De todos modos, desea verificar si hay más de una dirección IP en un rango de direcciones.
 
-IOS permite que las ACL estándar coincidan con un rango de direcciones utilizando una herramienta llamada máscara de _comodín_. Tenga en cuenta que no se trata de una máscara de subred. La máscara comodín (que este libro abrevia como _máscara WC_) le da al ingeniero una forma de decirle a IOS que ignore partes de la dirección al hacer comparaciones, esencialmente tratando esas partes como comodines, como si ya coincidiesen.
+IOS permite que las ACL estándar coincidan con un rango de direcciones utilizando una herramienta llamada máscara de _comodín_. Tenga en cuenta que no se trata de una máscara de subred. La máscara comodín (que este resumen abrevia como _máscara WC_) le da al ingeniero una forma de decirle a IOS que ignore partes de la dirección al hacer comparaciones, esencialmente tratando esas partes como comodines, como si ya coincidiesen.
 
 Puedes pensar en las máscaras WC en decimal y en binario, y ambos tienen sus usos. Para empezar, piensa en las máscaras de WC en decimal, usando estas reglas:
 
