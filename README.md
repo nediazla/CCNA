@@ -7,4 +7,6 @@ Luego desarrollare una guia de estudio que abarque lo necesario para poder aprob
 
 # [Guia](Guia/index.md)
 
+# [Módulos](Modulos/index.md)
+
 Seguimos trabajando :)

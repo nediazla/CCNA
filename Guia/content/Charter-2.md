@@ -28,7 +28,7 @@ Las flechas de la Figura 2-1 muestran las ubicaciones en las que se pueden filtr
 
 Las cuatro líneas con flechas de la figura señalan la ubicación y la dirección de las interfaces de router utilizadas para reenviar el paquete desde el host B al servidor S1. En este ejemplo concreto, esas interfaces y dirección son entrantes en la interfaz F0/0 de R1, salientes en la interfaz S0/0/0 de R1, entrantes en la interfaz S0/0/1 de R2 y salientes en la interfaz F0/0 de R2. Si, por ejemplo, habilitó una ACL en la interfaz F0/1 de R2, en cualquier dirección, esa ACL no podría filtrar el paquete enviado desde el host B al servidor S1, porque la interfaz F0/1 de R2 no forma parte de la ruta de B a S1.
 
-![](img/2.1.png)
+![](2.1.png)
 
 En resumen, para filtrar un paquete, debe habilitar una ACL en una interfaz que procese el paquete, en la misma dirección en la que el paquete fluye a través de esa interfaz.
 
@@ -43,7 +43,7 @@ Por ejemplo, considere un ejemplo con la Figura 2-2, en el que desea permitir pa
 
 La Figura 2-2 muestra una ACL de dos líneas en un rectángulo en la parte inferior, con una lógica de coincidencia simple: ambas instrucciones solo buscan coincidir con la dirección IP de origen en el paquete. Cuando está habilitado, R2 examina cada paquete IP entrante en esa interfaz y compara cada paquete con esos dos comandos ACL. Los paquetes enviados por el host A (dirección IP de origen 10.1.1.1) se permiten y los originados por el host B (dirección IP de origen 10.1.1.2) se descartan.
 
-![](img/2.2.png)
+![](2.2.png)
 ### Tomar medidas cuando se produce un partido
 
 Cuando se utilizan ACL IP para filtrar paquetes, solo se puede elegir una de las dos acciones. Los comandos de configuración utilizan las palabras clave  **deny** y  **permit**, y significan (respectivamente) descartar el paquete o permitir que siga funcionando como si la ACL no existiera.
@@ -62,7 +62,7 @@ Cisco IOS ha admitido ACL IP desde los primeros días de los routers de Cisco. C
 
 Este capítulo se centra únicamente en las ACL IP numeradas estándar, mientras que en el siguiente capítulo se analizan las otras tres categorías principales de ACL IP. En resumen, las ACL IP estarán numeradas o nombradas en el sentido de que la configuración identifica la ACL mediante un número o un nombre. Las ACL también serán estándar o extendidas, y las ACL extendidas tendrán capacidades mucho más sólidas para hacer coincidir paquetes. La Figura 2-3 resume las grandes ideas relacionadas con las categorías de ACL IP.
 
-![](img/2.3.png)
+![](2.3.png)
 
 ### ACL IPv4 numeradas estándar
 
@@ -79,11 +79,11 @@ Las ACL utilizan la lógica de primera coincidencia. Una vez que un paquete coin
 
 Para ver exactamente lo que eso significa, considere el ejemplo construido alrededor de la Figura 2-4. En la figura se muestra un ejemplo de ACL 1 con tres líneas de pseudocódigo. Este ejemplo aplica ACL 1 en la interfaz S0/0/1 de R2, entrante (la misma ubicación que en la Figura 2-2 anterior).
 
-![](img/2.4.png)
+![](2.4.png)
 
 Considere la lógica de ACL de primera coincidencia para un paquete enviado por el host A al servidor S1. La dirección IP de origen será 10.1.1.1 y se enrutará para que ingrese a la interfaz S0/0/1 de R2, impulsando la lógica ACL 1 de R2. R2 compara este paquete con la ACL, haciendo coincidir el primer elemento de la lista con una acción de permiso. Por lo tanto, se debe permitir el paso de este paquete, como se muestra en la Figura 2-5, a la izquierda.
 
-![](img/2.5.png)
+![](2.5.png)
 
 A continuación, considere un paquete enviado por el host B, dirección IP de origen 10.1.1.2. Cuando el paquete ingresa a la interfaz S0/0/1 de R2, R2 compara el paquete con la primera instrucción de ACL 1 y no hace una coincidencia (10.1.1.1 no es igual a 10.1.1.2). A continuación, R2 pasa a la segunda afirmación, que requiere alguna aclaración. El pseudocódigo ACL, en la Figura 2-4, muestra 10.1.1.x, que pretende ser una abreviatura de que cualquier valor puede existir en el último octeto. Comparando solo los primeros tres octetos, R2 decide que este último paquete tiene una dirección IP de origen que comienza con los primeros tres octetos 10.1.1, por lo que R2 considera que es una coincidencia en la segunda instrucción. R2 realiza la acción indicada (denegar) y descarta el paquete. R2 también detiene el procesamiento de ACL en el paquete, ignorando la tercera línea de la ACL.
 
@@ -132,7 +132,7 @@ Puedes pensar en las máscaras WC en decimal y en binario, y ambos tienen sus us
 
 Teniendo en cuenta estas dos reglas, considere la Figura 2-6, que muestra esta lógica utilizando tres máscaras WC diferentes pero populares: una que le dice al router que ignore el último octeto, otra que le dice al router que ignore los dos últimos octetos y otra que le dice al router que ignore los últimos tres octetos.
 
-![](img/2.6.png)
+![](2.6.png)
 
 Los tres ejemplos de los recuadros de la Figura 2-6 muestran dos números que son claramente diferentes.
 
@@ -152,7 +152,7 @@ La Figura 2-7 muestra la versión actualizada de la Figura 2-4, pero con la sint
 
 Por último, tenga en cuenta que cuando se utiliza una máscara WC, el  **parámetro source** definido  libremente del comando _access-list_ debe ser un 0 en cualquier octeto en el que la máscara WC sea un 255. IOS especificará una dirección de origen que sea 0 para las partes que se ignorarán, incluso si se configuraron valores distintos de cero.
 
-![](img/2.7.png)
+![](2.7.png)
 
 ### Máscaras de comodín binario
 
@@ -285,7 +285,7 @@ Ejemplo 2 de ACL numerada estándar
 
 Para el segundo ejemplo, use la Figura 2-8 e imagine que su jefe le da algunos requisitos apresuradamente en el pasillo. Al principio, le dice que quiere filtrar los paquetes que van desde los servidores de la derecha hacia los clientes de la izquierda. A continuación, dice que quiere que permita el acceso de los hosts A, B y otros hosts de su misma subred al servidor S1, pero deniegue el acceso a ese servidor a los hosts de la subred del host C. A continuación, le dice que, además, a los hosts de la subred del host A se les debe denegar el acceso al servidor S2, pero a los hosts de la subred del host C se les debe permitir el acceso al servidor S2, todo filtrando los paquetes que van solo de derecha a izquierda. A continuación, le dice que coloque la ACL entrante en la interfaz F0/0 de R2.
 
-![](img/2.8.png)
+![](2.8.png)
 
 Si revisas todos los comentarios del jefe, los requisitos podrían reducirse a lo siguiente:
 
@@ -344,7 +344,7 @@ Cuando resuelva problemas de una ACL por primera vez, antes de entrar en los det
 
 Por ejemplo, la Figura 2-9 repite la misma ACL mostrada anteriormente en la Figura 2-7. La primera línea de esa ACL coincide con la dirección de host específica 10.1.1.1. Si esa ACL existe en el enrutador R2, colocar esa ACL como ACL entrante en la interfaz S0/0/1 de R2 puede funcionar, ya que los paquetes enviados por el host 10.1.1.1, en el lado izquierdo de la figura, pueden ingresar a la interfaz S0/0/1 de R2. Sin embargo, si R2 habilita ACL 1 en su interfaz F0/0, para los paquetes entrantes, la ACL nunca coincidirá con un paquete con la dirección IP de origen 10.1.1.1, porque los paquetes enviados por el host 10.1.1.1 nunca ingresarán a esa interfaz. Los paquetes enviados por 10.1.1.1 saldrán de la interfaz F0/0 de R2, pero nunca entrarán en ella, solo por la topología de red.
 
-![](img/2.9.png)
+![](2.9.png)
 
 ### Práctica de la aplicación de ACL IP estándar
 

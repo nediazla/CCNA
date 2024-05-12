@@ -42,7 +42,7 @@ TCP, tal como se define en la solicitud de comentarios (RFC) 793, realiza las fu
 
 La figura 1-1 muestra los campos en el encabezado TCP. Aunque no es necesario memorizar los nombres de los campos ni sus ubicaciones, el resto de esta sección hace referencia a varios de los campos, por lo que todo el encabezado se incluye aquí como referencia.
 
-![](img/1.1.png)
+![](1.1.png)
 ### Multiplexación mediante números de puerto TCP
 
 TCP y UDP utilizan un concepto llamado _multiplexación_. Por lo tanto, esta sección comienza con una explicación de la multiplexación con TCP y UDP. A continuación, se exploran las características únicas de TCP.
@@ -56,7 +56,7 @@ En la figura 1-2 se muestra la red de ejemplo, con George ejecutando tres aplica
 - Una aplicación de transferencia bancaria basada en TCP
 - Una aplicación de servidor web TCP
 
-![](img/1.2.png)
+![](1.2.png)
 
 George necesita saber a qué aplicación dar los datos, pero _los tres paquetes provienen de la misma dirección Ethernet e IP_. Podría pensar que George podría ver si el paquete contiene un encabezado UDP o TCP, pero como se ve en la figura, dos aplicaciones (transferencia bancaria y web) utilizan TCP.
 
@@ -68,7 +68,7 @@ La multiplexación se basa en un concepto llamado _socket_. Un socket consta de 
 - Un protocolo de transporte
 - Un número de puerto
 
-![](img/1.3.png)
+![](1.3.png)
 
 Por lo tanto, para una aplicación de servidor web en George, el socket sería (10.1.1.2, TCP, puerto 80) porque, de forma predeterminada, los servidores web utilizan el conocido puerto 80. Cuando el navegador web de Hannah se conecta al servidor web, Hannah también usa un socket, posiblemente uno como este: (10.1.1.1, TCP, 49160). ¿Por qué 49160? Bueno, Hannah solo necesita un número de puerto que sea único en Hannah, por lo que Hannah ve ese puerto 49160.
 
@@ -80,7 +80,7 @@ La Autoridad de Números Asignados de Internet (IANA), la misma organización qu
 
 En la figura 1-4 se muestra un ejemplo que utiliza tres puertos efímeros en el dispositivo de usuario de la izquierda, con el servidor de la derecha utilizando dos puertos conocidos y un puerto de usuario. Las computadoras utilizan tres aplicaciones al mismo tiempo; Por lo tanto, hay tres conexiones de enchufe abiertas. Dado que un socket en un solo equipo debe ser único, una conexión entre dos sockets debe identificar una conexión única entre dos equipos. Esta singularidad significa que puede usar varias aplicaciones al mismo tiempo, hablando con aplicaciones que se ejecutan en el mismo equipo o en equipos diferentes. La multiplexación, basada en sockets, garantiza que los datos se entreguen a las aplicaciones correctas.
 
-![](img/1.4.png)
+![](1.4.png)
 
 Los números de puerto son una parte vital del concepto de socket. Los servidores utilizan puertos conocidos (o puertos de usuario), mientras que los clientes utilizan puertos dinámicos. Las aplicaciones que proporcionan un servicio, como FTP, Telnet y servidores web, abren un socket mediante un puerto conocido y escuchan las solicitudes de conexión. Dado que estas solicitudes de conexión de los clientes deben incluir los números de puerto de origen y destino, los números de puerto utilizados por los servidores deben conocerse de antemano. Por lo tanto, cada servicio utiliza un número de puerto conocido específico o un número de puerto de usuario. Tanto los puertos conocidos como los de usuario se enumeran en [www.iana.org/assignments/service](http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.txt)[nombres-números-puertos/service-names-port-numbers.txt.](http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.txt)
 
@@ -123,7 +123,7 @@ Independientemente del protocolo de capa de transporte que se utilice, las aplic
 
 TCP  connection establishment occurs before any of the other TCP features can begin their work. Connection establishment refers to the process of initializing Sequence and Acknowledgment fields and agreeing on the port numbers used. Figure 1-5 shows an example of connection establishment flow.
 
-![](img/1.5.png)
+![](1.5.png)
 
 Este flujo de establecimiento de conexión de tres vías (también denominado protocolo de enlace de tres vías) debe completarse antes de que pueda comenzar la transferencia de datos. La conexión existe entre los dos sockets, aunque el encabezado TCP no tiene un solo campo de socket. De las tres partes de un socket, las direcciones IP están implícitas en función de las direcciones IP de origen y destino en el encabezado IP. TCP está implícito porque se está utilizando un encabezado TCP, según lo especificado por el valor del campo de protocolo en el encabezado IP. Por lo tanto, las únicas partes del socket que deben codificarse en el encabezado TCP son los números de puerto.
 
@@ -131,7 +131,7 @@ Establecimiento de la conexión de señales TCP utilizando 2 bits dentro de los 
 
 La Figura 1-6 muestra la terminación de la conexión TCP. Esta secuencia de terminación de cuatro vías es sencilla y utiliza un indicador adicional, llamado  _bit FIN_. (FIN es la abreviatura de "terminado", como puede adivinar). Una nota interesante: antes de que el dispositivo de la derecha envíe el tercer segmento TCP de la secuencia, notifica a la aplicación que la conexión se está cayendo. A continuación, espera una confirmación de la aplicación antes de enviar el tercer segmento de la figura. En caso de que la aplicación tarde un poco en responder, el PC de la derecha envía el segundo flujo de la figura, reconociendo que el otro PC quiere desconectar la conexión. De lo contrario, el equipo de la izquierda podría volver a enviar el primer segmento repetidamente.
 
-![](img/1.6.png)
+![](1.6.png)
 
 TCP establece y termina las conexiones entre los puntos finales, mientras que UDP no lo hace. Muchos protocolos operan bajo estos mismos conceptos, por lo que los términos _orientado  a la conexión_ y _sin conexión_ se utilizan para referirse a la idea general de cada uno. Más formalmente, estos términos pueden definirse de la siguiente manera:
 
@@ -144,7 +144,7 @@ TCP proporciona una transferencia de datos confiable, que también se denomina _
 
 La Figura 1-7 muestra un ejemplo de cómo los campos TCP Sequence y Acknowledgegment permiten que la PC envíe 3000 bytes de datos al servidor, y el servidor acusa recibo de los datos. Los segmentos TCP de la figura se producen en orden, de arriba a abajo. En aras de la simplicidad, todos los mensajes tienen 1000 bytes de datos en la parte de datos del segmento TCP. El primer número de secuencia es un buen número redondo (1000), de nuevo en aras de la simplicidad. La parte superior de la figura muestra tres segmentos, siendo cada número de secuencia 1000 más que el anterior, identificando el primero de los 1000 bytes del mensaje. (Es decir, en este ejemplo, el primer segmento contiene los bytes 1000-1999; el segundo contiene los bytes 2000-2999; y el tercero contiene los bytes 3000-3999).
 
-![](img/1.7.png)
+![](1.7.png)
 
 El cuarto segmento TCP de la figura, el único que fluye de vuelta desde el servidor al explorador web, confirma la recepción de los tres segmentos. ¿Cómo? El valor de confirmación de 4000 significa "Recibí todos los datos con números de secuencia hasta uno menos que 4000, por lo que estoy listo para recibir su byte 4000 a continuación". (Tenga en cuenta que esta convención de acusar recibo enumerando el siguiente byte esperado, en lugar del número del último byte recibido, se llama  _Acuse de recibo hacia adelante_).
 
@@ -152,7 +152,7 @@ Sin embargo, este primer ejemplo no se recupera de ningún error; Simplemente mu
 
 Existen muchas variaciones en cuanto a la forma en que TCP realiza la recuperación de errores. La figura 1-8 muestra solo un ejemplo de este tipo, con detalles similares en comparación con la figura anterior. El navegador web vuelve a enviar tres segmentos TCP, de nuevo de 1000 bytes cada uno, de nuevo con números de secuencia fáciles de recordar. Sin embargo, en este ejemplo, el segundo segmento TCP no puede cruzar la red.
 
-![](img/1.8.png)
+![](1.8.png)
 
 La figura señala tres conjuntos de ideas detrás de cómo piensan los dos anfitriones. En primer lugar, a la derecha, el servidor se da cuenta de que no ha recibido todos los datos. Los dos segmentos TCP recibidos contienen bytes numerados 1000-1999 y 3000-3999. Claramente, el servidor no recibió los bytes numerados en el medio. A continuación, el servidor decide reconocer todos los datos hasta los datos perdidos, es decir, devolver un segmento con el campo Confirmación igual a 2000.
 
@@ -165,7 +165,7 @@ TCP implementa el control de flujo mediante un concepto de ventana que se aplica
 
 El mecanismo de la ventana corredera tiene mucho más sentido con un ejemplo. El ejemplo, que se muestra en la figura 1-9, utiliza las mismas reglas básicas que los ejemplos de las figuras anteriores. En este caso, ninguno de los segmentos TCP tiene errores y la discusión comienza un segmento TCP antes que en las dos figuras anteriores.
 
-![](img/1.9.png)
+![](1.9.png)
 
 Comience con el primer segmento, enviado por el servidor a la PC. El campo Acknowledgegment debería resultarle familiar a estas alturas: le dice a la PC que el servidor espera un segmento con el número de secuencia 1000 a continuación. El nuevo campo, el campo de ventana, se establece en 3000. Debido a que el segmento fluye a la PC, este valor indica a la PC que la PC no puede enviar más de 3000 bytes a través de esta conexión antes de recibir una confirmación. Entonces, como se muestra a la izquierda, la PC se da cuenta de que solo puede enviar 3000 bytes y deja de enviar, esperando un acuse de recibo, después de enviar tres segmentos TCP de 1000 bytes.
 
@@ -180,7 +180,7 @@ La transferencia de datos UDP difiere de la transferencia de datos TCP en que no
 
 La Figura 1-10 muestra el formato de encabezado UDP. Lo más importante es tener en cuenta que el encabezado incluye campos de puerto de origen y destino, con el mismo propósito que TCP. Sin embargo, el UDP tiene solo 8 bytes, en comparación con el encabezado TCP de 20 bytes que se muestra en la Figura 1-1. UDP necesita un encabezado más corto que TCP simplemente porque UDP tiene menos trabajo que hacer.
 
-![](img/1.10.png)
+![](1.10.png)
 
 ### Aplicaciones TCP/IP
 
@@ -200,7 +200,7 @@ En el habla común, muchas personas usan los términos _dirección web_ o térmi
 
 Desde una perspectiva práctica, los URI utilizados para conectarse a un servidor web incluyen tres componentes clave, como se indica en la Figura 1-11. En la figura se muestran los nombres formales de los campos de URI. Más importante para esta discusión, tenga en cuenta que el texto antes de :// identifica el protocolo utilizado para conectarse al servidor, el texto entre // y / identifica el servidor por su nombre, y el texto después de / identifica la página web.
 
-![](img/1.11.png)
+![](1.11.png)
 
 ### Encontrar el servidor web mediante DNS
 
@@ -210,7 +210,7 @@ Los URI suelen mostrar el nombre del servidor, un nombre que se puede usar para 
 
 Para reunir varios conceptos, en la figura 1-12 se muestra el proceso DNS iniciado por un explorador web, así como otra información relacionada. Desde una perspectiva básica, el usuario ingresa el URL (en este caso, [http://www.cisco.com/go/learningnetwork)](http://www.cisco.com/go/learningnetwork) resuelve el nombre del [www.cisco.com](http://www.cisco.com/) en la dirección IP correcta y comienza a enviar paquetes al servidor web.
 
-![](img/1.12.png)
+![](1.12.png)
 
 Los pasos que se muestran en la figura son los siguientes:
 
@@ -223,7 +223,7 @@ El ejemplo de la Figura 1-12 muestra lo que sucede cuando el host cliente no con
 
 Cuando el DNS local no conoce la dirección asociada a un nombre de host, debe pedir ayuda. En la figura 1-13 se muestra un ejemplo con el mismo cliente que en la figura 1-12. En este caso, el DNS de la empresa actúa como un servidor DNS recursivo, enviando mensajes DNS repetidos en un esfuerzo por identificar el servidor DNS autoritativo.
 
-![](img/1.13.png)
+![](1.13.png)
 
 Los pasos que se muestran en la figura son los siguientes:
 
@@ -241,7 +241,7 @@ HTTP define varios comandos y respuestas, siendo la más utilizada la solicitud 
 
 Las páginas web suelen constar de varios archivos, denominados  _objetos_. La mayoría de las páginas web contienen texto, así como varias imágenes gráficas, anuncios animados y, posiblemente, voz o video. Cada uno de estos componentes se almacena como un objeto (archivo) diferente en el servidor web. Para obtenerlos todos, el navegador web obtiene el primer archivo. Este archivo puede incluir (y normalmente lo hace) referencias a otros URI, por lo que el navegador también solicita los otros objetos. La Figura 1-14 muestra la idea general, con el navegador obteniendo el primer archivo y luego otros dos.
 
-![](img/1.14.png)
+![](1.14.png)
 
 En este caso, después de que el navegador web obtiene el primer archivo, el que se llama "/go/ccna" en el URI, el navegador lee e interpreta ese archivo. Además de contener partes de la página web, el archivo hace referencia a otros dos archivos, por lo que el navegador emite dos solicitudes HTTP GET adicionales. Tenga en cuenta que, aunque no se muestra en la figura, todos estos comandos fluyen a través de una (o posiblemente más) conexión TCP entre el cliente y el servidor. Esto significa que TCP proporcionaría recuperación de errores, asegurando que los datos se entregaron.
 
@@ -251,13 +251,13 @@ Este capítulo se cierra con una discusión del proceso por el cual un host, al 
 
 Como ejemplo, considere el host A que se muestra en el lado izquierdo de la Figura 1-15. El host tiene abiertas tres ventanas diferentes del navegador web, cada una de las cuales utiliza un puerto TCP único. El host A también tiene un cliente de correo electrónico y una ventana de chat abierta, los cuales usan TCP. Tanto las aplicaciones de correo electrónico como las de chat utilizan un número de puerto TCP único en el host A, como se muestra en la figura.
 
-![](img/1.15.png)
+![](1.15.png)
 
 En este capítulo se han mostrado varios ejemplos de cómo los protocolos de la capa de transporte utilizan el campo de número de puerto de destino en el encabezado TCP o UDP para identificar la aplicación receptora. Por ejemplo, si el valor del puerto TCP de destino en la figura 1-15 es 49124, el host A sabrá que los datos están destinados a la primera de las tres ventanas del explorador web.
 
 Antes de que un host receptor pueda examinar el encabezado TCP o UDP y encontrar el campo de puerto de destino, primero debe procesar los encabezados externos del mensaje. Si el mensaje entrante es una trama Ethernet que encapsula un paquete IPv4, los encabezados se parecen a los detalles de la Figura 1-16.
 
-![](img/1.16.png)
+![](1.16.png)
 
 El host receptor debe examinar varios campos, uno por encabezado, para identificar el siguiente encabezado o campo del mensaje recibido. Por ejemplo, el host A utiliza una NIC Ethernet para conectarse a la red, por lo que el mensaje recibido es una trama Ethernet. El campo Tipo de Ethernet identifica el tipo de encabezado que sigue al encabezado de Ethernet, en este caso, con un valor de hexadecimal 0800, un encabezado IPv4.
 

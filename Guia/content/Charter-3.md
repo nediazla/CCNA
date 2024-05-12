@@ -9,7 +9,7 @@
 
 Las ACL IPv4 son ACL estándar o extendidas, con ACL estándar que coinciden solo con la dirección IP de origen y que coinciden con una variedad de campos de encabezado de paquete. Al mismo tiempo, las ACL IP están numeradas o nombradas. La figura 3-1 muestra las categorías y las características principales de cada una de ellas tal como se presentaron en el capítulo anterior.
 
-![](img/3.1.png)
+![](3.1.png)
 
 Este capítulo analiza las otras tres categorías de ACL más allá de las ACL IP numeradas estándar y termina con algunas funciones misceláneas para proteger los routers y switches de Cisco.
 ### Listas de control de acceso IP numeradas ampliadas
@@ -23,11 +23,11 @@ Al igual que las ACL de IP numeradas estándar, las ACL de IP numeradas extendid
 
 El campo Protocolo del encabezado IP identifica el encabezado que sigue al encabezado IP. La Figura 3-2 muestra la ubicación del campo Protocolo IP, el concepto del mismo apunta al tipo de encabezado que sigue, junto con algunos detalles del encabezado IP como referencia.
 
-![](img/3.2.png)
+![](3.2.png)
 
 IOS requiere que configure los parámetros para las tres partes resaltadas de la Figura 3-2. Para el tipo de protocolo, simplemente use una palabra clave, como **tcp**, **udp** o **icmp**, que coincida con los paquetes IP que tienen un encabezado TCP, UDP o ICMP, respectivamente, después del encabezado IP. O puede usar la palabra clave **ip**, que significa "todos los paquetes IPv4". También debe configurar algunos valores para los campos de dirección IP de origen y destino que siguen; estos campos utilizan la misma sintaxis y las mismas opciones para hacer coincidir las direcciones IP que se describen en el Capítulo 2, "Listas básicas de control de acceso IPv4". La figura 3-3 muestra la sintaxis.
 
-![](img/3.3.png)
+![](3.3.png)
 
 En la tabla 3-2 se enumeran varios ejemplos de comandos `access-list` que utilizan solo los parámetros coincidentes necesarios. Siéntase libre de cubrir el lado derecho y usar la tabla para un ejercicio, o simplemente revise las explicaciones para tener una idea de la lógica en algunos comandos de ejemplo:
 
@@ -52,11 +52,11 @@ Las ACL extendidas también pueden examinar partes de los encabezados TCP y UDP,
 
 Los puertos más útiles para comprobar son los puertos conocidos utilizados por los servidores. Por ejemplo, los servidores web utilizan el conocido puerto 80 de forma predeterminada. La Figura 3-4 muestra la ubicación de los números de puerto en el encabezado TCP, después del encabezado IP.
 
-![](img/3.4.png)
+![](3.4.png)
 
 Cuando un comando de ACL extendido incluye la  palabra clave **tcp** o **udp**, ese comando puede hacer referencia opcionalmente al puerto de origen y/o destino. Para realizar estas comparaciones, la sintaxis utiliza palabras clave para igual, no igual, menor que, mayor que y para un rango de números de puerto. Además, el comando puede usar los números de puerto decimales literales o palabras clave más convenientes para algunos puertos de aplicación conocidos. La Figura 3-5 muestra las posiciones de los campos de puerto de origen y destino en el comando `access-list` y estas palabras clave de número de puerto.
 
-![](img/3.5.png)
+![](3.5.png)
 
 Por ejemplo, considere la red simple que se muestra en la Figura 3-6. El servidor FTP se encuentra a la derecha, con el cliente a la izquierda. La figura muestra la sintaxis de una ACL que coincide con lo siguiente:
 
@@ -65,13 +65,13 @@ Por ejemplo, considere la red simple que se muestra en la Figura 3-6. El servido
 - Paquetes enviados a la subred del servidor
 - Paquetes con puerto de destino TCP 21 (puerto de control del servidor FTP)
 
-![](img/3.6.png)
+![](3.6.png)
 
 Para apreciar completamente la coincidencia del puerto de destino con los parámetros `eq 21`, considere los paquetes que se mueven de izquierda a derecha, de PC1 al servidor. Suponiendo que el servidor utiliza el conocido puerto 21 (puerto de control FTP), el encabezado TCP del paquete tiene un valor de puerto de destino de 21. La sintaxis de ACL incluye los parámetros `eq 21` después de la dirección IP de destino. La posición después de los parámetros de la dirección de destino es importante: esa posición identifica el hecho de que los parámetros `eq 21` deben compararse con el puerto de destino del paquete. Como resultado, la instrucción ACL que se muestra en la Figura 3-6 coincidiría con este paquete y el puerto de destino de 21 si se utiliza en cualquiera de las cuatro ubicaciones implicadas en las cuatro líneas con flechas discontinuas de la figura.
 
 Por el contrario, la Figura 3-7 muestra el flujo inverso, con un paquete enviado por el servidor hacia PC1. En este caso, el encabezado TCP del paquete tiene un puerto de origen de 21, por lo que la ACL debe verificar el valor del puerto de origen de 21 y la ACL debe ubicarse en diferentes interfaces. En este caso, los parámetros `eq 21` siguen el campo de dirección de origen, pero vienen antes del campo de dirección de destino.
 
-![](img/3.7.png)
+![](3.7.png)
 
 Al examinar las ACL que coinciden con los números de puerto, primero considere la ubicación y la dirección en la que se aplicará la ACL. Esa dirección determina si el paquete se envía al servidor o desde el servidor. En ese momento, puede decidir si necesita verificar el puerto de origen o de destino en el paquete. Como referencia, la Tabla 3-3 enumera muchos de los números de puerto populares y sus protocolos y aplicaciones de capa de transporte. Tenga en cuenta que la sintaxis de los comandos `access-list` acepta tanto los números de puerto como una versión abreviada del nombre de la aplicación.
 
@@ -119,7 +119,7 @@ El proceso de configuración de las ACL extendidas coincide en su mayoría con e
 
 Este ejemplo se centra en la comprensión de la sintaxis básica. En este caso, la ACL deniega a Bob el acceso a todos los servidores FTP en la Ethernet de R1 y deniega a Larry el acceso al servidor web de Server1. La Figura 3-8 muestra la topología de red; El ejemplo 3-1 muestra la configuración en R1.
 
-![](img/3.8.png)
+![](3.8.png)
 
 ```
 interface Serial0  ip address 172.16.12.1 255.255.255.0  ip access-group 101 in ! interface Serial1  ip address 172.16.13.1 255.255.255.0  ip access-group 101 in !
@@ -156,7 +156,7 @@ El ejemplo 3-3, basado en la red que se muestra en la Figura 3-9, muestra otro e
 - A los hosts de la Ethernet de Sevilla no se les permite el acceso a los hosts de la Ethernet de Yosemite.
 - Todas las demás combinaciones están permitidas.
 
-![](img/3.9.png)
+![](3.9.png)
 
 ```
 interface ethernet 0  ip access-group 110 in !
@@ -196,7 +196,7 @@ Por supuesto, existen diferencias entre las ACL con nombre y las numeradas. Las 
 
 Puede aprender fácilmente la configuración de ACL con nombre simplemente convirtiendo las ACL numeradas para usar la configuración de ACL con nombre equivalente. La Figura 3-10 muestra una conversión de este tipo, utilizando una ACL estándar simple de tres líneas número 1. Para crear los tres **subcomandos  de permiso** para la ACL nombrada, copie literalmente partes de los tres comandos de ACL numerados, comenzando con la  **palabra clave** permit .
 
-![](img/3.10.png)
+![](3.10.png)
 
 La única parte verdaderamente nueva de la configuración de ACL nombrada es el comando de configuración global `ip access-list`. Este comando define si una ACL es una ACL estándar o extendida y define el nombre. También mueve al usuario al modo de configuración de ACL, como se muestra en el próximo Ejemplo 3-4. Una vez en el modo de configuración de ACL, configura los comandos `permit`, `deny` y `remark` que reflejan la sintaxis de los comandos numerados de ACL `access-list`. Si está configurando una ACL estándar denominada, estos comandos coinciden con la sintaxis de las ACL numeradas estándar; si está configurando ACL con nombre extendidas, coinciden con la sintaxis de las ACL numeradas extendidas.
 
