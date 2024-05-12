@@ -10,7 +10,7 @@ Este capítulo cubre los siguientes temas del examen:
 El examen CCNA se centra principalmente en funciones en las capas inferiores de TCP/IP, que definen
 cómo las redes IP pueden enviar paquetes IP de un host a otro mediante LAN y WAN. Este capítulo explica los conceptos básicos de algunos temas que reciben menos atención en los exámenes: TCP/IP.
 capa de transporte y la capa de aplicación TCP/IP. Las funciones de estas capas superiores desempeñan un papel importante.
-papel importante en redes TCP/IP reales. Además, muchos de los temas de seguridad de las Partes I y II de este resumen, y algunos de los temas de servicios IP de la Parte III, requieren que usted conozca los conceptos básicos de cómo funcionan las capas de transporte y aplicación de TCP/IP. Este capítulo sirve como eso introducción.
+Papel importante en redes TCP/IP reales. Además, muchos de los temas de seguridad de las Partes I y II de este resumen, y algunos de los temas de servicios IP de la Parte III, requieren que usted conozca los conceptos básicos de cómo funcionan las capas de transporte y aplicación de TCP/IP. Este capítulo sirve como eso introducción.
 Este capítulo comienza examinando las funciones de dos protocolos de capa de transporte:
 Protocolo de control de transmisión (TCP) y Protocolo de datagramas de usuario (UDP). el segundo mayor.
 La sección del capítulo examina la capa de aplicación TCP/IP, incluyendo alguna discusión sobre
@@ -202,7 +202,7 @@ Desde una perspectiva práctica, los URI utilizados para conectarse a un servido
 
 ![](img/1.11.png)
 
-**Encontrar el servidor web mediante DNS**
+### Encontrar el servidor web mediante DNS
 
 Un host puede usar DNS para descubrir la dirección IP que corresponde a un nombre de host en particular.
 
@@ -233,7 +233,7 @@ Los pasos que se muestran en la figura son los siguientes:
 4.      El DNS de la empresa envía otra solicitud DNS al servidor DNS cuya dirección se aprendió en el paso anterior, solicitando de nuevo la resolución del nombre [www.cisco.com.](http://www.cisco.com/) Este servidor DNS, el servidor autorizado para [cisco.com,](http://cisco.com/) proporciona la dirección.
 5.      El servidor DNS de la empresa devuelve una respuesta DNS al cliente, proporcionando la dirección IP solicitada en el paso 1 .
 
-**Transferencia de archivos con HTTP**
+### Transferencia de archivos con HTTP
 
 Una vez que un cliente web (navegador) ha creado una conexión TCP a un servidor web, el cliente puede comenzar a solicitar la página web del servidor. La mayoría de las veces, el protocolo utilizado para transferir la página web es HTTP. El protocolo de capa de aplicación HTTP, definido en RFC 7230, define cómo se pueden transferir archivos entre dos equipos. HTTP se creó específicamente con el propósito de transferir archivos entre servidores web y clientes web.
 
@@ -245,7 +245,7 @@ Las páginas web suelen constar de varios archivos, denominados  _objetos_. La 
 
 En este caso, después de que el navegador web obtiene el primer archivo, el que se llama "/go/ccna" en el URI, el navegador lee e interpreta ese archivo. Además de contener partes de la página web, el archivo hace referencia a otros dos archivos, por lo que el navegador emite dos solicitudes HTTP GET adicionales. Tenga en cuenta que, aunque no se muestra en la figura, todos estos comandos fluyen a través de una (o posiblemente más) conexión TCP entre el cliente y el servidor. Esto significa que TCP proporcionaría recuperación de errores, asegurando que los datos se entregaron.
 
-**Cómo identifica el host receptor la aplicación receptora correcta**
+### Cómo identifica el host receptor la aplicación receptora correcta
 
 Este capítulo se cierra con una discusión del proceso por el cual un host, al recibir cualquier mensaje a través de cualquier red, puede decidir cuál de sus muchos programas de aplicación debe procesar los datos recibidos.
 

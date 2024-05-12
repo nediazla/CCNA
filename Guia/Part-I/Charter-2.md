@@ -33,7 +33,6 @@ Las cuatro líneas con flechas de la figura señalan la ubicación y la direcci�
 En resumen, para filtrar un paquete, debe habilitar una ACL en una interfaz que procese el paquete, en la misma dirección en la que el paquete fluye a través de esa interfaz.
 
 Cuando está habilitado, el router procesa cada paquete IP entrante o saliente utilizando esa ACL. Por ejemplo, si se habilita en R1 para los paquetes entrantes en la interfaz F0/0, R1 comparará cada paquete IP entrante en F0/0 con la ACL para decidir el destino de ese paquete: continuar sin cambios o descartarse.
-
 ## Paquetes coincidentes
 
 Cuando piensa en la ubicación y la dirección de una ACL, ya debe estar pensando en qué paquetes planea filtrar (descartar) y cuáles desea dejar pasar. Para decirle al router esas mismas ideas, debe configurar el router con una ACL IP que coincida con los paquetes. _Los paquetes coincidentes_ se refieren a cómo configurar los comandos de ACL para ver cada paquete, enumerando cómo identificar qué paquetes deben descartarse y cuáles deben permitirse.
@@ -45,8 +44,6 @@ Por ejemplo, considere un ejemplo con la Figura 2-2, en el que desea permitir pa
 La Figura 2-2 muestra una ACL de dos líneas en un rectángulo en la parte inferior, con una lógica de coincidencia simple: ambas instrucciones solo buscan coincidir con la dirección IP de origen en el paquete. Cuando está habilitado, R2 examina cada paquete IP entrante en esa interfaz y compara cada paquete con esos dos comandos ACL. Los paquetes enviados por el host A (dirección IP de origen 10.1.1.1) se permiten y los originados por el host B (dirección IP de origen 10.1.1.2) se descartan.
 
 ![](img/2.2.png)
-
-
 ### Tomar medidas cuando se produce un partido
 
 Cuando se utilizan ACL IP para filtrar paquetes, solo se puede elegir una de las dos acciones. Los comandos de configuración utilizan las palabras clave  **deny** y  **permit**, y significan (respectivamente) descartar el paquete o permitir que siga funcionando como si la ACL no existiera.
@@ -72,7 +69,6 @@ Este capítulo se centra únicamente en las ACL IP numeradas estándar, mientras
 El título de esta sección sirve como una gran introducción, si puede decodificar lo que Cisco quiere decir con cada palabra específica. Esta sección trata sobre un tipo de filtro de Cisco (_ACL_) que coincide solo con la dirección IP de origen del paquete (_estándar_), está configurado para identificar la ACL mediante números en lugar de nombres (_numerados_) y examina los paquetes IPv4.
 
 En esta sección se examinan los detalles de las ACL IP numeradas estándar. En primer lugar, examina la idea de que una ACL es una lista y qué lógica utiliza esa lista. A continuación, el texto analiza de cerca cómo hacer coincidir el campo de dirección IP de origen en el encabezado del paquete, incluida la sintaxis de los comandos. Esta sección termina con una visión completa de los comandos de configuración y verificación para implementar ACL estándar.
-
 ### Lógica de lista con ACL IP
 
 Una sola ACL es una sola entidad y, al mismo tiempo, una lista de uno o más comandos de configuración. Como una sola entidad, la configuración habilita toda la ACL en una interfaz, en una dirección específica, como se muestra anteriormente en la Figura 2-1. Como una lista de comandos, cada comando tiene una lógica de coincidencia diferente que el router debe aplicar a cada paquete al filtrar mediante que ACL.
@@ -96,7 +92,6 @@ Por último, considere un paquete enviado por el host C, de nuevo al servidor S1
 Esta secuencia de procesamiento de una ACL como una lista ocurre para cualquier tipo de ACL de IOS: IP, otros protocolos, estándar o extendidos, con nombre o numerados.
 
 Por último, si un paquete no coincide con ninguno de los elementos de la ACL, el paquete se descarta. La razón es que cada ACL de IP tiene una  _declaración de denegación de todo_ implícita al final de la ACL. No existe en la configuración, pero si un router sigue buscando en la lista y no se realiza ninguna coincidencia al final de la lista, IOS considera que el paquete ha coincidido con una entrada que tiene una acción de **denegación**.
-
 ### Coincidencia de lógica y sintaxis de comandos
 
 Las ACL IP numeradas estándar utilizan el siguiente comando global:
@@ -108,7 +103,6 @@ access-list {1-99 | 1300-1999} {permit | deny} _matching-parameters_
 Cada ACL numerada estándar tiene uno o más  comandos **de lista de acceso** con el mismo número, cualquier número de los rangos que se muestran en la línea de sintaxis anterior. (Un número no es mejor que el otro). IOS se refiere a cada línea de una ACL como una entrada de control de acceso (ACE), pero muchos ingenieros simplemente las llaman instrucciones ACL.
 
 Además del número de ACL, cada  **comando access-list** también enumera la acción (**permitir** o **denegar**), además de la lógica coincidente. En el resto de esta sección se examina cómo configurar los parámetros de coincidencia, lo que, para las ACL estándar, significa que solo puede hacer coincidir la dirección IP de origen o partes de la dirección IP de origen mediante algo denominado máscara de comodín de ACL.
-
 ### Coincidencia de la dirección IP exacta
 
 Para que coincida con una dirección IP de origen específica, la dirección IP completa, todo lo que tiene que hacer es escribir esa dirección IP al final del comando. Por ejemplo, en el ejemplo anterior se usa pseudocódigo para "permit if source = 10.1.1.1". El siguiente comando configura esa lógica con la sintaxis correcta utilizando el número 1 de ACL:  
@@ -188,7 +182,7 @@ access-list 1 permit 172.16.8.0 0.0.3.255
 
 La sección "Práctica de la aplicación de ACL IP estándar" le brinda la oportunidad de practicar la coincidencia de subredes al configurar ACL.
 
-Coincidencia de todas las direcciones
+### Coincidencia de todas las direcciones
 
 En algunos casos, querrá que un comando de ACL coincida con todos y cada uno de los paquetes que llegan a ese punto en la ACL. En primer lugar, hay que conocer la forma (sencilla) de hacer coincidir todos los paquetes utilizando la  palabra clave any. Y lo que es más importante, hay que pensar en cuándo hacer coincidir todos y cada uno de ellosPaquetes.
 
@@ -201,7 +195,6 @@ access-list 1 allow any
 Entonces, ¿cuándo y dónde debe usar dicho comando? Recuerde que todas las ACL IP de Cisco terminan con una **denegación implícita**  de cualquier concepto al final de cada ACL. Es decir, si un router compara un paquete con la ACL y el paquete no coincide con ninguna de las instrucciones configuradas, el router descarta el paquete. ¿Desea anular ese comportamiento predeterminado? Configure un **permiso cualquiera** al final de la ACL.
 
 Es posible que también desee configurar explícitamente un comando para eliminar todo el tráfico (por ejemplo, `access-list 1 deny any`) al final de una ACL. ¿Por qué, cuando la misma lógica ya se encuentra al final de la ACL de todos modos? Bueno, los  **comandos show de  ACL** enumeran contadores para el número de paquetes que coinciden con cada comando en la ACL, pero no hay ningún contador para ese concepto implícito **de denegación** al  final de la ACL. Por lo tanto, si desea ver los contadores de cuántos paquetes coinciden con la  lógica de **denegación de cualquier** al final de la ACL, configure una **denegación explícita de cualquiera**.
-
 ### Implementación de ACL IP estándar
 
 En este capítulo ya se han presentado todos los pasos de configuración por partes. En esta sección se resumen esas piezas como un proceso de configuración. El proceso también hace referencia al  **comando access-list**, cuya sintaxis genérica se repite aquí como referencia:
@@ -275,18 +268,13 @@ Serial0/0/1 is up, line protocol is up
 Internet address is 10.1.2.2/24
 
   Broadcast address is 255.255.255.255   Address determined by setup command
-
   MTU is 1500 bytes
-
   Helper address is not set
-
   Directed broadcast forwarding is disabled   
   Multicast reserved groups joined: 224.0.0.9
-
   Outgoing access list is not set
-  Inbound access list is 1
-
-! Lines omitted for brevity
+  Inbound access list is 1! 
+  Lines omitted for brevity
 ```
 
 El resultado de estos comandos muestra dos elementos de interés. La primera línea de salida en este caso indica el tipo (estándar) y el número. Si existiera más de una ACL, vería varias estrofas de salida, una por ACL, cada una con una línea de encabezado como esta. A continuación, estos comandos enumeran los recuentos de paquetes para el número de paquetes que el router ha hecho coincidir con cada comando. Por ejemplo, hasta ahora 107 paquetes han coincidido con la primera línea de la ACL.
@@ -323,14 +311,14 @@ En el ejemplo 2-3 se muestra la configuración que completa estos requisitos.
 access-list 2 remark This ACL permits server S1 traffic to host A's subnet 
 access-list 2 permit 10.2.2.1 ! 
 access-list 3 remark This ACL permits server S2 traffic to host C's subnet 
-access-list 3 permit 10.2.2.2 ! interface F0/0  ip access-group 2 out !
-
+access-list 3 permit 10.2.2.2 ! 
+interface F0/0  ip access-group 2 out !
 interface F0/1  ip access-group 3 out
 ```
 
 Como se destaca en el ejemplo, la solución con ACL número 2 permite todo el tráfico del servidor S1, con esa lógica habilitada para los paquetes que salen de la interfaz F0/0 de R1. El resto del tráfico se descartará debido a la **denegación implícita**  de todo al final de la ACL. Además, ACL 3 permite el tráfico del servidor S2, que luego puede salir de la interfaz F0/1 de R1. Además, tenga en cuenta que la solución muestra el uso del  **parámetro access-list remark**, que le permite dejar documentación de texto que permanece con la ACL.
 
-**Consejos para la solución de problemas y la verificación**
+### Consejos para la solución de problemas y la verificación
 
 La solución de problemas de ACL IPv4 requiere cierta atención a los detalles. En particular, debe estar preparado para mirar la dirección y la máscara de comodín y predecir con confianza las direcciones que coinciden con esos dos parámetros combinados. Los próximos problemas de práctica un poco más adelante en este capítulo pueden ayudarte a prepararte para esa parte del trabajo. Pero algunos otros consejos también pueden ayudarlo a verificar y solucionar problemas de ACL en los exámenes.
 
@@ -358,13 +346,13 @@ Por ejemplo, la Figura 2-9 repite la misma ACL mostrada anteriormente en la Figu
 
 ![](img/2.9.png)
 
-**Práctica de la aplicación de ACL IP estándar**
+### Práctica de la aplicación de ACL IP estándar
 
 Algunos temas de CCNA, como las ACL, simplemente requieren más ejercicios y práctica que otros. Las ACL requieren que pienses en parámetros que coincidan con rangos de números, y eso, por supuesto, requiere cierto uso de matemáticas y algún uso de procesos.
 
 Esta sección proporciona algunos problemas prácticos y consejos, desde dos perspectivas. En primer lugar, en esta sección se le pide que cree ACL estándar de una línea para que coincidan con algunos paquetes. En segundo lugar, esta sección le pide que interprete los comandos de ACL existentes para describir qué paquetes coincidirá con la ACL. Ambas habilidades son útiles para los exámenes.
 
-**Práctica Creación de comandos de lista de acceso**
+### Práctica Creación de comandos de lista de acceso
 
 En esta sección, practique familiarizarse con la sintaxis del  comando **access-list**, especialmente con la elección de la lógica de coincidencia correcta. Estas habilidades serán útiles cuando lea sobre las ACL extendidas y con nombre en el próximo capítulo.
 
@@ -389,7 +377,7 @@ En la Tabla 2-2 se enumeran los criterios para varios problemas de práctica. Su
 | 8           | Packets from subnet 172.20.112.0/26                         |
 | 9           | Packets from subnet 192.168.9.64/28                         |
 | 10          | Packets from subnet 192.168.9.64/30                         |
-**Ingeniería inversa de ACL a rango de direcciones**
+### Ingeniería inversa de ACL a rango de direcciones
 
 En algunos casos, es posible que no esté creando su propia ACL. En su lugar, es posible que tenga que interpretar algunos  **comandos de lista de acceso** existentes  . Para responder a este tipo de preguntas en los exámenes, debe determinar el rango de direcciones IP que coinciden con una combinación particular de dirección/máscara comodín en cada instrucción de ACL.
 
@@ -421,12 +409,15 @@ Curiosamente, IOS permite al usuario de CLI escribir un  **comando access-list*
 El cambio que IOS puede hacer con un  `comando access-list` es convertir a 0 cualquier octeto de una dirección para la cual el octeto de la máscara comodín sea 255. Por ejemplo, con una máscara comodín de 0.0.255.255, IOS ignora los dos últimos octetos. IOS espera que el campo de dirección termine con dos ceros. De lo contrario, IOS aún acepta el  `comando access-list`, pero IOS cambia los dos últimos octetos de la dirección a 0s. El ejemplo 2-5 muestra un ejemplo, donde la configuración muestra la dirección 10.1.1.1, pero la máscara comodín 0.0.255.255.
 
 ```
-R2# configure terminal 
-//Enter configuration commands, one per line. End with CNTL/Z. 
+R2#configure terminal
+Enter configuration commands, one per line. End with CNTL/Z.
+R2(config)#
 R2(config)# access-list 21 permit 10.1.1.1 0.0.255.255
 R2(config)# ^Z
 R2#
-R2# show ip access-lists Standard IP access list 21 permit 10.1.0.0, wildcard bits 0.0.255.255
+R2#show ip access-lists
+Standard IP access list 21
+10 permit 10.1.0.0 0.0.255.255
 ```
 
 Las matemáticas para encontrar el rango de direcciones se basan en el hecho de que el comando es completamente correcto o que IOS ya ha establecido estos octetos de direcciones en 0, como se muestra en el ejemplo.
