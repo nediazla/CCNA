@@ -210,7 +210,7 @@ access-list _access-list-number_ {deny | permit} _source_ [_source-wildcard_]
 | **Paso 3.** | Habilite la ACL en la interfaz del router elegida, en la dirección correcta, utilizando el  **subcomando ip access-group** _number_ {**in \| out**} interface .                                                                                                                                                                                                                                                                                                                                     |
 El resto de esta sección muestra un par de ejemplos.
 
-Ejemplo 1 de ACL numerada estándar
+#### Ejemplo 1 de ACL numerada estándar
 
 En el primer ejemplo se muestra la configuración para los mismos requisitos que se muestra en las figuras 2-4 y 2-5. Reformulado, los requisitos para esta ACL son los siguientes:
 
@@ -281,7 +281,7 @@ El resultado de estos comandos muestra dos elementos de interés. La primera lí
 
 Finalmente, al final del ejemplo se muestra el resultado del  **comando show ip interface**. Este comando enumera, entre muchos otros elementos, el número o el nombre de cualquier ACL IP habilitada en la interfaz según el  subcomando `ip access-group` interface.
 
-Ejemplo 2 de ACL numerada estándar
+#### Ejemplo 2 de ACL numerada estándar
 
 Para el segundo ejemplo, use la Figura 2-8 e imagine que su jefe le da algunos requisitos apresuradamente en el pasillo. Al principio, le dice que quiere filtrar los paquetes que van desde los servidores de la derecha hacia los clientes de la izquierda. A continuación, dice que quiere que permita el acceso de los hosts A, B y otros hosts de su misma subred al servidor S1, pero deniegue el acceso a ese servidor a los hosts de la subred del host C. A continuación, le dice que, además, a los hosts de la subred del host A se les debe denegar el acceso al servidor S2, pero a los hosts de la subred del host C se les debe permitir el acceso al servidor S2, todo filtrando los paquetes que van solo de derecha a izquierda. A continuación, le dice que coloque la ACL entrante en la interfaz F0/0 de R2.
 
@@ -421,6 +421,3 @@ Standard IP access list 21
 ```
 
 Las matemáticas para encontrar el rango de direcciones se basan en el hecho de que el comando es completamente correcto o que IOS ya ha establecido estos octetos de direcciones en 0, como se muestra en el ejemplo.
-
-### [index](/Guia/index.md)
-### [Charter 2](Charter-3.md)

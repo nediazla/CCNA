@@ -262,6 +262,3 @@ Antes de que un host receptor pueda examinar el encabezado TCP o UDP y encontrar
 El host receptor debe examinar varios campos, uno por encabezado, para identificar el siguiente encabezado o campo del mensaje recibido. Por ejemplo, el host A utiliza una NIC Ethernet para conectarse a la red, por lo que el mensaje recibido es una trama Ethernet. El campo Tipo de Ethernet identifica el tipo de encabezado que sigue al encabezado de Ethernet, en este caso, con un valor de hexadecimal 0800, un encabezado IPv4.
 
 El encabezado IPv4 tiene un campo similar llamado campo Protocolo IP. El campo Protocolo IPv4 tiene una lista estándar de valores que identifican el siguiente encabezado, con el decimal 6 utilizado para TCP y el decimal 17 utilizado para UDP. En este caso, el valor de 6 identifica el encabezado TCP que sigue al encabezado IPv4. Una vez que el host receptor se da cuenta de que existe un encabezado TCP, puede procesar el campo de puerto de destino para determinar qué proceso de aplicación local debe recibir el.
-
-### [index](/Guia/index.md)
-### [Charter 2](Charter-2.md)

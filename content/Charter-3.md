@@ -3,7 +3,7 @@
 
 **En este capítulo se tratan los siguientes temas del examen:**
 
-**Fundamentos de seguridad 5.0**
+**Fundamentos de seguridad
 
 - Configurar y verificar las listas de control de acceso
 
@@ -322,6 +322,7 @@ Curiosamente, IOS siempre almacena ACL numeradas con el estilo original de confi
 | **Paso 8.**  | El ingeniero agrega una nueva instrucción al final de la ACL mediante el  comando de configuración global `access-list 24 permit 10.1.4.0 0.0.0.255` de estilo antiguo.             |
 | **Paso 9.**  | El  comando `show ip access-lists` confirma que el  comando `access-list` de estilo antiguo  del paso anterior siguió la regla de agregarse solo al final de la ACL.                |
 | **Paso 10.** | El ingeniero muestra la configuración para confirmar que las partes de ACL 24                                                                                                       |
+
 configurados con comandos de estilo nuevo y comandos de estilo antiguo se enumeran en la misma ACL de estilo antiguo (`show running-config`).
 
 ```
