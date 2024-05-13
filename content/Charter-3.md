@@ -1,4 +1,4 @@
-![](switch-1.png)
+![](img/switch-1.png)
 # Listas avanzadas de control de acceso IPv4
 
 **En este capítulo se tratan los siguientes temas del examen:**

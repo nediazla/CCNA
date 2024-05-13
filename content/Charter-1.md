@@ -1,4 +1,4 @@
-![](switch-1.png)
+![](img/switch-1.png)
 # Introducción al transporte TCP/IP y aplicaciones
 
 Este capítulo cubre los siguientes temas del examen:
