@@ -9,7 +9,7 @@ Con los siguientes temas:
 
 # [Charter 3: Listas avanzadas de control de acceso IPv4](content/Charter-3.md)
 
-
+# [Charter 4: Arquitectura de Seguridad](content/Charter-4.md)
 # Extras
 
 
