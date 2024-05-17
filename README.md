@@ -4,12 +4,12 @@ Desarrollare una guia de estudio que abarque lo necesario para poder aprobar el 
 
 Con los siguientes temas:
 
-# [Charter I: Introducción al transporte TCP/IP y aplicaciones](content/Charter-1.md)
-# [Charter 2: Listas básicas de control de acceso IPv4](content/Charter-2.md)
+# [Charter I: Introducción al transporte TCP/IP y aplicaciones](CCNA/content/Charter-1.md)
+# [Charter 2: Listas básicas de control de acceso IPv4](CCNA/content/Charter-2.md)
 
-# [Charter 3: Listas avanzadas de control de acceso IPv4](content/Charter-3.md)
+# [Charter 3: Listas avanzadas de control de acceso IPv4](CCNA/content/Charter-3.md)
 
-# [Charter 4: Arquitectura de Seguridad](content/Charter-4.md)
+# [Charter 4: Arquitectura de Seguridad](CCNA/content/Charter-4.md)
 # Extras
 
 # [OSPF](extras/OSPF.md)

@@ -254,7 +254,6 @@ message-digest
   Los links virtuales se utilizan para dos propósitos:  
 
   - Para un área que no tiene una conexión física con la red troncal - Para emparchar la red troncal en caso de que se produzca una discontinuidad del área 0  
-
 ###   Áreas no conectadas físicamente al área 0  
 
   Como se mencionó anteriormente, el área 0 debe estar en el centro de todas las demás áreas. En algunos casos extraños, en que es imposible tener un área físicamente conectada con la estructura básica, se utiliza un link virtual.  
@@ -311,7 +310,6 @@ RTB# router ospf 10 area 2 virtual-link 10.0.0.11
    El intervalo muerto es el número de segundos que no se han visto los **Hello** paquetes de un router antes de que sus vecinos declaren que el router OSPF está inactivo.   
 
    - El OSPF requiere que estos intervalos sean exactamente los mismos entre dos vecinos. Si cualquiera de estos intervalos es diferente, estos routers no se convierten en vecinos en un segmento particular. Los comandos de interfaz del router utilizados para establecer estos temporizadores son:  **ip ospf hello-interval seconds** y **ip ospf dead-interval seconds**.   -  **Stub area flag:** Dos routers también tienen que acordar el indicador de área stub en los **Hello** paquetes para convertirse en vecinos. Las áreas de rutas internas se tratarán en una sección posterior. Tenga en cuenta que la definición de áreas de rutas internas afecta el proceso de elección de vecinos.      
-
 ##   Adyacencias  
 
    La adyacencia es el siguiente paso luego del proceso de establecimiento de vecinos. Los routers adyacentes son routers que van más allá del simple **Hello** intercambio y continúan con el proceso de intercambio de bases de datos.   
@@ -331,7 +329,6 @@ RTB# router ospf 10 area 2 virtual-link 10.0.0.11
    En este diagrama, todos los routers comparten un segmento de acceso múltiple común. Debido al intercambio de **Hello** paquetes, un router es elegido DR y otro es elegido BDR.   
 
   Cada router perteneciente al segmento (que ya se haya convertido en vecino) intenta establecer una adyacencia con el DR y BDR.  
-
 ###   Elección DR  
 
    La elección de DR y BDR se realiza a través del  **Hello** protocolo. Los **Hello** paquetes se intercambian a través de paquetes de multidifusión IP (apéndice B) en cada segmento.    
@@ -345,7 +342,6 @@ RTB# router ospf 10 area 2 virtual-link 10.0.0.11
   ![Elección DR](https://www.cisco.com/c/dam/en/us/support/docs/ip/open-shortest-path-first-ospf/7039-1-08.png)
 
   En este diagrama, RTA y RTB tienen la misma prioridad de interfaz, pero RTB tiene una RID mayor. RTB sería DR en ese segmento. RTC tiene mayor prioridad que RTB. RTC es DR en ese segmento.  
-
 ###   Creación de la adyacencia  
 
   El proceso de creación de la adyacencia tiene efecto después de que se han completado varias etapas. Los routers adyacentes tendrán la misma base de datos de estados de enlace.  
@@ -476,7 +472,6 @@ Ethernet0
 ###   Adyacencias en interfaces punto-a-punto  
 
   OSPF siempre forma una adyacencia con el vecino del otro lado de una interfaz de punto a punto tal como las líneas seriales de punto a punto. No existe ningún concepto de DR o BDR. El estado de las interfaces seriales es punto a punto.  
-
 ###   Adyacencias en redes de Acceso múltiple sin difusión (NBMA)  
 
   Se debe tener especial cuidado con la configuración de OSPF en medios de acceso múltiple que no son de difusión, como Frame Relay, X.25, ATM. El protocolo considera estos medios como cualquier otro medio de broadcast como Ethernet.  
@@ -487,9 +482,9 @@ Ethernet0
 
   Dada la ausencia de capacidades de difusión, el DR y BDR necesitan tener una lista estática de todos los routers conectados a la nube.  
 
-   Esto se logra con el **neighbor ip-address [priority number] [poll-interval seconds]** comando, donde "ip-address" y "priority" son la dirección IP y la prioridad OSPF dada al vecino.   
+   Esto se logra con el `neighbor ip-address [priority number] [poll-interval seconds]` comando, donde `ip-address` y `priority` son la dirección IP y la prioridad OSPF dada al vecino.   
 
-  Un vecino con prioridad 0 se considera que no reúne las condiciones para la elección de DR. “poll-interval” es el tiempo que espera una interfaz de NBMA antes de sondear (enviar un mensaje de **saludo**) a un vecino aparentemente inactivo.  
+  Un vecino con prioridad 0 se considera que no reúne las condiciones para la elección de DR. `poll-interval` es el tiempo que espera una interfaz de NBMA antes de sondear (enviar un mensaje de **saludo**) a un vecino aparentemente inactivo.  
 
    El **neighbor** comando se aplica a los routers con potencial DR o BDR (la prioridad de la interfaz no es igual a 0). Esto muestra un diagrama de red donde la selección del DR es muy importante:   
 
@@ -500,13 +495,11 @@ Ethernet0
   La elección del DR podría estar influenciada por el parámetro de prioridad ospf en las interfaces. Los routers que no necesitan convertirse en DR o BDR tienen una prioridad de 0; otros routers podrían tener una prioridad más baja.  
 
    El **neighbor** comando no se trata en profundidad en este documento y se vuelve obsoleto a través del nuevo tipo de red de interfaz, independientemente del medio físico subyacente. Esto se explica en la siguiente sección.   
-
 ##   Cómo evitar los DR y el comando neighbor en las NBMA  
 
   Pueden utilizarse distintos métodos para evitar las complicaciones de la configuración de vecinos estáticos y routers específicos que se convierten en DR o BDR en la nube sin difusión.  
 
   Qué método específico usar depende de si estamos diseñando una red desde cero o si estamos corrigiendo un diseño ya existente.  
-
 ###   Subinterfaces punto a punto  
 
   Una subinterfaz es una manera lógica de definir una interfaz. Es posible dividir una misma interfaz física en varias interfaces lógicas con cada una de las subinterfaces definidas como de punto a punto.  
@@ -601,10 +594,9 @@ network 198.51.100.10 0.0.255.255 area 0
 ```
 RTA#show ip ospf interface s0 
 Serial0 is up, line protocol is up 
-Internet Address 198.51.100.101 255.255.255.0, Area 0 Process ID 10, Router ID 203.0.113.101, Network Type POINT_TO_MULTIPOINT, Cost: 64 Transmit 
-Delay is 1 sec, State POINT_TO_MULTIPOINT, Timer intervals configured, Hello 30, Dead 120, Wait 120, Retransmit 5 Hello due in 0:00:04 
-Neighbor Count is 2, Adjacent neighbor count is 2 Adjacent with neighbor 198.51.100.174 
-Adjacent with neighbor 198.51.100.130 
+Internet Address 198.51.100.101 255.255.255.0, Area 0 Process ID 10, Router ID 203.0.113.101, Network Type POINT_TO_MULTIPOINT, Cost: 64 
+Transmit Delay is 1 sec, State POINT_TO_MULTIPOINT, Timer intervals configured, Hello 30, Dead 120, Wait 120, Retransmit 5 Hello due in 0:00:04 
+Neighbor Count is 2, Adjacent neighbor count is 2 Adjacent with neighbor 198.51.100.174 Adjacent with neighbor 198.51.100.130 
 
 RTA#show ip ospf neighbor 
 Neighbor ID Pri State Dead Time 
@@ -676,6 +668,7 @@ O 172.16.0.1 [110/192] via 198.51.100.101, 00:14:29, Serial1
   Donde **area-id** es el área que contiene las redes que se van a resumir. “address” y “mask” especifican el rango de direcciones que se van a resumir en un rango. Este es un ejemplo de resumen:  
 
   ![Resumen de rutas dentro del área](https://www.cisco.com/c/dam/en/us/support/docs/ip/open-shortest-path-first-ospf/7039-1-13.png)
+  
   En este diagrama, RTB resume el rango de subredes de 172.16.0.64 a 172.16.0.95 en un rango: 172.16.0.64 255.255.224.0. Para lograr esto, enmascare los primeros tres bits del extremo izquierdo de 64 con una máscara de 255.255.224.0.  
 
   De la misma manera, RTC genera la dirección de resumen 172.16.0.96 255.255.224.0 en la red troncal. Observe que este resumen fue exitoso porque tenemos dos alcances distintos de subredes, 64-95 y 96-127.  
@@ -708,14 +701,13 @@ ip route 172.16.0.64 255.255.224.0 null0
 
   A fin de tratar este problema posible, se agregó a la configuración de OSPF de Cisco IOS® un comando que permite deshabilitar de manera selectiva la compatibilidad con la RFC 2328.  
 
-   El nuevo comando de configuración se encuentra en **router ospf**, y tiene la sintaxis:   
+   El nuevo comando de configuración se encuentra en `router ospf`, y tiene la sintaxis:   
 
-[no] compatible rfc1583 
+`no compatible rfc1583` 
 
   El parámetro predeterminado es compatible con la RFC 1583. Este comando está disponible en estas versiones de Cisco IOS®:  
 
   - 12.1(03)DC - 12.1(03)DB - Línea principal 12.001(001.003) - 12.1 - 12.1(01.03)T - 12.1 Tren T - Línea principal 12.000(010.004) - 12.0 - 12.1(01.03)E - 12.1 Tren E - 12.1(01.03)EC - 12.0(10.05)W05(18.00.10) - 12.0(10.05)SC  
-
 ###   Resumen de ruta externa  
 
   El resumen de ruta externa es específico para las rutas externas que se introducen en OSPF mediante la redistribución. Además, asegúrese de que los rangos externos que se resumen sean contiguos.  
@@ -740,7 +732,7 @@ RTD# router ospf 100 summary-address 172.16.0.96 255.255.224.0 redistribute bgp 
 
   Esto hace que RTA genere una ruta externa 172.16.0.64 255.255.224.0 y que RTD genere 172.16.0.96 255.255.224.0.  
 
-   Observe que el **summary-address** comando no tiene efecto si se utiliza en el RTB porque el RTB no realiza la redistribución en OSPF.   
+   Observe que el `summary-address` comando no tiene efecto si se utiliza en el RTB porque el RTB no realiza la redistribución en OSPF.   
 ##   Zona fragmentada  
 
   OSPF permite que ciertas áreas sean configuradas como áreas stub. No se permite que las redes externas, como aquellas redistribuidas desde otros protocolos a OSFP, inunden el área stub.  
@@ -849,8 +841,7 @@ O 172.16.0.208 [110/74] via 203.0.113.151, 00:31:27, Serial0 O*IA 0.0.0.0 0.0.0.
 
   El costo de la ruta predeterminada es ahora de 74 (64 para una línea T1 + 10 anunciada por RTC). En este caso no se necesita configuración el RTE.  
 
-   El área ya es stub, y el  **no-summary** comando no afecta al paquete Hello en absoluto como lo hace el **stub** comando.    
-
+   El área ya es stub, y el  `no-summary` comando no afecta al paquete Hello en absoluto como lo hace el `stub` comando.    
 ##   Redistribución de rutas en OSPF  
 
   La redistribución de rutas en OSPF desde otros protocolos de routing o desde rutas estáticas hace que estas rutas se conviertan en rutas externas de OSPF. Para redistribuir las rutas en OSPF, utilice este comando en el modo de configuración del router:  
@@ -870,7 +861,6 @@ route-map map-tag [[permit | deny] | [sequence-number]]
 ```
 
    Con la redistribución de rutas en OSPF, sólo las rutas que no están divididas en subredes se redistribuyen si no se especifica la **subnets** palabra clave.   
-
 ###   Rutas externas E1 vs. E2  
 
   Las rutas externas se incluyen en dos categorías, tipo externo 1 y tipo externo 2. La diferencia entre ambos tipos es la manera en que se calcula el costo (métrica) de la ruta.  
@@ -918,7 +908,8 @@ router ospf 10 network 203.0.113.150 0.0.0.255 area 2
 ```
 RTE#show ip route 
 Codes: C - connected, S - static, I - IGRP, R - RIP, M - mobile, B - BGP D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area E1 - OSPF external type 1, E2 - OSPF external type 2, E - EGP i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, * - candidate default Gateway of last resort is not set 203.0.113.150 255.255.255.252 is subnetted, 1 subnets 
-C 203.0.113.150 is directly connected, Serial0 O IA 203.0.113.140 [110/74] via 203.0.113.151, 00:02:31, Serial0 
+C 203.0.113.150 is directly connected, Serial0 
+O IA 203.0.113.140 [110/74] via 203.0.113.151, 00:02:31, Serial0 
 O E2 198.51.100.1 [110/20] via 203.0.113.151, 00:02:32, Serial0
 ```
 
@@ -930,7 +921,8 @@ redistribute static metric 50 subnets
 RTE#show ip route 
 Codes: C - connected, S - static, I - IGRP, R - RIP, M - mobile, B - BGP D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area E1 - OSPF external type 1, E2 - OSPF external type 2, E - EGP i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, * - candidate default Gateway of last resort is not set 10.0.0.16 255.255.255.0 is subnetted, 1 subnets 
 O E2 10.0.0.16 [110/50] via 203.0.113.151, 00:00:02, Serial0 203.0.113.150 255.255.255.252 is subnetted, 1 subnets 
-C 203.0.113.150 is directly connected, Serial0 O IA 203.0.113.140 [110/74] via 203.0.113.151, 00:00:02, Serial0 
+C 203.0.113.150 is directly connected, Serial0 
+O IA 203.0.113.140 [110/74] via 203.0.113.151, 00:00:02, Serial0 
 O E2 198.51.100.1 [110/50] via 203.0.113.151, 00:00:02, Serial0
 ```
 
@@ -1042,7 +1034,7 @@ ip route 203.0.113.150 255.255.255.0 203.0.113.67
 
   Deben aplicarse interfaces pasivas y listas de distribución en los routers de redistribución. Filtrar información con protocolos de estado de enlace, como OSPF, es difícil.  
 
-**Distribute-list out** funciona en el ASBR para filtrar rutas redistribuidas en otros protocolos. **Distribute-list in** funciona en cualquier router para evitar rutas de la tabla de ruteo, pero no evita que los paquetes de estado de link se propaguen; los routers de flujo descendente aún tendrán las rutas.
+`Distribute-list out` funciona en el ASBR para filtrar rutas redistribuidas en otros protocolos. `Distribute-list in` funciona en cualquier router para evitar rutas de la tabla de ruteo, pero no evita que los paquetes de estado de link se propaguen; los routers de flujo descendente aún tendrán las rutas.
 
   Es mejor evitar cualquier filtro de OSPF en lo posible si los filtros pueden aplicarse a los demás protocolos, a fin de prevenir bucles.  
 
@@ -1135,9 +1127,9 @@ default-information originate [always] [metric metric-value] [metric-type type-v
 
   La métrica y el tipo de métrica son el costo y el tipo (E1 o E2) asignados a la ruta predeterminada. La correspondencia de la ruta especifica el conjunto de condiciones que deben ser cumplidas para que se genere el valor predeterminado.  
 
-  [![Inserción de valores predeterminados](https://www.cisco.com/c/dam/en/us/support/docs/ip/open-shortest-path-first-ospf/7039-1-20.png)](https://www.cisco.com/c/dam/en/us/support/docs/ip/open-shortest-path-first-ospf/7039-1-20.png "Inserción de valores predeterminados")  
+  ![Inserción de valores predeterminados](https://www.cisco.com/c/dam/en/us/support/docs/ip/open-shortest-path-first-ospf/7039-1-20.png)
 
-   Supongamos que RTE inserta la ruta predeterminada 0.0.0.0 en el RIP. RTC tiene un gateway de último recurso de 203.0.113.152. El RTC no propaga el valor predeterminado al RTA hasta que configuramos el RTC con un **default-information originate** comando.   
+   Supongamos que RTE inserta la ruta predeterminada 0.0.0.0 en el RIP. RTC tiene un gateway de último recurso de 203.0.113.152. El RTC no propaga el valor predeterminado al RTA hasta que configuramos el RTC con un `default-information originate` comando.   
 
 ```
 RTC#show ip route 
@@ -1153,8 +1145,10 @@ ip address 203.0.113.67 255.255.255.192
 interface Serial1 
 ip address 203.0.113.151 255.255.255.192 
 router ospf 10 redistribute rip metric 10 subnets 
-network 203.0.113.150 0.0.0.255 area 0 default-information originate metric 10 
-router rip redistribute ospf 10 metric 2 passive-interface Ethernet0 
+network 203.0.113.150 0.0.0.255 area 0 
+default-information originate metric 10 
+router rip 
+redistribute ospf 10 metric 2 passive-interface Ethernet0 
 network 203.0.113.150 
 
 RTA#show ip route 
@@ -1180,7 +1174,6 @@ C 203.0.113.151 is directly connected, Ethernet1 O*E2 0.0.0.0 0.0.0.0 [110/10] v
   - ¿Qué clase de área tiene? - ¿Qué tipo de potencia de CPU tiene en dicha área? - ¿Qué clase de medios? - ¿OSPF se ejecuta en el modo de NBMA? - ¿Está mallada la red NBMA? - ¿Tiene muchas LSA externas en la red? - ¿Están otras áreas bien resumidas?  
 
   Por esta razón, es difícil especificar una cantidad máxima de routers por área. Para obtener ayuda con el diseño de red específico consulte con su ingeniero de ventas o ingeniero de sistemas local.  
-
 ###   Cantidad de vecinos  
 
   El número de routers conectados a la misma LAN también es importante. Cada LAN tiene un DR y un BDR que crean adyacencias con todos los demás routers.  
@@ -1213,8 +1206,7 @@ C 203.0.113.151 is directly connected, Ethernet1 O*E2 0.0.0.0 0.0.0.0 [110/10] v
 
   Se ha demostrado que una topología de interconexión parcial se comporta mucho mejor que una interconexión total. Una red de punto a punto o de punto a multipunto realizada con atención funciona mucho mejor que las redes multipunto que tienen que lidiar con problemas de DR  
 
-  [![Guía de diseño de OSPF: malla completa frente a malla parcial](https://www.cisco.com/c/dam/en/us/support/docs/ip/open-shortest-path-first-ospf/7039-1-23.gif)](https://www.cisco.com/c/dam/en/us/support/docs/ip/open-shortest-path-first-ospf/7039-1-23.gif "Guía de diseño de OSPF: malla completa frente a malla parcial")  
-
+  ![Guía de diseño de OSPF: malla completa frente a malla parcial](https://www.cisco.com/c/dam/en/us/support/docs/ip/open-shortest-path-first-ospf/7039-1-23.gif)
 ###   Problemas de memoria  
 
   No es fácil calcular la memoria que se necesita para una configuración OSPF determinada. Los problemas con la memoria generalmente aparecen cuando se introducen demasiadas rutas externas en el dominio OSPF.  
@@ -1223,7 +1215,7 @@ C 203.0.113.151 is directly connected, Ethernet1 O*E2 0.0.0.0 0.0.0.0 [110/10] v
 
   La memoria también se conserva mediante un buen diseño de OSPF. El resumen en los routers de borde de área y el uso de áreas stub podrían minimizar aún más el número de rutas intercambiadas.  
 
-   La memoria total utilizada por OSPF es la suma de la memoria utilizada en la tabla de ruteo (**show ip route summary**) y la memoria utilizada en la base de datos de estado de link.   
+   La memoria total utilizada por OSPF es la suma de la memoria utilizada en la tabla de ruteo (`show ip route summary`) y la memoria utilizada en la base de datos de estado de link.   
 
   Los siguientes números son una estimación general. Cada entrada de la tabla de routing consume aproximadamente entre 200 y 280 bytes, más 44 bytes por cada ruta adicional.  
 
@@ -1234,7 +1226,6 @@ C 203.0.113.151 is directly connected, Ethernet1 O*E2 0.0.0.0 0.0.0.0 [110/10] v
   La diferencia en la memoria del procesador utilizada sería la respuesta (conserve una copia de seguridad de las configuraciones).  
 
   Normalmente, una tabla de routing con menos de 500 000 bytes se puede alojar con 2 a 4 MB de RAM; las redes grandes con más de 500 000 necesitan de 8 a 16 MB o de 32 a 64 MB si se insertan rutas completas desde Internet.  
-
 ##   Summary  
 
   El protocolo de OSPF definido en la RFC 1583 proporciona un protocolo abierto de alta funcionalidad que permite que redes de proveedores múltiples se comuniquen con la familia de protocolos TCP/IP.  
@@ -1243,7 +1234,7 @@ C 203.0.113.151 is directly connected, Ethernet1 O*E2 0.0.0.0 0.0.0.0 [110/10] v
 
 ##   Apéndice A: Sincronización de la base de datos de estados de enlace  
 
-  [![Guía de diseño de OSPF: Sincronización de la base de datos de estados de enlace](https://www.cisco.com/c/dam/en/us/support/docs/ip/open-shortest-path-first-ospf/7039-1-24.gif)](https://www.cisco.com/c/dam/en/us/support/docs/ip/open-shortest-path-first-ospf/7039-1-24.gif "Guía de diseño de OSPF: Sincronización de la base de datos de estados de enlace")  
+  ![Guía de diseño de OSPF: Sincronización de la base de datos de estados de enlace](https://www.cisco.com/c/dam/en/us/support/docs/ip/open-shortest-path-first-ospf/7039-1-24.gif)  
 
   En este diagrama, los routers del mismo segmento pasan a través de una serie de estados antes de formar una adyacencia exitosa. La elección de vecino y DR se lleva a cabo a través del protocolo de saludo.  
 
@@ -1275,7 +1266,7 @@ ip ospf retransmit-interval seconds
 
 ###   Avisos sobre el estado de los links  
 
-  [![Guía de diseño de OSPF: anuncios de estado de enlace](https://www.cisco.com/c/dam/en/us/support/docs/ip/open-shortest-path-first-ospf/7039-1-25.gif)](https://www.cisco.com/c/dam/en/us/support/docs/ip/open-shortest-path-first-ospf/7039-1-25.gif "Guía de diseño de OSPF: anuncios de estado de enlace")  
+  ![Guía de diseño de OSPF: anuncios de estado de enlace](https://www.cisco.com/c/dam/en/us/support/docs/ip/open-shortest-path-first-ospf/7039-1-25.gif)
 
   Los anuncios de estado de link se dividen en cinco tipos. Los links de router (RL) son generados por todos los routers. Estos links describen el estado de las interfaces del router dentro de un área determinada.  
 
@@ -1401,7 +1392,8 @@ ip address 203.0.113.16 255.255.255.192
 interface Serial0 
 ip address 203.0.113.152 255.255.255.192 
 router ospf 10 redistribute rip metric 10 subnets 
-network 203.0.113.150 0.0.0.63 area 1 default-information originate metric 10 
+network 203.0.113.150 0.0.0.63 area 1 
+default-information originate metric 10 
 router rip 
 network 203.0.113.128 
 ip route 0.0.0.0 0.0.0.0 Ethernet0 
@@ -1578,7 +1570,6 @@ OSPF Router with ID (203.0.113.67) (Process ID 10) Router Link States (Area 1) L
   - 224.0.0.5 se asignaría a 01-00-5E-00-00-05 - 224.0.0.6 se asignaría a 01-00-5E-00-00-06  
 
   OSPF emplea transmisión en redes Token Ring.  
-
 ##   Apéndice C: Máscaras de subred de longitud variable (VLSM)  
 
   La idea en relación con las máscaras de subred de longitud variable es ofrecer más flexibilidad para dividir una red principal en varias subredes y poder mantener una cantidad adecuada de hosts en cada subred.  
@@ -1597,7 +1588,6 @@ OSPF Router with ID (203.0.113.67) (Process ID 10) Router Link States (Area 1) L
 
 
 -252 (1111 1100) The address space is divided into 64. -248 (1111 1000) The address space is divided into 32. -240 (1111 0000) The address space is divided into 16. -224 (1110 0000) The address space is divided into 8. -192 (1100 0000) The address space is divided into 4. -128 (1000 0000) The address space is divided into 2.
-
 
   Sin VLSM, puede utilizar la máscara 255.255.255.128 y dividir las direcciones en 2 subredes con 128 hosts cada una o puede utilizar 255.255.255.192 y dividir el espacio en 4 subredes con 64 hosts cada una.  
 
