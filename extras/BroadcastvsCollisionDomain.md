@@ -4,8 +4,7 @@ Hoy hablemos de dos términos: dominio de transmisión y dominio de colisión. E
 
 **Dominio de transmisión:** un término de Ethernet utilizado para describir cuando un usuario está transmitiendo; todos los demás usuarios deben prestarle atención y procesarlo. Las retransmisiones en una red son útiles pero las retransmisiones excesivas (tormentas de retransmisiones) no son buenas para ninguna red.
 
-**Dominio de colisión:** es un término de Ethernet que se utiliza para describir una configuración de red en la que un usuario envía tráfico y otros usuarios lo observan. Si dos usuarios envían tráfico simultáneamente, se produce una colisión y ambos usuarios necesitan retransmitir datos.
-
+**Dominio de colisión:** es un término de Ethernet que se utiliza para describir una configuración de red en la que un usuario envía tráfico y otros usuarios lo observan. Si dos usuarios envían tráfico simultáneamente, se produce una colisión y ambos usuarios necesitan retransmitir datos
 ### Local Area Network
 
 La Figura 1 muestra la configuración LAN básica utilizando el HUB. Puede ver que dos usuarios (Sohan y Mohan) están conectados a esto mediante un conjunto de cables. La siguiente red es un ejemplo de un dominio de colisión y un dominio de transmisión.
@@ -16,7 +15,6 @@ Para una red doméstica con pocos hosts, esto parece simple, pero la vida en una
 Figure 1: Basic LAN Setup
 
 Cuando una red grande utiliza el Hub como agregado para la conectividad de múltiples usuarios, se crea un gran dominio de colisión y un dominio de transmisión, lo que no es bueno para la productividad del usuario. Con tantas transmisiones y colisiones, esta red no puede soportar la ejecución de las últimas aplicaciones transaccionales.
-
 ### Switch & Router Role
 
 La Figura 2 muestra una LAN con un Switch agregado. Podemos decir que esta red tiene dos segmentos, uno con Hub y otro segmento son los usuarios conectados al conmutador. Cuando construimos una red usando conmutadores (capa 2), cada puerto representa un dominio de colisión separado en el conmutador. Significa que varios usuarios pueden enviar tráfico al mismo tiempo [más usuarios son productivos y agregan valor a la organización]. Desde el punto de vista de las redes, las redes conmutadas (donde se utilizan conmutadores) son menos ruidosas en comparación con las construidas con concentradores.
