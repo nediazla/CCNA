@@ -77,3 +77,85 @@ Primero, de forma predeterminada, IOS utiliza una función hash llamada Message 
 
 ![](img/5.3.png)
 
+Entonces, si la contraseña original en texto claro no se puede volver a crear, ¿cómo puede un conmutador o enrutador usarla para compararla con la contraseña en texto claro escrita por el usuario? La respuesta depende de otro hecho sobre estos hashes de seguridad como MD5: cada entrada de texto sin cifrar da como resultado un resultado único de la fórmula matemática.
+
+El comando `enable secret fred` genera un hash MD5. Si un usuario escribe **fred** al intentar ingresar al modo habilitar, IOS ejecutará MD5 con ese valor y obtendrá el mismo hash MD5 que aparece en el comando `enable secret`, por lo que IOS permite al usuario acceder a habilitar modo. Si el usuario escribiera cualquier otro valor además de **fred**, IOS calcularía un hash MD5 diferente al valor almacenado con el comando `enable secret`, y IOS rechazaría el intento de ese usuario de alcanzar el modo de habilitación.
+
+Sabiendo ese hecho, el conmutador puede hacer una comparación cuando un usuario escribe una contraseña después de usar el comando EXEC `enable` de la siguiente manera:
+
+| **Step 1.** | IOS calcula el hash MD5 de la contraseña en el comando `enable secret` y almacena el hash de la contraseña en la configuración.                                                                                                     |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Step 2.** | Cuando el usuario escribe el comando `enable` para alcanzar el modo habilitar, una contraseña que debe compararse con ese comando de configuración, IOS codifica la contraseña en texto sin cifrar tal como la escribió el usuario. |
+| **Step 3.** | IOS compara los dos valores hash: si son iguales, la contraseña ingresada por el usuario debe ser la misma que la contraseña configurada.                                                                                           |
+
+Como resultado, IOS puede almacenar el hash de la contraseña pero nunca almacenar la contraseña en texto claro; sin embargo, aún puede determinar si el usuario escribió la misma contraseña.
+
+Los conmutadores y enrutadores ya utilizan la lógica que se describe aquí, pero puede ver la evidencia observando la configuración del conmutador. El ejemplo 5-2 muestra la creación del comando **enable secret**, con algunos detalles relacionados. Este ejemplo muestra el valor almacenado (en hash) como se revela en la salida del comando "show running-configuration". Ese resultado también muestra que IOS cambió el comando `enable secret fred` para enumerar el tipo de cifrado 5 (lo que significa que la contraseña enumerada es en realidad un hash MD5 de la contraseña de texto sin cifrar). La larga cadena de texto galimatías es el hash, lo que impide que otros lean la contraseña.
+
+```
+Switch3(config)# enable secret fred
+Switch3(config)# ^Z 
+
+Switch3# show running-config | include enable secret
+
+enable secret 5 $1$ZGMA$e8cmvkz4UjiJhVp7.maLE1
+
+Switch3# configure terminal
+Enter configuration commands, one per line. End with CNTL/Z.
+Switch3(config)# no enable secret
+Switch3(config)# ^Z
+```
+
+El final del ejemplo también muestra un punto importante sobre la eliminación de la contraseña secreta de habilitación: después de estar en el modo `enable`, puede eliminar la contraseña secreta de habilitación usando el comando `no enable secret`, sin siquiera tener que ingresar el valor de la contraseña. También puede sobrescribir la contraseña anterior simplemente repitiendo el comando enable secret. Pero no puede ver la contraseña original en texto claro.
+### Hashes mejorados para Enable Secret de Cisco
+El uso de cualquier función hash para codificar contraseñas depende de varias características clave de la función hash particular. En particular, cada valor de entrada posible debe dar como resultado un único valor hash, de modo que cuando los usuarios escriban una contraseña, solo un valor de contraseña coincida con cada valor hash. Además, el algoritmo hash debe resultar en matemáticas computacionalmente difíciles para calcular la contraseña de texto claro basada en el valor hash para disuadir a los atacantes.
+
+El algoritmo hash MD5 existe desde hace unos 30 años. A lo largo de esos años, las computadoras se han vuelto mucho más rápidas y los investigadores han encontrado formas creativas de atacar el algoritmo MD5, haciendo que MD5 sea menos difícil de descifrar. Es decir, a alguien que viera su configuración en ejecución le resultaría más fácil recrear sus contraseñas secretas en texto claro que en los primeros años de MD5.
+
+Estos hechos no pretenden decir que MD5 sea malo, pero como muchas funciones criptográficas anteriores a MD5, se han logrado avances y se necesitaban nuevas funciones. Para brindar opciones más recientes que crearían un desafío mucho mayor para los atacantes, Cisco agregó dos hashes adicionales en la década de 2010, como se indica en la Figura 5-4.
+
+![](img/5.4.png)
+
+IOS ahora admite dos tipos de algoritmos alternativos en las imágenes de IOS de enrutador y conmutador más recientes. Ambos usan un hash SHA-256 en lugar de MD5, pero con dos opciones más nuevas, cada una de las cuales tiene algunas diferencias en los detalles de cómo cada algoritmo usa SHA-256. La Tabla 5-2 muestra la configuración de los tres tipos de algoritmos en el comando `enable secret`.
+
+| **Command**                                        | **Type** | **Algorithm** |
+| -------------------------------------------------- | -------- | ------------- |
+| **enable [algorithm-type md5] secret** _password_  | 5        | MD5           |
+| **enable algorithm-type sha256 secret** _password_ | 8        | SHA-256       |
+| **enable algorithm-type scrypt secret** _password_ | 9        | SHA-256       |
+
+El ejemplo 5-3 muestra el cambio del comando `enable secret` de MD5 al algoritmo scrypt. Es de destacar que el ejemplo muestra que solo debe existir un comando `enable secret` entre esos tres comandos en la Tabla 5-2. Básicamente, si configura otro comando `enable secret` con un tipo de algoritmo diferente, ese comando reemplaza cualquier comando `enable secret` existente.
+
+```
+R1# show running-config | include enable
+enable secret 5 $1$ZSYj$725dBZmLUJ0nx8gFPTtTv0
+R1# configure terminal
+Enter configuration commands, one per line. End with CNTL/Z. 
+
+R1(config)# enable algorithm-type scrypt secret mypass1
+R1(config)# ^Z
+
+R1# 
+R1# show running-config | include enable
+enable secret 9 $9$II/EeKiRW91uxE$fwYuOE5EHoii16AWv2wSywkLJ/KNeGj8uK/24B0TVU6 
+R1#
+```
+
+Siguiendo el proceso que se muestra en el ejemplo, el primer comando confirma que el comando `enable secret` actual usa codificación tipo 5, lo que significa que usa MD5. En segundo lugar, el usuario configura la contraseña utilizando un algoritmo tipo scrypt. El último comando confirma que solo existe un comando `enable secret` en la configuración, ahora con codificación tipo 9.
+### Codificación de contraseñas para nombres de usuario locales
+Cisco agregó el comando `enable secret` en la década de 1990 para superar los problemas con el comando `enable password`. Los comandos `username`, `password` y `user secret` tienen un historial similar. Originalmente, IOS admitía el comando `username user password password`, un comando que tenía los mismos problemas de ser una contraseña de texto sin cifrar o un valor mal cifrado (con la función de cifrado de contraseña del servicio). Muchos años después, Cisco agregó el comando global `username user secret password`, que codificaba la contraseña como un hash MD5, y Cisco agregó soporte para los hashes SHA-256 más nuevos más adelante.
+
+Hoy en día, se prefiere el comando `username secret` es preferible sobre el comando `username password`;  sin embargo, IOS no utiliza la misma lógica para el comando `username` que para permitir que los comandos `enable secret` y `enable password` existan en la misma configuración. IOS permite
+- Solo un comando de nombre de usuario para un nombre de usuario determinado: ya sea un comando `username name password password` o un comando `username name secrte password`.
+- Una combinación de comandos (`username password` y `username secret`) en el mismo enrutador o conmutador (para diferentes nombres de usuario)
+
+Debe utilizar el comando `username secret` en lugar del comando `username password` cuando sea posible. Sin embargo, tenga en cuenta que algunas funciones de IOS requieren que el enrutador conozca una contraseña de texto sin cifrar mediante el comando `username` (por ejemplo, cuando se realizan algunos métodos de autenticación comunes para enlaces serie llamados PAP y CHAP). En esos casos, aún necesitarás usar el comando `username` y `password`
+
+Como se mencionó, las versiones más recientes de IOS tanto en conmutadores como en enrutadores utilizan opciones de codificación adicionales más allá de MD5, tal como lo admite el comando `enable secret`. La Tabla 5-3 muestra la sintaxis de esas tres opciones en el comando `username`, con la opción MD5 mostrada como una opción porque es la opción predeterminada utilizada con el comando `username secret`.
+
+| **Command**                                                        | **Type** | **Algorithm** |
+| ------------------------------------------------------------------ | -------- | ------------- |
+| **username** _name_ [**algorithm-type md5**] **secret** _password_ | 5        | MD5           |
+| **username** _name_ **algorithm-type sha256 secret** _password_    | 8        | SHA-256       |
+| **username** _name_ **algorithm-type scrypt secret** _password_    | 9        | SHA-256       |
+
