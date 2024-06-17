@@ -159,3 +159,46 @@ Como se mencionó, las versiones más recientes de IOS tanto en conmutadores com
 | **username** _name_ **algorithm-type sha256 secret** _password_    | 8        | SHA-256       |
 | **username** _name_ **algorithm-type scrypt secret** _password_    | 9        | SHA-256       |
 
+### Controlar los ataques a contraseñas con ACL
+Los atacantes pueden intentar iniciar sesión repetidamente en sus dispositivos de red para obtener acceso, pero IOS tiene una función que usa ACL para evitar que el atacante vea siquiera una solicitud de contraseña. Cuando un usuario externo se conecta a un enrutador o conmutador mediante Telnet o SSH, IOS utiliza una línea vty para representar la conexión de ese usuario. IOS puede aplicar una ACL a las líneas vty, filtrando las direcciones que pueden hacer telnet o SSH en el enrutador o conmutador. Si se filtra, el usuario nunca ve un mensaje de inicio de sesión.
+
+Por ejemplo, imagine que todos los dispositivos del personal de ingeniería de redes se conectan a la subred 10.1.1.0/24. La política de seguridad establece que solo el personal de ingeniería de redes debe poder realizar telnet o SSH en cualquiera de los enrutadores Cisco de una red. En tal caso, la configuración que se muestra en el Ejemplo 5-4 podría usarse en cada enrutador para denegar el acceso desde direcciones IP que no estén en esa subred.
+
+```
+line vty 0 4  
+login  
+password cisco  
+access-class 3 in 
+! 
+! Next command is a global command that matches IPv4 packets with 
+! a source address that begins with 10.1.1.  
+access-list 3 permit 10.1.1.0 0.0.0.255
+```
+
+El comando `access-class` se refiere a la lógica de coincidencia en la `access-list 3`. La palabra clave in se refiere a conexiones Telnet y SSH en este enrutador; en otras palabras, personas que realizan telnet en este enrutador. Tal como está configurado, ACL 3 verifica la dirección IP de origen de los paquetes para detectar conexiones Telnet entrantes.
+
+IOS también admite el uso de ACL para filtrar conexiones Telnet y SSH salientes. Por ejemplo, considere un usuario que usa Telnet o SSH por primera vez para conectarse a la CLI y ahora se encuentra en modo de usuario o habilitado. Con un filtro vty saliente, IOS aplicará la lógica ACL si el usuario intenta los comandos telnet o ssh para conectarse desde el dispositivo local a otro dispositivo.
+
+Para configurar una ACL de VTY saliente, utilice el comando `access-class` `acl out` en el modo de configuración de VTY. Una vez configurado, el enrutador filtra cualquier intento realizado por los usuarios actuales de vty de utilizar los comandos telnet y ssh para iniciar nuevas conexiones a otros dispositivos.
+
+De las dos opciones (proteger las conexiones entrantes y salientes), proteger las conexiones entrantes, con diferencia, la más importante y la más común. Sin embargo, para ser completos, las ACL de VTY salientes tienen una característica sorprendentemente extraña en la forma en que usan la ACL. Cuando se utiliza la palabra clave `out`, la ACL de IP estándar enumerada en el comando `access-class` en realidad mira la dirección IP de destino y no la de origen. Es decir, filtra según el dispositivo al que intenta conectarse el comando telnet o ssh.
+### Firewalls y sistemas de prevención de intrusiones
+El siguiente tema examina las funciones de un par de tipos diferentes de dispositivos de red: firewalls y sistemas de prevención de intrusiones (IPS). Ambos dispositivos funcionan para proteger redes, pero con objetivos y enfoques ligeramente diferentes.
+
+Tradicionalmente, un firewall se ubica en la ruta de reenvío de todos los paquetes para que luego pueda elegir qué paquetes descartar y cuáles permitir. Al hacerlo, el firewall protege la red de diferentes tipos de problemas al permitir que solo los tipos de tráfico previstos entren y salgan de la red. De hecho, en su forma más básica, los firewalls realizan el mismo tipo de trabajo que los enrutadores con las ACL, pero los firewalls pueden realizar esa función de filtrado de paquetes con muchas más opciones, además de realizar otras tareas de seguridad.
+
+La Figura 5-5 muestra un diseño de red típico para un sitio que utiliza un firewall físico. La figura muestra un firewall, como el firewall Cisco Adaptive Security Appliance (ASA), conectado a un enrutador Cisco, que a su vez se conecta a Internet. Todo el tráfico empresarial que vaya hacia o desde Internet se enviaría a través del firewall. El firewall consideraría sus reglas y elegiría para cada paquete si se le debe permitir el paso.
+
+![](img/5.5.png)
+
+Aunque los firewalls tienen algunas características similares a las de un enrutador (como reenvío y filtrado de paquetes), brindan características de seguridad mucho más avanzadas que un enrutador tradicional. Por ejemplo, la mayoría de los firewalls pueden utilizar los siguientes tipos de lógica para elegir si descartar o permitir un paquete:
+- Al igual que las ACL de IP del enrutador, haga coincidir las direcciones IP de origen y destino
+- Al igual que las ACL de IP del enrutador, identifique las aplicaciones haciendo coincidir su TCP estático conocido y Puertos UDP
+- Observe los flujos de la capa de aplicación para saber qué puertos TCP y UDP adicionales utiliza un flujo en particular y filtre según esos puertos.
+- Haga coincidir el texto en el URL de una solicitud HTTP (es decir, observe y compare el contenido de lo que a menudo se denomina dirección web) y haga coincidir patrones para decidir si se permite o deniega la descarga de la página web identificada por ese URL.
+- Mantenga la información de estado almacenando información sobre cada paquete y tome decisiones sobre el filtrado de paquetes futuros en función de la información de estado histórica (lo que se denomina inspección de estado o firewall con estado).
+
+La función de firewall con estado proporciona los medios para prevenir una variedad de ataques y es una de las diferencias más obvias entre el procesamiento ACL de un enrutador y el filtrado de seguridad mediante un firewall. Los enrutadores deben dedicar el menor tiempo posible a procesar cada paquete para que los paquetes experimenten un pequeño retraso al pasar a través del enrutador. El enrutador no puede tomarse el tiempo para recopilar información sobre un paquete y luego, para paquetes futuros, considerar alguna información de estado guardada sobre paquetes anteriores al tomar una decisión de filtrado. Debido a que se centran en la seguridad de la red, los firewalls guardan cierta información sobre los paquetes y pueden considerar esa información para futuras decisiones de filtrado.
+
+Como ejemplo de los beneficios de utilizar un firewall con estado, considere un simple ataque de denegación de servicio (DoS). Un atacante puede realizar este tipo de ataque contra un servidor web utilizando herramientas que crean (o comienzan a crear) un gran volumen de conexiones TCP al servidor. El firewall podría permitir conexiones TCP a ese servidor normalmente, pero imagine que el servidor normalmente podría recibir 10 nuevas conexiones TCP por segundo en condiciones normales y 100 por segundo en los momentos de mayor actividad. Un ataque DoS podría intentar miles o más de conexiones TCP por segundo, aumentando el uso de CPU y RAM en el servidor y, finalmente, sobrecargando el servidor hasta el punto de que no pueda atender a usuarios legítimos.
+Un firewall con estado podría rastrear la cantidad de conexiones TCP por segundo (es decir, registrar información de estado basada en paquetes anteriores), incluida la cantidad de solicitudes de conexión TCP desde cada dirección IP de cliente a cada dirección de servidor. El firewall con estado podría detectar una gran cantidad de conexiones TCP, verificar su información de estado y luego notar que la cantidad de solicitudes es muy grande desde una pequeña cantidad de clientes a ese servidor en particular, lo cual es típico de algunos tipos de ataques DoS. El firewall con estado podría entonces comenzar a filtrar esos paquetes, ayudando al servidor web a sobrevivir al ataque, mientras que un firewall sin estado o una ACL de enrutador no habrían tenido la información histórica del estado para darse cuenta de que se estaba produciendo un ataque DoS.
