@@ -421,3 +421,14 @@ Standard IP access list 21
 ```
 
 Las matemáticas para encontrar el rango de direcciones se basan en el hecho de que el comando es completamente correcto o que IOS ya ha establecido estos octetos de direcciones en 0, como se muestra en el ejemplo.
+
+### Comandos de referencia
+
+| Coamando                                                                         | Descripcion                                                                                                   |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `access-list access-list-number {deny \| permit} source [source-wildcard] [log]` | Global command for standard numbered access lists. Use a number between 1 and 99 or 1300 and 1999, inclusive. |
+| `access-list access-list-number remark text`                                     | Command that defines a remark to help you remember what the ACL is supposed to do.                            |
+| `ip access-group number {in \| out}`                                             | Interface subcommand to enable access lists.                                                                  |
+| `show ip interface [type number]`                                                | Includes a reference to the access lists enabled on the interface                                             |
+| `show access-lists [access-list-number \| access-list-name]`                     | Shows details of configured access lists for all protocols                                                    |
+| `show ip access-lists [access-list-number \| access-list-name`                   | Shows IP access lists                                                                                         |
