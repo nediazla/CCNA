@@ -16,23 +16,23 @@ Con los siguientes temas:
 
 [Chapter 6](content/Charter-6.md), “Implementing Switch Port Security,” explica los conceptos y también cómo configurar y verificar la seguridad del puerto del conmutador, una función del conmutador que realiza un monitoreo básico basado en MAC de los dispositivos que envían datos a un conmutador.
 
-[Chapter 7](content/charter-7.md), “Implementing DHCP,” analiza cómo se pueden configurar los hosts con sus configuraciones IPv4 y cómo pueden aprender esas configuraciones con DHCP. 
+[Chapter 7](content/Charter-7.md), “Implementing DHCP,” analiza cómo se pueden configurar los hosts con sus configuraciones IPv4 y cómo pueden aprender esas configuraciones con DHCP. 
 
-[Chapter 8](content/charter-8.md), “DHCP Snooping and ARP Inspection,” muestra cómo implementar dos funciones de seguridad de conmutador relacionadas, una de las cuales se centra en reaccionar a mensajes DHCP sospechosos y la otra a mensajes ARP sospechosos.
+[Chapter 8](content/Charter-8.md), “DHCP Snooping and ARP Inspection,” muestra cómo implementar dos funciones de seguridad de conmutador relacionadas, una de las cuales se centra en reaccionar a mensajes DHCP sospechosos y la otra a mensajes ARP sospechosos.
 
-[Chapter 9](content/charter-9.md), “Device Management Protocols,” discusses the concepts and configuration of some common network management tools: syslog, NTP, CDP, and LLDP. 
+[Chapter 9](content/Charter-9.md), “Device Management Protocols,” discusses the concepts and configuration of some common network management tools: syslog, NTP, CDP, and LLDP. 
 
-[Chapter 10](content/charter-10.md), “Network Address Translation,” analiza la secuencia completa de concepto, configuración, verificación y solución de problemas para la función NAT del enrutador, incluida cómo ayuda a conservar las direcciones IPv4 públicas.
+[Chapter 10](content/Charter-10.md), “Network Address Translation,” analiza la secuencia completa de concepto, configuración, verificación y solución de problemas para la función NAT del enrutador, incluida cómo ayuda a conservar las direcciones IPv4 públicas.
 
-[Chapter 11](content/charter-11.md), “Quality of Service (QoS),” analiza una amplia variedad de conceptos, todos relacionados con el tema amplio de QoS.
+[Chapter 11](content/Charter-11.md), “Quality of Service (QoS),” analiza una amplia variedad de conceptos, todos relacionados con el tema amplio de QoS.
 
-[Chapter 12](content/charter-12.md), “Miscellaneous IP Services,” analiza varios temas para los cuales el examen requiere conocimientos conceptuales pero no conocimientos de configuración, incluidos FHRP (incluido HSRP), SNMP, TFTP y FTP.
+[Chapter 12](content/Charter-12.md), “Miscellaneous IP Services,” analiza varios temas para los cuales el examen requiere conocimientos conceptuales pero no conocimientos de configuración, incluidos FHRP (incluido HSRP), SNMP, TFTP y FTP.
 
-[Chapter 13](content/charter-13.md), “LAN Architecture,” examina varias formas de diseñar LAN Ethernet, analiza los pros y los contras y explica la terminología de diseño común, incluida la alimentación a través de Ethernet (PoE).
+[Chapter 13](content/Charter-13.md), “LAN Architecture,” examina varias formas de diseñar LAN Ethernet, analiza los pros y los contras y explica la terminología de diseño común, incluida la alimentación a través de Ethernet (PoE).
 
-[Chapter 14](content/charter-14.md), “WAN Architecture,” analiza los conceptos detrás de tres alternativas de WAN: Metro Ethernet, MPLS VPN y Internet VPN. 
+[Chapter 14](content/Charter-14.md), “WAN Architecture,” analiza los conceptos detrás de tres alternativas de WAN: Metro Ethernet, MPLS VPN y Internet VPN. 
 
-[Chapter 15](content/charter-15.md), “Cloud Architecture,” explica los conceptos básicos y luego analiza en general el impacto que tiene la computación en la nube en una red empresarial típica, incluidos los conceptos fundamentales de la virtualización de servidores.
+[Chapter 15](content/Charter-15.md), “Cloud Architecture,” explica los conceptos básicos y luego analiza en general el impacto que tiene la computación en la nube en una red empresarial típica, incluidos los conceptos fundamentales de la virtualización de servidores.
 
 Chapter 16, “Introduction to Controller-Based Networking,” analiza muchos conceptos y términos relacionados con cómo las redes definidas por software (SDN) y la programabilidad de la red están impactando las redes empresariales típicas.
 
