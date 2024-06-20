@@ -201,3 +201,117 @@ Fa0/13               1            1         �
 Total Addresses in System (excluding one mac per port) : 0
 Max Addresses limit in System (excluding one mac per port) : 8192
 ```
+
+
+Tenga en cuenta que para los siguientes ejemplos, un conmutador ha configurado la seguridad del puerto solo en el puerto Fa0/13. En este caso, el conmutador parece estar configurado para admitir una dirección MAC, ya ha alcanzado ese total y tiene una acción de violación de seguridad de "shutdown".
+
+A continuación, el Ejemplo 6-6 muestra los resultados después de que ya se haya producido una violación de la seguridad del puerto en el puerto F0/13. El primer comando confirma el estado de error desactivado (según el comando `show interfaces status`) y el estado de apagado seguro (según el comando `show port-security`).
+
+```
+! The next lines show the log message generated when the violation occurred.
+Jul 31 18:00:22.810: %PORT_SECURITY-2-PSECURE_VIOLATION: Security violation occurred, caused by MAC address d48c.b57d.8200 on port FastEthernet0/13
+
+! The next command shows the err-disabled state, implying a security violation.
+SW1# show interfaces Fa0/13 status
+
+Port    Name                   Status        Vlan   Duplex  Speed  Type Fa0/13                         err-disabled  1      auto     auto  10/100BaseTX 
+!
+! The next command's output has shading for several of the most important facts.
+SW1#  show port-security interface Fa0/13
+Port Security                  : Enabled
+Port Status                    : Secure-shutdown
+Violation Mode                 : Shutdown
+Aging Time                     : 0 mins
+Aging Type                     : Absolute
+SecureStatic Address Aging     : Disabled
+Maximum MAC Addresses          : 1
+Total MAC Addresses            : 1
+Configured MAC Addresses       : 1
+Sticky MAC Addresses           : 0
+Last Source Address:Vlan       : 0200.3333.3333:2
+Security Violation Count       : 1
+```
+
+El resultado del comando `show port-security interface` enumera el estado actual de seguridad del puerto (secure-shutdown), así como el modo configurado (shutdown). La última línea de resultado enumera la cantidad de infracciones que causaron que la interfaz fallara a un estado de error deshabilitado, mientras que la penúltima línea identifica la dirección MAC y la VLAN del dispositivo que causó la infracción.
+La Figura 6-3 resume estos comportamientos, suponiendo el mismo escenario que se muestra en el ejemplo.
+![](img/6.3.png)
+
+### Modos de protección y restricción de seguridad portuaria
+Los modos de infracción restringir y proteger adoptan un enfoque muy diferente para proteger los puertos. Estos modos aún descartan el tráfico infractor, pero la interfaz permanece en un estado conectado (up/up) y en un estado de seguridad del puerto seguro. Como resultado, el puerto continúa enviando buen tráfico pero descarta el tráfico infractor.
+
+Tener un puerto aparentemente en buen estado que también descarta el tráfico puede ser un desafío a la hora de solucionar problemas. Básicamente, debe conocer la función y luego saber cómo saber cuándo la seguridad del puerto está descartando parte del tráfico en un puerto aunque el estado de la interfaz parezca bueno.
+
+Con el modo de protección, la única acción que realiza el conmutador ante una trama que viola las reglas de seguridad del puerto es descartar la trama. El conmutador no cambia el puerto a un estado de desactivación de errores, no genera mensajes y ni siquiera incrementa el contador de infracciones.
+El ejemplo 6-7 muestra una muestra con modo de protección después de que se hayan producido varias infracciones. Tenga en cuenta que el comando `show` confirma el modo (protección) tal como se configuró en la parte superior del ejemplo, con un estado de seguridad del puerto de seguridad, un estado que no cambiará en el modo de protección. Además, tenga en cuenta que el contador en la parte inferior muestra 0, aunque se hayan producido varias infracciones, porque el modo de protección no cuenta los fotogramas infractores.
+
+```
+SW1# show running-config 
+! Lines omitted for brevity 
+interface FastEthernet0/13   
+   switchport mode access   
+   switchport port-security   
+   switchport port-security mac-address 0200.1111.1111   
+   switchport port-security violation protect
+! Lines omitted for brevity
+
+SW1# show port-security interface Fa0/13
+Port Security                 : Enabled
+Port Status                   : Secure-up
+Violation Mode                : Protect
+Aging Time                    : 0 mins
+Aging Type                    : Absolute
+SecureStatic Address Aging    : Disabled
+Maximum MAC Addresses         : 1
+Total MAC Addresses           : 1
+Configured MAC Addresses      : 1
+Sticky MAC Addresses          : 0
+Last Source Address:Vlan      : 0000.0000.0000:0
+Security Violation Count      : 0
+```
+
+Mientras que el modo shutdown desactiva la interfaz y el modo de protección no hace más que descartar el tráfico infractor, el modo de restricción proporciona un compromiso entre los otros dos modos. Si el ejemplo 6-7 hubiera utilizado el modo de violación de restricción en lugar de proteger, el estado del puerto también habría permanecido en un estado seguro; sin embargo, IOS mostraría alguna indicación de la actividad de seguridad del puerto, como un contador de violaciones incremental preciso, así como mensajes de syslog. El ejemplo 6-8 muestra un ejemplo del contador de infracciones y finaliza con un mensaje de syslog de seguridad de puerto de ejemplo. En este caso, hasta el momento 97 tramas entrantes violaron las reglas, y la trama más reciente tenía una dirección MAC de origen de 0200.3333.3333 en la VLAN 1.
+
+```
+SW1# show port-security interface fa0/13
+Port Security                 : Enabled
+Port Status                   : Secure-up
+Violation Mode                : Restrict
+Aging Time                    : 0 mins
+Aging Type                    : Absolute
+SecureStatic Address Aging    : Disabled
+Maximum MAC Addresses         : 1
+Total MAC Addresses           : 1
+Configured MAC Addresses      : 1
+Sticky MAC Addresses          : 0
+Last Source Address:Vlan      : 0200.3333.3333:1
+Security Violation Count      : 97
+! 
+! The following log message also points to a port security issue. 
+! 01:46:58: %PORT_SECURITY-2-PSECURE_VIOLATION: Security violation occurred, caused by MAC address 0200.3333.3333 on port FastEthernet0/13.
+```
+
+La Figura 6-4 resume los puntos clave sobre el modo restringido para la seguridad del puerto. En este caso, la figura coincide nuevamente con el mismo escenario que el ejemplo, con un total de 97 tramas infractoras llegando hasta el momento, siendo la más reciente la de la dirección MAC de origen MAC3.
+
+![](img/6.4.png)
+
+### Comandos de referencia
+
+
+| Comando                                                                | Modo / Propósito / Descripción                                                                                                                                                         |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `switchport mode {access \| trunk}`                                    | Interface configuration mode command that tells the switch to always be an access port, or always be a trunk port                                                                      |
+| `switchport port-security mac-address mac-address`                     | Interface configuration mode command that statically adds a specific MAC address as an allowed MAC address on the interface                                                            |
+| `switchport port-security mac-address sticky`                          | Interface subcommand that tells the switch to learn MAC addresses on the interface and add them to the configuration for the interface as secure MAC addresses                         |
+| `switchport port-security maximum value`                               | Interface subcommand that sets the maximum number of static secure MAC addresses that can be assigned to a single interface                                                            |
+| `switchport port-security violation {protect \| restrict \| shutdown}` | Interface subcommand that tells the switch what to do if an inappropriate MAC address tries to access the network through a secure switch port                                         |
+| `errdisable recovery cause psecure-violation`                          | Global command that enables the automatic recovery from err-disabled state for ports that reach that state due to port security violations                                             |
+| `errdisable recovery interval seconds`                                 | Global command that sets the delay, in seconds, before a switch attempts to recover an interface in err-disabled mode, regardless of the reason for that interface being in that state |
+| `shutdown`                                 `no shutdown`               | Interface subcommands that administratively disable and enable an interface, respectively                                                                                              |
+| `show running-config`                                                  | Lists the currently used configuration                                                                                                                                                 |
+| `show running-config \| interface type number`                         | Displays the running-configuration excerpt of the listed interface and its subcommands only                                                                                            |
+| `show mac address-table dynamic [interface type number]`               | Lists the dynamically learned entries in the switch’s address (forwarding) table                                                                                                       |
+| `show mac address-table secure [interface type number]`                | Lists MAC addresses defined or learned on ports configured with port security                                                                                                          |
+| `show mac address-table static [interface type number]`                | Lists static MAC addresses and MAC addresses learned or defined with port security                                                                                                     |
+| `show interfaces [interface type number] status`                       | Lists one output line per interface (or for only the listed interface if included), noting the description, operating state, and settings for duplex and speed on each interface       |
+| `show port-security interface type number`                             | Lists an interface’s port security configuration settings and security operational status                                                                                              |
+| `show port-security`                                                   | Lists one line per interface that summarizes the port security settings for any interface on which it is enabled                                                                       |
