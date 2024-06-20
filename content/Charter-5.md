@@ -29,11 +29,13 @@ Algunas contraseñas de iOS de estilo anterior crean una exposición de segurida
 
  Cisco intentó resolver este problema de texto de claro agregando un comando para cifrar esas contraseñas: el comando de configuración global de contraseña `service password-encription`. Este comando encripta las contraseñas que normalmente se mantienen como texto claro, específicamente las contraseñas de estos comandos: 
  
-**password** password (console or vty mode)
-**username** name **password** password (global)
-**enable password** password (global)
+```
+password password (console or vty mode)
+username name password password (global)
+enable password password (global)
+```
  
-Para ver cómo funciona, el ejemplo 5-1 muestra cómo el comando de contraseña de contraseña de servicio encripta la contraseña de la consola de texto de texto. El ejemplo usa el show running-config | Sección de línea Con 0 Comando tanto antes como después del cifrado; Este comando enumera solo la sección de la configuración sobre la consola.
+Para ver cómo funciona, el ejemplo 5-1 muestra cómo el comando de contraseña de contraseña de servicio encripta la contraseña de la consola de texto de texto. El ejemplo usa el `show running-config | line console 0` tanto antes como después del cifrado; Este comando enumera solo la sección de la configuración sobre la consola.
 
 ```
 Switch3# show running-config | section line con 0 
@@ -291,7 +293,22 @@ Si desea aprender un poco más sobre estos temas por su propio interés, permít
 
 ### Comandos de Referencia
 
-| Comando          | Modo / Propósito / Descripción                                 |
-| ---------------- | -------------------------------------------------------------- |
-| `line console 0` | Command that changes the context to console configuration mode |
-|                  |                                                                |
+| Comando                                                                    | Modo / Propósito / Descripción                                                                                                                                           |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `line console 0`                                                           | Command that changes the context to console configuration mode                                                                                                           |
+| `line vty 1st-vty last-vty`                                                | Command that changes the context to vty configuration mode for the range of vty lines listed in the command.                                                             |
+| `login`                                                                    | Console and vty configuration mode. Tells IOS to prompt for a password.                                                                                                  |
+| `password pass-value`                                                      | Console and vty configuration mode. Lists the password required if the login command is configured.                                                                      |
+| `login local`                                                              | Console and vty configuration mode. Tells IOS to prompt for a username and password, to be checked against locally configured username global configuration commands     |
+| `username name [algorithmtype md5 \| sha256 \| scrypt] secret pass-value` | Global command. Defines one of possibly multiple usernames and associated passwords, stored as a hashed value (default MD5), with other hash options as well.            |
+| `username name password pass-value`                                        | Global command. Defines a username and password, stored in clear text in the configuration by default                                                                    |
+| `crypto key generate rsa [modulus 512 \| 768 \| 1024]`                     | Global command. Creates and stores (in a hidden location in flash memory) the keys required by SSH.                                                                      |
+| `transport input {telnet \| ssh \| all \| none}`                           | vty line configuration mode. Defines whether Telnet and/or SSH access is allowed into this switch.                                                                       |
+| `[no] service password-encryption`                                         | Global command that encrypts all clear-text passwords in the running-config. The no version of the command disables the encryption of passwords when the password is set |
+| `enable password pass-value`                                               | Global command to create the enable password, stored as a clear text instead of a hashed value.                                                                          |
+| `enable [algorithm-type md5 \| sha256 \| scrypt] secret pass-value`        | Global command to create the enable password, stored as a hashed value instead of clear text, with the hash defined by the algorithm type                                |
+| `no enable secret`                           `no enable password`          | Global command to delete the enable secret or enable password commands, respectively.                                                                                    |
+| `access-class number \| name in`                                           | A vty mode command that enables inbound ACL checks against Telnet and SSH clients connecting to the router                                                               |
+| `show running-config \| section vty`                                       | Lists the vty lines and subcommands from the configuration.                                                                                                              |
+| `show running-config \| section con`                                       | Lists the console and subcommands from the configuration                                                                                                                 |
+| `show running-config \| include enable`                                    | Lists all lines in the configuration with the word enable                                                                                                                |
