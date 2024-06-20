@@ -214,7 +214,8 @@ Jul 31 18:00:22.810: %PORT_SECURITY-2-PSECURE_VIOLATION: Security violation occu
 ! The next command shows the err-disabled state, implying a security violation.
 SW1# show interfaces Fa0/13 status
 
-Port    Name                   Status        Vlan   Duplex  Speed  Type Fa0/13                         err-disabled  1      auto     auto  10/100BaseTX 
+Port    Name                   Status        Vlan   Duplex  Speed  Type 
+Fa0/13                         err-disabled  1      auto     auto  10/100BaseTX 
 !
 ! The next command's output has shading for several of the most important facts.
 SW1#  show port-security interface Fa0/13
