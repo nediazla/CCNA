@@ -4,17 +4,17 @@ Desarrollare una guia de estudio que abarque lo necesario para poder aprobar el 
 
 Con los siguientes temas:
 
-[Chapter 1](content/charter-1.md), “Introduction to TCP/IP Transport and Applications,” Completa la mayor parte de la discusión detallada de las dos capas superiores del modelo TCP/IP (transporte y aplicación), centrándose en TCP y las aplicaciones.
+[Chapter 1](content/Charter-1.md), “Introduction to TCP/IP Transport and Applications,” Completa la mayor parte de la discusión detallada de las dos capas superiores del modelo TCP/IP (transporte y aplicación), centrándose en TCP y las aplicaciones.
 
-[Chapter 2](content/charter-2.md), “Basic IPv4 Access Control Lists,” Examina cómo las ACL de IP estándar pueden filtrar paquetes según la dirección IP de origen para que un enrutador no reenvíe el paquete.
+[Chapter 2](content/Charter-2.md), “Basic IPv4 Access Control Lists,” Examina cómo las ACL de IP estándar pueden filtrar paquetes según la dirección IP de origen para que un enrutador no reenvíe el paquete.
 
-[Chapter 3](content/charter-3.md), “Advanced IPv4 Access Control Lists,” examina las ACL nombradas y numeradas, y las ACL IP estándar y extendidas.
+[Chapter 3](content/Charter-3.md), “Advanced IPv4 Access Control Lists,” examina las ACL nombradas y numeradas, y las ACL IP estándar y extendidas.
 
-[Chapter 4](content/charter-4.md), “Security Architectures,” analiza una amplia gama de conceptos fundamentales en seguridad de redes.
+[Chapter 4](content/Charter-4.md), “Security Architectures,” analiza una amplia gama de conceptos fundamentales en seguridad de redes.
 
-[Chapter 5](content/charter-5.md), “Securing Network Devices,” muestra cómo utilizar la CLI del enrutador y del conmutador e introduce los conceptos detrás de los firewalls y los sistemas de prevención de intrusiones (IPS).
+[Chapter 5](content/Charter-5.md), “Securing Network Devices,” muestra cómo utilizar la CLI del enrutador y del conmutador e introduce los conceptos detrás de los firewalls y los sistemas de prevención de intrusiones (IPS).
 
-[Chapter 6](content/charter-6.md), “Implementing Switch Port Security,” explica los conceptos y también cómo configurar y verificar la seguridad del puerto del conmutador, una función del conmutador que realiza un monitoreo básico basado en MAC de los dispositivos que envían datos a un conmutador.
+[Chapter 6](content/Charter-6.md), “Implementing Switch Port Security,” explica los conceptos y también cómo configurar y verificar la seguridad del puerto del conmutador, una función del conmutador que realiza un monitoreo básico basado en MAC de los dispositivos que envían datos a un conmutador.
 
 [Chapter 7](content/charter-7.md), “Implementing DHCP,” analiza cómo se pueden configurar los hosts con sus configuraciones IPv4 y cómo pueden aprender esas configuraciones con DHCP. 
 
