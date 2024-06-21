@@ -269,3 +269,129 @@ Network Destination        Netmask          Gateway       
 ! Lines omitted for brevity
 ```
 
+### Configuración de IP del host en macOS
+Aunque los detalles varían, al igual que Windows, macOS tiene una interfaz gráfica para ver la configuración de red y una variedad de comandos de red. Esta sección muestra ejemplos de cada uno, comenzando con la Figura 7-10. Muestra la configuración de red en macOS para una interfaz Ethernet, con la dirección, la máscara, el enrutador predeterminado y las direcciones del servidor DNS. También tenga en cuenta que la configuración indica que la interfaz utiliza DHCP.
+
+![](img/7.10.png)
+
+Tanto macOS como Linux admiten el comando `ifconfig` para enumerar información similar al comando `ipconfig /all` de Windows. (Tenga en cuenta que `ifconfig` no tiene una opción `/all`). Es de destacar que el comando `ifconfig` no enumera la puerta de enlace predeterminada ni los servidores DNS, por lo que el Ejemplo 7-8 incluye otros dos comandos de macOS que proporcionan esos detalles.
+
+```
+Wendell-Odoms-iMac:~ wendellodom$ ifconfig en0
+en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	options=10b<RXCSUM,TXCSUM,VLAN_HWTAGGING,AV>
+	ether 0c:4d:e9:a9:9c:41\
+	inet 192.168.1.102 netmask 0xffffff00 broadcast 192.168.1.255
+! IPv6 details omitted for brevity
+	media: autoselect (1000baseT <full-duplex,flow-control,energy-efficient-ethernet>)
+	status: active
+		
+Wendell-Odoms-iMac:~ wendellodom$ networksetup -getinfo Ethernet
+DHCP Configuration
+IP address: 192.168.1.102
+Subnet mask: 255.255.255.0
+Router: 192.168.1.1 
+Client ID:
+IPv6: Automatic|
+IPv6 IP address: none
+IPv6 Router: none
+Ethernet Address: 0c:4d:e9:a9:9c:41
+
+Wendell-Odoms-iMac:~ wendellodom$ networksetup -getdnsservers Ethernet
+8.8.8.4
+8.8.8.8
+```
+
+Al igual que Windows, macOS agrega una ruta predeterminada a su tabla de enrutamiento de host basada en la puerta de enlace predeterminada, así como una ruta a la subred local calculada en función de la dirección IP y la máscara aprendidas con DHCP. Y al igual que Windows, macOS usa el comando `netstat -rn` para enumerar esas rutas, pero con varias diferencias en el resultado. Es de destacar que en el ejemplo de macOS que se muestra en el Ejemplo 7-9, la salida representa la ruta predeterminada usando la palabra default en lugar de los números emparejados 0.0.0.0 y 0.0.0.0 para la subred y la máscara de destino.
+
+```
+C:\DOCUME1\OWNER>
+Routing tables
+
+Internet:
+Destination      Gateway           Flags       Refs     Use    Netif     Expire
+default          192.168.1.1       UGSc        92       0      en0  
+127              127.0.0.1         UCS         0        0      lo0 
+127.0.0.1        127.0.0.1         UH          4        1950    lo0 
+169.254          link#5            UCS         2        0       en0           ! 
+169.254.210.104  0:5:1b:a3:5d:d0   UHLSW       0        0       en0           ! 
+192.168.1        link#5            UCS         9        0       en0           ! 
+192.168.1.1/32   link#5            UCS         1        0       en0           ! 
+192.168.1.1      60:e3:27:fb:70:97 UHLWIir     12       2502    en0        1140
+192.168.1.102/32 link#5            UCS         0        0       en0           ! 
+! lines omitted for brevity
+```
+
+### Configuración de IP del host en Linux
+En Linux, las ventanas gráficas para mostrar la configuración de red difieren por muchas razones.
+
+Primero, el mundo Linux incluye una gran cantidad de versiones o distribuciones diferentes de Linux. Además, Linux separa el sistema operativo del escritorio (la interfaz gráfica) para que un usuario de una distribución de Linux pueda elegir entre diferentes interfaces de escritorio. Como resultado, verá diferentes pantallas GUI para mostrar la configuración de red de Linux.
+
+Para tener una perspectiva, esta sección muestra algunos ejemplos del escritorio MATE incluido en la distribución Ubuntu MATE Linux (www.ubuntu-mate.org). Primero, la imagen de la Figura 7-11 muestra detalles de un adaptador de LAN inalámbrica e incluye la dirección IPv4, la máscara, el enrutador predeterminado y la dirección IP DNS principal.
+
+![](img/7.11.png)
+
+Desde la línea de comandos, los hosts Linux suelen admitir un gran conjunto de comandos. Sin embargo, un conjunto de comandos más antiguo, denominado en conjunto net-tools, ha quedado obsoleto en Linux, hasta el punto de que algunas distribuciones de Linux no incluyen net-tools. (Puede agregar fácilmente net-tools a la mayoría de las distribuciones de Linux). La biblioteca net-tools incluye `ifconfig` y `netstat -rn`. Para reemplazar esas herramientas, Linux usa la biblioteca `iproute`, que incluye un conjunto de comandos y funciones de reemplazo, muchos de ellos realizados con el comando `ip` y algunos parámetros.
+
+NOTA Consulte este enlace para obtener una comparación más amplia de los comandos: [aqui](https://access.red hat.com/sites/default/files/attachments/rh_ip_command_cheatsheet_1214_jc)
+
+El ejemplo 7-10 muestra un ejemplo del comando `ifconfig` para la misma interfaz detallada en la Figura 7-11. Tenga en cuenta que enumera las direcciones Ethernet MAC e IPv4, junto con la máscara de subred, similar a la versión macOS del comando. Sin embargo, en Linux, también muestra algunos contadores de interfaz.
+
+```
+chris@LL ~ $ ifconfig wlan0 
+wlan0 Link encap:Ethernet HWaddr 30:3a:64:0d:73:43 
+		inet addr:192.168.1.223 Bcast:192.168.1.255 Mask:255.255.255.0 
+		inet6 addr: fe80::e5b8:f355:636a:b2a4/64 Scope:Link 
+		UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1 
+		RX packets:2041153 errors:0 dropped:0 overruns:0 
+		frame:0 TX packets:712814 errors:0 dropped:0 overruns:0 carrier:0 
+		collisions:0 txqueuelen:1000
+		RX bytes:2677874115 (2.6 GB) TX bytes:134076542 (134.0 MB)
+
+chris@LL ~ $ ip address 
+3: wlan0: mtu 1500 qdisc mq state UP group default qlen 1000 
+	link/ether 30:3a:64:0d:73:43 brd ff:ff:ff:ff:ff:ff 
+	inet 192.168.1.223/24 brd 192.168.1.255 scope global wlan0 
+		valid_lft forever preferred_lft forever 
+	inet6 fe80::e5b8:f355:636a:b2a4/64 scope link 
+		valid_lft forever preferred_lft forever
+```
+
+La parte inferior del ejemplo muestra el comando del paquete `iproute` que reemplaza a `ifconfig`, es decir, la dirección IP. Tenga en cuenta que muestra la misma información básica de direccionamiento, solo que la máscara de subred se muestra en notación de prefijo en lugar de en decimal con puntos.
+
+Linux también admite desde hace mucho tiempo el comando `netstat -rn`, como parte del paquete `net-tools`, con un ejemplo que se muestra en el Ejemplo 7-11. El resultado muestra una ruta predeterminada, pero con un estilo que muestra el destino como 0.0.0.0. Como es habitual, la ruta predeterminada apunta a la puerta de enlace predeterminada aprendida con DHCP: 192.168.1.1. También enumera una ruta a la subred local (192.168.1.0 como se resalta en la parte inferior del resultado).
+
+```
+chris@LL ~ $  netstat -rn
+Kernel IP routing table
+Destination     Gateway        Genmask          Flags   MSS Window  irtt Iface
+0.0.0.0         192.168.1.1     0.0.0.0           UG      0   0       0   wlan0
+169.254.0.0     0.0.0.0         255.255.0.0       U       0   0       0   wlan0
+192.168.1.0     0.0.0.0         255.255.255.0     U       0   0       0   wlan0
+
+chris@LL ~ $ ip route 
+default via 192.168.1.1 dev wlan0  proto static  metric 600
+169.254.0.0/16 dev wlan0  scope link  metric 1000 
+192.168.1.0/24 dev wlan0  proto kernel  scope link  src 192.168.1.223  metric 600 
+chris@LL ~ $
+```
+
+La parte inferior del ejemplo muestra el comando destinado a reemplazar `netstat -rn`: `ip route`.
+Tenga en cuenta que también muestra una ruta predeterminada que hace referencia al enrutador predeterminado, junto con una ruta para la subred local.
+
+### Comandos de referencia
+
+| Comando                               | Descripción                                                                                                                                                                                                          |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ip helper-address IP-address          | An interface subcommand that tells the router to notice local subnet broadcasts (to 255.255.255.255) that use UDP, and change the source and destination IP address, enabling DHCP servers to sit on a remote subnet |
+| ip address dhcp                       | An interface subcommand that tells the router or switch to use DHCP to attempt to lease a DHCP address from a DHCP server                                                                                            |
+| show arp, show ip arp                 | Command that lists the router’s IPv4 ARP table                                                                                                                                                                       |
+| show dhcp lease                       | Switch command that lists information about addresses leased because of the configuration of the ip address dhcp command                                                                                             |
+| show ip default-gateway               | Switch command that lists the switch’s default gateway setting, no matter whether learned by DHCP or statically configured                                                                                           |
+| ipconfig /al                          | (Windows) Lists IP address, mask, gateway, and DNS servers                                                                                                                                                           |
+| ifconfig                              | (Mac, Linux) Lists IP address and mask for an interface                                                                                                                                                              |
+| networksetup -getinfo interface       | (Mac) Lists IP settings including default router                                                                                                                                                                     |
+| networksetup -getdnsservers interface | (Mac) Lists DNS servers used                                                                                                                                                                                         |
+| netstat -rn                           | (Windows, Mac, Linux) Lists the host’s routing table, including a default route that uses the DHCP-learned default gateway                                                                                           |
+| ip address                            | (Linux) Lists IP address and mask information for interfaces; the Linux replacement for ifconfig                                                                                                                     |
+| ip route                              | (Linux) Lists routes, including the default route and a route to the local subnet; the Linux replacement for netstat -rn                                                                                             |
