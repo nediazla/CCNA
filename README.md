@@ -44,7 +44,7 @@ Chapter 19, “Understanding Ansible, Puppet, and Chef,” analiza la necesidad 
 
 # Extras
 
-## [CCNA Cheat Sheet](extras/CCNA_Cheat_sheet.md)
+## [CCNA Cheat Sheet](extras/CCNA_Cheat_Sheet.md)
 ## [OSPF](extras/OSPF.md)
 ## [modelo de redes](extras/Networking_Model.md)
 
