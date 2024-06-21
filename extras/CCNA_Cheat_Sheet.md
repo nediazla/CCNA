@@ -20,7 +20,6 @@
 | (config)# ipv6 route 2001:41d0:8:e115::/64 [g1/1] [next hop]    | Next hop is required for Ethernet interface in IPv6      |
 | (config)# ip host the-space.agency 178.32.222.21                | Create a static host entry on this device.               |
 | (config)# ipv6 unicast-routing                                  | Globally enable ipv6 routing.                            |
-
 ## Troubleshoot basic Networking
 
 | Command                                 | Description                                              |
@@ -41,7 +40,6 @@
 | # ping 1.2.3.4 [source g1/1]            |                                                          |
 | # traceroute 1.2.3.4 [source g1/1]      |                                                          |
 | # show control-plane host open-ports    | netstat -tulpn on this cisco device, basically           |
-
 ## Troubleshoot networks with SPAN
 
 | Command                                                         | Description                    |
@@ -49,7 +47,6 @@
 | (config)# monitor session 23 source interface g1/1 {rx,tx,both} | Define SPAN #23 input as g1/1  |
 | (config)# monitor session 23 destination interface g1/2         | Define SPAN #23 output as g1/2 |
 | # show monitor                                                  | Show all configured SPANs      |
-
 ## Port Security
 
 | Command                                                          | Description                                         |
@@ -63,7 +60,6 @@
 | (config-if)# shutdown  (config-if)# no shutdown                  | Reenable if after port-security violation.          |
 | (config)# errdisable recovery cause psecure-violation            | Reenable if automatically after problem is fixed.   |
 | (config)# errdisable recovery interval 42                        | Recheck every 42 seconds. (min 30, default 300)     |
-
 ## Port-security violation terms
 
 | Term       | Definition                                           |
@@ -71,7 +67,6 @@
 | protect    | Drops packets, no alert                              |
 | restrict   | Drops packets, increments security-violation count   | 
 | shutdown   | Shuts down the port (default)                        |
-
 ## Troubleshooting Port Security
 
 | Command                               | Description                                            |
@@ -79,14 +74,12 @@
 | # show port-security [interface g1/1] | port status, violation mode, max/total MACs,...        |
 | # show port-security address          | Secure MACs on ports.                                  |
 | # show errdisable recovery            | Check if autorecovery is enabled. Disabled by default. |
-
 ## Configure vlans
 
 Nota: Incluso cuando el puerto de un switch se cambia de acceso a troncal, su VLAN de acceso se mantiene en la configuración.
 Cuando falla la negociación troncal automática (por ejemplo, porque desconecto un enlace entre los conmutadores y lo pongo en mi computadora portátil) la VLAN de acceso configurada se activa una vez más y es posible que pueda acceder a partes de la red.
 Se supone que no debo hacerlo. Desactive siempre la negociación automática DTP/troncal.
-
-# Layer2 Switch Vlan Config
+## Layer2 Switch Vlan Config
 
 | Command                                           | Description                                             |
 |:--------------------------------------------------|:--------------------------------------------------------|
@@ -100,7 +93,6 @@ Se supone que no debo hacerlo. Desactive siempre la negociación automática DTP
 | (config-if)# switchport trunk encapsulation dot1q | Sometimes the default is ciscos old isl.                |
 | (config-if)# switchport trunk native vlan 256     | Except for vlan 256, which is still untagged.           |
 | (config-if)# switchport nonegotiate               | Disable DTP                                             |
-
 ## Layer3 Switch Vlan Config
 
 | Command                                       | Description                                |
@@ -110,7 +102,6 @@ Se supone que no debo hacerlo. Desactive siempre la negociación automática DTP
 | (config-if)# no shutdown                      | virtual interfaces are disabled by default |
 | (config-if)# int g                            |                                            |
 | (config)# no vlan 23                          | delete vlan 23                             |
-
 ## Router (on a Stick) Vlan Config
 
 | Command                                            | Description                                                      |
@@ -119,7 +110,6 @@ Se supone que no debo hacerlo. Desactive siempre la negociación automática DTP
 | (config-subif)# encapsulation dot1q 10             | enable ieee 802.1Q vlan tagging with vlan 10 on the subinterface |
 | (config-subif)# ip address 10.0.10.1 255.255.255.0 |                                                                  |
 | # show vlans                                       | Show vlans and their trunk interfaces                            |
-
 ## Troubleshoot Vlans on a switch
 
 | Command                                                | Description                             |
@@ -130,7 +120,6 @@ Se supone que no debo hacerlo. Desactive siempre la negociación automática DTP
 | # show run interface vlan 1                            | Quick way to search the running config. |
 | # show interface status                                | Show trunk mode / access vlan           |
 | # show dtp interface g1/1                              | Show current DTP mode for g1/1          |
-
 ## VTP
 
 | Command                                          | Description |
@@ -139,16 +128,14 @@ Se supone que no debo hacerlo. Desactive siempre la negociación automática DTP
 | (config)# vtp domain <domain-name>               |             |
 | (config)# vtp password <password>                |             |
 | (config)# vtp pruning                            |             |
-
 ## Troubleshoot VTP
 
 | Command           | Description                             |
 |:------------------|:----------------------------------------|
 | show vtp status   | show vtp domain, pruning, mode and more |
 | show vtp password |                                         |
-
 ## STP
-Spaning Tree Protocol (802.1D) blocks ports with redundant links to prevent layer 2 loops and broadcast storms.
+Spaning Tree Protocol (802.1D) bloquea puertos con enlaces redundantes para evitar bucles de capa 2 y tormentas de transmisión.
 
 | Command                                                  | Description                                          |
 |:---------------------------------------------------------|:-----------------------------------------------------|
@@ -158,7 +145,6 @@ Spaning Tree Protocol (802.1D) blocks ports with redundant links to prevent laye
 | (config-if)# spanning-tree bpduguard enable              | Enable gpduguard on this interface                   |
 | (config-if)# spanning-tree portfast                      | Enable portfast on this interface                    |
 | (config-if)# spanning-tree guard root                    | Enable root guard on this interface                  |
-
 ## Troubleshoot STP
 
 | Command                                      | Description                                         |
@@ -167,14 +153,12 @@ Spaning Tree Protocol (802.1D) blocks ports with redundant links to prevent laye
 | # show spanning-tree summary                 | Is global portfast/bpduguard configured?            |
 | # show running-config interface g1/1         | Is portfast/bpduguard configured on this interface? |
 | # show spanning-tree interface g1/1 portfast | Is portfast active on this interface?               |
-
 ## RSTP
 Rapid Spanning Tree Protocol (802.1w) reduces convergence time after a topology change compares to STP.
 
 | Command                                       | Description                          |
 |:----------------------------------------------|:-------------------------------------|
 | (config)# spanning-tree mode rapid-pvst       | Change spanning-tree mode to RSTP    |
-
 ## Etherchannel (Link Aggregation)
 
 ¿Cómo configurar LACP? :
@@ -189,7 +173,6 @@ Mira los modos otra vez
 | (config)# interface port-channel 1                            | Configure virtual interface for etherchannel 1 |
 | (config-if)# switchport mode trunk                            | Put etherchannel 1 in trunk mode               |
 | (config-if)# switchport trunk allowed vlan 10,20,30           | Add tagged vlans 10,20,30 on ethercahnnel 1    |
-
 ## Troubleshoot Etherchannel (Link Aggregation)
 
 | Command                            | Description                                           |
@@ -197,7 +180,6 @@ Mira los modos otra vez
 | # show interface port-channel 1    | Has the combined bandwidth and members as extra info. |
 | # show etherchannel summary        | Show etherchannel protocols and members as a list     |
 | # show etherchannel port-channel 1 | Show per member state and stats                       |
-
 ## Configure a Serial
 Layer 1 link speed is dictated by a CSU/DSU, in a lab without an external CSU/DSU a DTE (Data Terminal Equipment) cable and DCE (Data Communications Equipment) cable are used.
 
@@ -206,7 +188,6 @@ Layer 1 link speed is dictated by a CSU/DSU, in a lab without an external CSU/DS
 | (config)# interface serial 1/0          | Configure interface serial 1/0                  |
 | (config-if)# clock rate 128000          | Set clock rate on DCE router side to 128 kbps   |
 | (config)# show controllers serial 1/0   | Verify clock rate for serial interface 1/0      |
-
 ## ACLs
 
 \#1-#99, #1300-#1999: Standard IPv4 ACL
@@ -230,7 +211,6 @@ Default mask for standard ACLs: 0.0.0.0
 | (config-ext-nac1)# permit udp host 10.20.30.40 any eq dns  |                                                           |
 | (config-ext-nac1)# deny udp host 10.20.30.40 any           |                                                           |
 | (config-ext-nac1)# permit ip any any                       |                                                           |
-
 ## Interface ACLs
 
 | Command                                          | Description                                                               |
@@ -241,17 +221,15 @@ Default mask for standard ACLs: 0.0.0.0
 | (config-if)# ip access-group local_only in       | Overwrite the used ACL, only one ACL per if + proto + direction!          |
 | (config-if)# ipv6 traffic-filter 23 out          | The v6 syntax of course differs...                                        |
 | # show ip interface g1/1 &#124; incl access list | Show ACLs on g1/1 (When none set shows not set for v4 and nothing for v6) |
-
 ## Troubleshooting ACLs
 
 | Command                      | Description                                              |
 |:-----------------------------|:---------------------------------------------------------|
 | # show [ip[v6]] access-lists | Show all configured ACLs                                 |
 | # show access-list 10        | Display all rules in ACL #10 and how often they matched. |
-
 ## NAT
 
-Local addresses are any address as it appears inside the network. Global addresses are any address as it appears outside the network.
+Las direcciones locales son cualquier dirección tal como aparece dentro de la red. Las direcciones globales son cualquier dirección tal como aparece fuera de la red.
 
 | Term           | Definition                                                                   |
 |:---------------|:-----------------------------------------------------------------------------|
@@ -268,13 +246,11 @@ Local addresses are any address as it appears inside the network. Global address
 | (config)# int g1/2                               | Enter if-config mode for g1/2                                        |
 | (config-if)# ip address 10.10.23.1 255.255.255.0 | configure 10.10.23.1/24 on g1/2                                      |
 | (config-if)# ip nat inside                       | Packets going out, need to change their dest, incoming their src ip. |
-
 ## SNAT
 
 | Command                                                  | Description                                                 |
 |:---------------------------------------------------------|:------------------------------------------------------------|
 | (config)# ip nat inside source static 10.10.23.2 1.2.3.5 | SNAT - statically map an internal ip 1:1 to an external ip. |
-
 ## DNAT
 
 | Command                                                             | Description                                                  |
@@ -293,7 +269,6 @@ IP internas. La información de nivel superior, como los números de puerto de c
 |:---------------------------------------------------------------|:-----------------------------------------------------|
 | (config)# access-list 10 permit 10.10.0.0 0.0.255.255          | Create an ACL identifying 10.10/16                   |
 | (config)# ip nat inside source list 10 interface g1/1 overload | PAT IPs matching ACL #10 many:1 with g1/1s public IP |
-
 ## Troubleshooting NAT
 
 | Command                            | Description                                                                     |
@@ -305,7 +280,6 @@ IP internas. La información de nivel superior, como los números de puerto de c
 
 Is the ACL correct? Is there a route to the address?
 Note: NAT Table entries are kept for 24h after the last use by default.
-
 ## DHCP Server
 
 | Command                                                  | Description                                            |
@@ -319,7 +293,6 @@ Note: NAT Table entries are kept for 24h after the last use by default.
 | (dhcp-config)# lease <days> <hours> <mins>               | lease validity time                                    |
 | (config)# int g1/1                                       | Enter interface config mode on client facing interface |
 | (config-if)# ip helper-address 192.168.1.1               | Relay DHCP Requests to this host                       |
-
 ## Troubleshooting DHCP
 
 | Command                       | Description                                           |
@@ -330,7 +303,6 @@ Note: NAT Table entries are kept for 24h after the last use by default.
 | # show ip dhcp binding        | Show which mac got which ip                           |
 | # sh run &#124; section dhcp  | See if ip dhcp exclude-address / pool stuff is wrong. |
 | # sh run int g1/1             | See if ip helper-address is wrong.                    |
-
 ## HSRP
 
 | Command                                             | Description                                                      |
@@ -339,13 +311,11 @@ Note: NAT Table entries are kept for 24h after the last use by default.
 | (config-if)# standby [group-number] priority <prio> | (optional) Set prio of this router.                              |
 | (config-if)# standby [group-number] preempt         | (optional) Preempt other routers when this router becomes active |
 | (config-if)# standby {1,2}                          | (optional) Set HSRP Version                                      |
-
 ## Troubleshooting HSRP
 
 | Command        | Description                                                                |
 |:---------------|:---------------------------------------------------------------------------|
 | # show standby | HSRP Groups, their VIPs, state, active router, standby router, preemption. |
-
 ## SLAs
 
 | Command                                                             | Description                                       |
@@ -354,14 +324,12 @@ Note: NAT Table entries are kept for 24h after the last use by default.
 | (config-ip-sla)# icmp-echo 1.2.3.4                                  | Define icmp-echo test.                            |
 | (config-ip-sla)# frequency 42                                       | frequency in seconds.                             |
 | (config)# ip sla schedule 23 life {forever, seconds} start-time now | Start test #23 now and until manually stopped.    |
-
 ## Troubleshooting SLAs
 
 | Command                     | Description                        |
 |:----------------------------|:-----------------------------------|
 | # show ip sla configuration | Show all configured ip sla configs |
 | # show ip sla statistics    | Show sla results                   |
-
 ## Device Management
 
 | Command                               | Description                                                                  |
@@ -379,7 +347,6 @@ Note: NAT Table entries are kept for 24h after the last use by default.
 | # setup                               | initial configuration dialog                                                 |
 | # show version                        | ios, bootloader and hardware infos, uptime, configuration register           |
 | # show {running,startup}-config       |                                                                              |
-
 ## Firmware Management
 
 Note: flash: is the main flash memory on all iOS devices
@@ -393,7 +360,6 @@ Note: flash: is the main flash memory on all iOS devices
 |                                                       |                                                               |
 | # show file systems                                   | Lists available file systems                                  |
 | # show flash0:                                        | List fs content and free space.                               |
-
 ## License Management
 
 | Command                                                                       | Description                                              |
@@ -412,7 +378,6 @@ Note: flash: is the main flash memory on all iOS devices
 | # show license                                                                | active licenses                                          |
 | # show license feature                                                        | technology packe and feature licenses supported.         |
 | # show license udi                                                            | product id and serial number needed to order licenses    |
-
 ## Reset Password
 
 | Command                          | Description                                                            |
@@ -424,7 +389,6 @@ Note: flash: is the main flash memory on all iOS devices
 | (config)# enable secret foobar   | Overwrite forgotten password                                           |
 | (config)# config-register 0x2102 | Do load startup-config after boot again.                               |
 | # save                           |                                                                        |
-
 ## Telnet / Console
 
 | Command                                        | Description                                                 |
@@ -440,7 +404,6 @@ Note: flash: is the main flash memory on all iOS devices
 | (config-line)# exec-timeout 10                 | Autologout after 10 Minutes                                 |
 | (config-line)# login local                     | Require login on telnet/console connection via local users. |
 | (config)# username h.acker secret C1sco123     | Create local user with encrypted password.                  |
-
 ## SSH
 
 | Command                                        | Description                                              |
@@ -452,7 +415,6 @@ Note: flash: is the main flash memory on all iOS devices
 | (config-line)# transport input ssh             | Force ssh, disable telnet.                               |
 | # show ip ssh                                  | SSH version, timeout time, auth retries..                |
 | # show ssh                                     | List of active connections                               |
-
 ## Clock
 
 | Command                                  | Description                    |
@@ -464,7 +426,6 @@ Note: flash: is the main flash memory on all iOS devices
 | (config)# ntp master [stratum]           | Enable ntp server.             |
 | # show ntp associations                  | ntp connections.               |
 | # show ntp status                        | synchronized?, statum, ...     |
-
 ## Disable unused services
 
 | Command                              | Description                           |
@@ -473,7 +434,6 @@ Note: flash: is the main flash memory on all iOS devices
 | (config)# no ip http server          | Stop the http server (but not https). |
 | (config)# no cdp enable              | Stop CDP                              |
 | # auto secure                        |                                       |
-
 ## Radius
 
 | Command                                                         | Description                          |
@@ -486,7 +446,6 @@ Note: flash: is the main flash memory on all iOS devices
 | (config)# aaa group server radius <group-name>                  | Create authentication group.         |
 | (config-sg-radius)# server name <radius-conf-name>              | Using the radius config.             |
 | (config)# aaa authentication login group <group-name> local     | Allow that group and local users in. |
-
 ## TACACS+
 
 | Command                                                     | Description                          |
@@ -500,7 +459,6 @@ Note: flash: is the main flash memory on all iOS devices
 | (config)# aaa group server tacacs+ <group-name>             | Multiple possible.                   |
 | (config-sg-tacacs+)# server name <tacacs-conf-name>         |                                      |
 | (config)# aaa authentication login group <group-name> local | Allow that group and local users in. |
-
 ## Syslog
 
 | Command                      | Description                                    |
@@ -514,7 +472,6 @@ service time stamps log [datetime, log] | Needed for date and time in syslog mes
 | Command        | Description                         |
 |:---------------|:------------------------------------|
 | # show logging | syslog status, local logging buffer |
-
 ## SNMP
 
 | Command                                           | Description                  |
@@ -530,7 +487,6 @@ service time stamps log [datetime, log] | Needed for date and time in syslog mes
 | # show snmp location  |             |
 | # show snmp contact   |             |
 | # show snmp host      |             |
-
 ## CDP - Cisco Discovery Protocol
 
 | Command                        | Description                                                     |
@@ -539,7 +495,6 @@ service time stamps log [datetime, log] | Needed for date and time in syslog mes
 | # (config-if)# [no] cdp enable | Enable cdp on an interface                                      |
 | # show cdp neighbors [detail]  | List connected cisco devices (name, local/remote port, [ip] ..) |
 | # show cdp entry *             |                                                                 |
-
 ## LLDP - Link Layer Discovery Protocol
 
 | Command                         | Description                                  |
@@ -547,7 +502,6 @@ service time stamps log [datetime, log] | Needed for date and time in syslog mes
 | # [no] lldp run                 | Enables lldp globaly and on all interfaces   |
 | (config-if)# [no] lldp transmit | Enable lldp packet transmission on interface |
 | (config-if)# [no] lddp receive  | Enable lldp packet reception on interace     |
-
 ## PPP
 
 | Command                                                   | Description                                       |
@@ -568,8 +522,6 @@ service time stamps log [datetime, log] | Needed for date and time in syslog mes
 | (config-if)# ppp authentication chap                      | Require remote to authenticate via chap           |
 
 Note: When routy1 connects to routy2 it looks in it's local user database for a user named routy2 and uses that users password. This means the passwords have to be the same on both sides and the usernames must be the other sides hostname.
-
-
 ## Troubleshooting PPP
 
 | Command                    | Description                                    |
@@ -578,7 +530,6 @@ Note: When routy1 connects to routy2 it looks in it's local user database for a 
 | # show interfaces          | encapsulation, logical bandwidth               |
 | # show ppp all             | session state, auth type, peer ip and name     |
 | # debug ppp authentication |                                                |
-
 ## MLP
 
 | Command                                           | Description                      |
@@ -592,13 +543,11 @@ Note: When routy1 connects to routy2 it looks in it's local user database for a 
 | (config-if)# encapsulation ppp                    |                                  |
 | (config-if)# ppp multilink                        |                                  |
 | (config-if)# ppp multilink group 23               | Join mlp group #23.              |
-
 ## Troubleshooting MLP
 
 | Command            | Description   |
 |:-------------------|:--------------|
 | show ppp multilink | Physical IFs, |
-
 ## PPPoE
 
 | Command                                       | Description                                                 |
@@ -610,14 +559,12 @@ Note: When routy1 connects to routy2 it looks in it's local user database for a 
 | (config)# interface s0/0/0                    |                                                             |
 | (config-if)# no ip address                    |                                                             |
 | (config-if)# pppoe-client dial-pool-number 23 | ... the pool is a group of one or more physical interfaces. |
-
 ## Troubleshooting PPPoE
 
 | Command                   | Description                                               |
 |:--------------------------|:----------------------------------------------------------|
 | # show ip interface brief | is the dialer if up? Does the dialer have an IP via IPCP? |
 | # show pppoe session      | Are PPPoE sessions established? Which ports.              |
-
 ## GRE
 
 Note: We can run OSPF and other routing protocols through this gre tunnel, as gre supports multicast.
@@ -631,15 +578,13 @@ Note: We can run OSPF and other routing protocols through this gre tunnel, as gr
 
 tunnel mode gre ip
 ip mtu
-
-### Troubleshooting GRE
+## Troubleshooting GRE
 
 | Command                            | Description                                           |
 |:-----------------------------------|:------------------------------------------------------|
 | # show ip interface brief tunnel23 | Line hould be up, given a route to the destination.   |
 | # show inteface tunnel23           | Tunnel source, dest, protocol                         |
 | # show ip route                    | Should include the transit net as directly connected. |
-
 ## RIPv2
 
 | Command                                                             | Description                                             |
@@ -655,7 +600,6 @@ ip mtu
 | (config-router)# no passive-interface g1/2                          | Overwrite passive-interface default                     |
 | (config-router)# default information originate                      | Advertise the default route.                            |
 | (config-if)# no ip rip advertise 123                                |                                                         |
-
 ## Troubleshooting RIPv2
 
 | Command                 | Description                                              |
@@ -664,7 +608,6 @@ ip mtu
 | # show ip rip database  | Routes learned by rip, used to combile the routing table |
 | # show ip route         | Show learned routes                                      |
 | # clear ip route *      | Get rid of all routes                                    |
-
 ## EIGRP
 
 Note: The network command enables any interface with an ip in that net to send and receive EIGRP updates. Also it enables routes to this nets to start beeing advertised.
@@ -688,7 +631,6 @@ Note: The network command enables any interface with an ip in that net to send a
 | # show ip[v6] eigrp interfaces [if-name]        | If, Number of peers, pending routes, queued pkgs     |
 | # show ip[v6] route [eigrp]                     | Routes starting with D were learned via EIGRP        |
 | # show ip[v6] eigrp topology [all-links]        | Topology table, as#, router-id                       |
-
 ## EIGRP with ipv6
 
 | Command                         | Description                                   |
@@ -697,7 +639,6 @@ Note: The network command enables any interface with an ip in that net to send a
 | (config)# ipv6 router eigrp 23  | Configure eigrp as #23                        |
 | (config-rtr)# no shutdown       | Enable this eigrp routing process.            |
 | (config-if)# [no] ipv6 eigrp 23 | Enable eigrp with ipv6 for as #23 on this if. |
-
 ## OSPF
 
 cost = reference bandwidth / interface bandwidth
@@ -715,7 +656,6 @@ The default reference bandwith is 100Mbps. Everything faster has a cost of 1.
 | (config-router)# auto-cost reference-bandwidth <refbw in Mb/s> | Change reference bandwidth speed                |
 | (config-if)# ip ospf cost 23                                   | Overwrite interface cost to 23                  |
 | (config-if)# bandwidth <bw in kb/s>                            | Change interface bandwidth                      |
-
 ## Router Types
 | Term                                     | Definition                                                                       |
 |:-----------------------------------------|:---------------------------------------------------------------------------------|
@@ -723,7 +663,6 @@ The default reference bandwith is 100Mbps. Everything faster has a cost of 1.
 | Backbone Router                          | Has one or more OSPF interfaces in the backbone                                  | 
 | Area Boundary Router (ABR)               | Has at least one interface in the backbone area and at least one in another area |
 | Autonomous System Boundary Router (ASBR) | Injects routes into OSPF via redistribution from other routing protocols         |
-
 ## OSPF with ipv6 (OSPFv3)
 
 | Command                                     | Description                                        |
@@ -734,8 +673,6 @@ The default reference bandwith is 100Mbps. Everything faster has a cost of 1.
 | (config-if)# ipv6 ospf <pid> area <area id> | Required for OSPFv3.                               |
 
 The networks command does not exist, non mentioned commands are the same.
-
-
 ## Troubleshooting OSPF
 
 | Command                            | Description                                                  |
@@ -749,8 +686,6 @@ The networks command does not exist, non mentioned commands are the same.
 | # show ip(v6) ospf interface brief | ospf enabled interfaces                                      |
 | # show ip(v6) ospf interface g1/1  | ospf related infos for g1/1, passive?                        |
 | # show ip(v6) route (ospf)         | ospf routes are marked O, show route ad and cost             |
-
-
 ## BGP
 
 Nota: En otros protocolos de enrutamiento, la declaración de red se utiliza para determinar las interfaces a través de las cuales el protocolo debe comunicarse con sus vecinos. En BGP indica sólo qué rutas deben anunciarse a los vecinos BGP. La red debe coincidir con una ruta exacta en la tabla de enrutamiento o aún así no se anunciará.
@@ -767,18 +702,15 @@ Nota: En otros protocolos de enrutamiento, la declaración de red se utiliza par
 | # show ip bgp summary             | neighbors IPs, ASs and session states, bgp version |
 | # show ip bgp neighbors [peer-ip] | tcp sessions and timers, bgp parameters            |
 | # show ip bgp                     | routing infos received from all peers              |
-
 ## CLI
-
-### Default Behavior
+## Default Behavior
 
 Here I'll collect crazy default behaviors and how to fix them, I guess..
 
 | Command                       | Description                                      |
 |:------------------------------|:-------------------------------------------------|
 | (config)# no ip domain-lookup | Don't try to telnet unknown single word commands |
-
-### Modes
+## Modes
 
 | Mode      | Prompt         | enter                         |
 |:----------|:---------------|:------------------------------|
@@ -788,8 +720,7 @@ Here I'll collect crazy default behaviors and how to fix them, I guess..
 | Interface | (config-if)#   | (config)# interface g1/0      |
 | Line      | (config-line)# | (config)# line vty 0 4        |
 | DHCP      | (dhcp-config)# | (config)# ip dhcp pool Foobar |
-
-### Filters
+## Filters
 
 | Name              | Function                                                                  |
 |:------------------|:--------------------------------------------------------------------------|
@@ -797,8 +728,7 @@ Here I'll collect crazy default behaviors and how to fix them, I guess..
 | section interface | find a section including 'interface'                                      |
 | begin interface   | Show remaining config starting with the first line containing 'interface' |
 | exclude !         | exclude all line containing ! (comments)                                  |
-
-### Navigation
+## Navigation
 
 | Sequence       | Function                                       |
 |:---------------|:-----------------------------------------------|
@@ -814,12 +744,8 @@ Here I'll collect crazy default behaviors and how to fix them, I guess..
 | Ctrl-E         | Move Cursor to the end of the line             |
 | Tab            | Autocompletion                                 |
 | ?              | Help, can be entered mostly everywhere         |
-
-
-
 ## Packet Types
-
-### Ethernet Frame
+## Ethernet Frame
 
 | Field                      | Field Length    | Description                                                                 |
 |:---------------------------|:----------------|:----------------------------------------------------------------------------|
@@ -830,8 +756,7 @@ Here I'll collect crazy default behaviors and how to fix them, I guess..
 | Type or Length             | 2 bytes         | Layer three type OR length if smaler then 1536 bytes.                       |
 | Data                       | 46 - 1500 bytes | Payload                                                                     |
 | Frame check sequence (FCS) | 4 bytes         | 32 bit CRC Checksum                                                         |
-
-### IPv4 Header
+## IPv4 Header
 
 | Field                        | Field Length | Description                            |
 |:-----------------------------|:-------------|:---------------------------------------|
@@ -847,8 +772,7 @@ Here I'll collect crazy default behaviors and how to fix them, I guess..
 | Header Checksum              | 2 bytes      |                                        |
 | Options (optional)           | 16 bytes     |                                        |
 | Padding                      | max. 31 bits | Pad to the nearest 32 bit boundary     |
-
-### TCP Segment
+## TCP Segment
 
 | Field                  | Field Length | Description                                                                 |
 |:-----------------------|:-------------|:----------------------------------------------------------------------------|
@@ -864,8 +788,7 @@ Here I'll collect crazy default behaviors and how to fix them, I guess..
 | Urgent Pointer         | 2 bytes      | Points to the last 'urgent' byte in the Segment, used when URG flag is set. |
 | Options                | 0 - 320 bits | The Size is determined by Header length. TODO:                              |
 | Data                   | variable     |                                                                             |
-
-### UDP Segment
+## UDP Segment
 
 | Field               | Field Length | Description                   |
 |:--------------------|:-------------|:------------------------------|
@@ -874,7 +797,6 @@ Here I'll collect crazy default behaviors and how to fix them, I guess..
 | Length              | 2 bytes      | Length of the whole Segment   |
 | Checksum (optional) | 2 bytes      | Checksum of the whole Segment |
 | Data                | variable     |                               |
-
 ## To Sort and Misc
 
 | Command                          | Description                                   |
