@@ -44,6 +44,7 @@ Chapter 19, “Understanding Ansible, Puppet, and Chef,” analiza la necesidad 
 
 # Extras
 
-# [OSPF](extras/OSPF.md)
+## [OSPF](extras/OSPF.md)
+## [modelo de redes](extras/Networking_Model.md)
 
 Seguimos trabajando :)
