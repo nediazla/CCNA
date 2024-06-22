@@ -261,3 +261,82 @@ Se puede habilitar DAI para realizar las comparaciones que se muestran en la fig
 - Mensajes con direcciones IP inesperadas en los dos campos de dirección IP ARP
 
 Finalmente, al igual que DHCP Snooping, DAI realiza su trabajo en la CPU del conmutador en lugar de en el ASIC del conmutador, lo que significa que el propio DAI puede ser más susceptible a ataques DoS. El atacante podría generar una gran cantidad de mensajes ARP, lo que aumentaría el uso de la CPU en el conmutador. DAI puede evitar estos problemas limitando la velocidad del número de mensajes ARP en un puerto a lo largo del tiempo.
+### Configuración de inspección dinámica de ARP
+La configuración de DAI requiere sólo unos pocos comandos, con la habitual mayor variedad de ajustes de configuración opcionales. Esta sección examina la configuración de DAI, primero con configuraciones en su mayoría predeterminadas y con dependencia de DHCP Snooping. Luego muestra algunas de las funciones opcionales, como límites de velocidad, recuperación automática del estado de error deshabilitado y cómo habilitar comprobaciones adicionales de los mensajes ARP entrantes.
+### Configuración de la inspección ARP en un conmutador de capa 2
+Antes de configurar DAI, debe pensar en la función y tomar algunas decisiones en función de sus objetivos, topología y funciones del dispositivo. Las decisiones incluyen lo siguiente:
+- Elija si desea confiar en DHCP Snooping, ARP ACL o ambos.
+- Si utiliza DHCP Snooping, configúrelo y haga que los puertos correctos sean confiables para DHCP Snooping.
+- Elija las VLAN en las que habilitar DAI.
+- Haga que DAI sea confiable (en lugar de la configuración predeterminada de no confiable) en puertos seleccionados en esas VLAN, generalmente para los mismos puertos en los que confiaba para DHCP Snooping.
+
+Todos los ejemplos de configuración en esta sección utilizan la misma red de muestra utilizada en el
+Temas de configuración de DHCP Snooping, repetidos aquí como Figura 8-15. Al igual que con DHCP Snooping, el interruptor SW2 de la derecha debe configurarse para confiar en el puerto conectado al enrutador (G1/0/2), pero no confiar en los dos puertos conectados a las PC.
+
+![](img/8.15.png)
+
+El ejemplo 8-5 muestra la configuración requerida para habilitar DAI en el conmutador SW2 en la Figura 8-15, una configuración que sigue una progresión similar en comparación con DHCP Snooping. Todos los puertos en la figura se conectan a la VLAN 11, por lo que para habilitar DAI en la VLAN 11, simplemente agregue el comando global `ip arp Inspection vlan 11`. Luego, para cambiar la lógica en el puerto G1/0/2 (conectado al enrutador) para que DAI confíe en él, agregue el subcomando `ip arp Inspection Trust`.
+
+```
+ip arp inspection vlan 11 
+! 
+interface GigabitEthernet1/0/2  
+ip arp inspection trust
+```
+
+El ejemplo 8-5 configura DAI, pero omite tanto DHCP Snooping como ARP ACL. (Si configurara un conmutador solo con los comandos que se muestran en el ejemplo 8-5, el conmutador filtraría todos los ARP que ingresan a todos los puertos que no son de confianza en la VLAN 11). El ejemplo 8-6 muestra una configuración DAI completa y funcional que agrega la configuración de DHCP Snooping. para que coincida con la configuración DAI en el ejemplo 8-5. Tenga en cuenta que el Ejemplo 8-6 combina la configuración anterior de DHCP Snooping del Ejemplo 8-1 para esta misma topología con la configuración DAI que se acaba de mostrar en el Ejemplo 8-5, con resaltados para las líneas de configuración específicas de DAI.
+
+```
+ip arp inspection vlan 11 
+ip dhcp snooping 
+ip dhcp snooping vlan 11 
+no ip dhcp snooping information option 
+!
+interface GigabitEthernet1/0/2  
+ip dhcp snooping trust  
+ip arp inspection trust
+```
+
+Recuerde, DHCP ocurre primero con los clientes DHCP y luego envían mensajes ARP. Con la configuración del Ejemplo 8-6, el conmutador crea su tabla de vinculación de DHCP Snooping analizando los mensajes DHCP entrantes. A continuación, cualquier mensaje ARP entrante en puertos DAI que no sean de confianza debe tener información coincidente en esa tabla vinculante.
+
+El ejemplo 8-7 confirma los datos clave sobre el funcionamiento correcto de DAI en esta red de muestra según la configuración del ejemplo 8-6. El comando `show ip arp Inspection` proporciona ambos ajustes de configuración junto con variables de estado y contadores. Por ejemplo, las líneas resaltadas muestran el total de mensajes ARP recibidos en puertos que no son de confianza en esa VLAN y la cantidad de mensajes ARP descartados (actualmente 0).
+
+```
+SW2# show ip arp inspection
+
+Source Mac Validation      : Disabled
+Destination Mac Validation : Disabled
+IP Address Validation      : Disabled
+
+ Vlan     Configuration    Operation   ACL Match Static ACL  
+ ----     -----------       -------   ---------   ----------
+
+   11     Enabled            Active
+ Vlan     ACL Logging       DHCP Logging       Probe Logging
+ ----     -----------       ------------       -------------
+   11     Deny               Deny                Off
+
+ Vlan       Forwarded          Dropped     DHCP Drops       ACL Drops
+ ----       ---------          -------     ----------       ---------
+   11           59                0             0               0
+
+ Vlan   DHCP Permits    ACL Permits  Probe Permits   Source MAC Failures
+ ----   ------------    -----------  -------------   -------------------
+   11         7              0             49                 0
+
+ Vlan   Dest MAC Failures   IP Validation Failures   Invalid Protocol Data
+ ----   -----------------   ----------------------   ---------------------
+ 
+ Vlan   Dest MAC Failures   IP Validation Failures   Invalid Protocol Data
+ ----   -----------------   ----------------------   ---------------------
+   11           0                    0                          0
+
+SW2# show ip dhcp snooping binding
+
+MacAddress         IpAddress      Lease(sec) Type       VLAN  Interface
+-----------------  -------------  ---------- ---------  ----  ----------------
+02:00:11:11:11:11  172.16.2.101   86110 dhcp-snooping    11  GigabitEthernet1/0/3 02:00:22:22:22:22  172.16.2.102   86399 dhcp-snooping    11  GigabitEthernet1/0/4
+
+Total number of bindings: 2
+```
+
