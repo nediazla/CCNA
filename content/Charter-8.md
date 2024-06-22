@@ -335,8 +335,33 @@ SW2# show ip dhcp snooping binding
 
 MacAddress         IpAddress      Lease(sec) Type       VLAN  Interface
 -----------------  -------------  ---------- ---------  ----  ----------------
-02:00:11:11:11:11  172.16.2.101   86110 dhcp-snooping    11  GigabitEthernet1/0/3 02:00:22:22:22:22  172.16.2.102   86399 dhcp-snooping    11  GigabitEthernet1/0/4
+02:00:11:11:11:11  172.16.2.101   86110 dhcp-snooping    11  GigabitEthernet1/0/3 
+02:00:22:22:22:22  172.16.2.102   86399 dhcp-snooping    11  GigabitEthernet1/0/4
 
 Total number of bindings: 2
 ```
 
+El final del Ejemplo 8-7 muestra un ejemplo del comando de enlace show ip dhcp snooping en el conmutador SW2. Tenga en cuenta que las dos primeras columnas enumeran una dirección MAC e IP tal como se aprende de los mensajes DHCP. Luego, imagine que llega un mensaje ARP desde la PC1, un mensaje que debería incluir la dirección MAC 0200.1111.1111 de la PC1 y 172.16.2.101 como dirección MAC e IP de origen, respectivamente. Según este resultado, el conmutador encontraría los datos coincidentes y permitiría el mensaje ARP.
+
+El ejemplo 8-8 muestra algunos detalles de lo que sucede cuando el conmutador SW2 recibe un mensaje ARP no válido en el puerto G1/0/4 en la Figura 8-15. En este caso, para crear el mensaje ARP no válido,
+La PC2 en la figura se configuró con una dirección IP estática de 172.16.2.101 (que es la dirección IP de la PC1).
+dirección IP alquilada por DHCP). Los puntos destacados en el mensaje de registro en la parte superior del ejemplo muestran las direcciones MAC y IP de origen reclamadas por la PC2 en el mensaje ARP. Si vuelve a consultar la parte inferior del Ejemplo 8-7, puede ver que este par MAC/IP de origen no existe en la tabla de vinculación de DHCP Snooping, por lo que DAI rechaza el mensaje ARP.
+
+```
+Jul 25 14:28:20.763: %SW_DAI-4-DHCP_SNOOPING_DENY: 1 Invalid ARPs (Req) on Gi1/0/4, vlan 11.([0200.2222.2222/172.16.2.101/0000.0000.0000/172.16.2.1/09:28:20 EST Thu Jul 25 2019])
+
+SW2# show ip arp inspection statistics
+
+ Vlan          Forwarded          Dropped     DHCP Drops       ACL Drops
+ ----          ---------          -------     ----------       ---------
+   11              59               17            17                0
+
+ Vlan   DHCP Permits    ACL Permits  Probe Permits   Source MAC Failures
+ ----   ------------    -----------  -------------   -------------------
+   11        7                0            49                  0
+
+ Vlan   Dest MAC Failures   IP Validation Failures   Invalid Protocol Data
+
+ ----   -----------------   ----------------------   ---------------------
+  11            0                      0                          0
+```
