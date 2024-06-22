@@ -365,3 +365,96 @@ SW2# show ip arp inspection statistics
  ----   -----------------   ----------------------   ---------------------
   11            0                      0                          0
 ```
+
+Las estadísticas del comando de inspección `show ip arp` también confirman que el switch ha descartado algunos mensajes ARP. Las líneas resaltadas en el medio de la tabla muestran un total de 17 mensajes ARP descartados en VLAN 11. Esa misma línea resaltada confirma que se descartaron los 17 debido a la tabla de vinculación de DHCP Snooping (“DHCP Drops”), y cero se eliminó debido a un ARP. ACL (“Caídas de ACL”).
+### Limitar las tasas de mensajes DAI
+Al igual que DHCP Snooping, DAI también puede ser el foco de un ataque DoS en el que el atacante genera una gran cantidad de mensajes ARP. Al igual que DHCP Snooping, DAI admite la configuración de límites de velocidad para ayudar a prevenir esos ataques, con una reacción para colocar el puerto en un estado de desactivación de errores y con la capacidad de configurar la recuperación automática desde ese estado de desactivación de errores.
+
+Los límites de velocidad de DHCP Snooping y DAI tienen algunas pequeñas diferencias en el funcionamiento, los valores predeterminados y la configuración, como se muestra a continuación:
+- DAI utiliza de forma predeterminada límites de velocidad para todas las interfaces (confiables y no confiables), y DHCP Snooping no utiliza límites de velocidad de forma predeterminada.
+- DAI permite la configuración de un intervalo de ráfaga (una cantidad de segundos), de modo que el límite de velocidad puede tener una lógica como “x mensajes ARP durante y segundos” (DHCP Snooping no define una configuración de ráfaga).
+
+Es útil observar la configuración del límite de velocidad de snooping de DAI y DHCP juntas para hacer comparaciones, por lo que el Ejemplo 8-9 muestra ambas. El ejemplo repite exactamente los mismos comandos de DHCP Snooping del Ejemplo 8-3 anterior, pero agrega la configuración DAI (resaltada). La configuración del Ejemplo 8-7 podría agregarse a la configuración que se muestra en el Ejemplo 8-6 para obtener una configuración completa de DHCP Snooping y DAI.
+
+```
+errdisable recovery cause dhcp-rate-limit 
+errdisable recovery cause arp-inspection 
+errdisable recovery interval 30 
+!
+interface GigabitEthernet1/0/2  
+ip dhcp snooping limit rate 10  
+ip arp inspection limit rate 8 
+!
+interface GigabitEthernet1/0/3  
+ip dhcp snooping limit rate 2  
+ip arp inspection limit rate 8 burst interval 4
+```
+
+El ejemplo 8-10 enumera resultados que confirman los ajustes de configuración. Por ejemplo, el Ejemplo 8-9 configura el puerto G1/0/2 con una velocidad de 8 mensajes por cada ráfaga (predeterminada) de 1 segundo; la salida del Ejemplo 8-10 para la interfaz G1/0/2 también muestra una velocidad de 8 y un intervalo de ráfaga de 1. De manera similar, el Ejemplo 8-9 configura el puerto G1/0/3 con una velocidad de 8 durante una ráfaga de 4 segundos. , y el Ejemplo 8-10 confirma esos mismos valores para el puerto G1/0/3. Tenga en cuenta que las otras dos interfaces del ejemplo 8-10 muestran la configuración predeterminada de una velocidad de 15 mensajes en una ráfaga de un segundo.
+
+```
+SW2# show ip arp inspection interfaces
+
+ Interface        Trust State     Rate (pps)    Burst Interval
+ ---------------  -----------     ----------    --------------
+ Gi1/0/1            Untrusted         15                1
+ Gi1/0/2            Trusted           8                 1
+ Gi1/0/3            Untrusted         8                 4
+ Gi1/0/4            Untrusted         15                1
+! Lines omitted for brevity
+```
+
+### Configuración de comprobaciones de mensajes DAI opcionales
+Como se menciona en la sección titulada "Lógica de inspección dinámica de ARP", DAI siempre verifica los campos de dirección MAC de origen y dirección IP de origen del mensaje ARP en comparación con alguna tabla en el conmutador, pero también puede realizar otras verificaciones. Esas comprobaciones requieren más CPU, pero también ayudan a prevenir otros tipos de ataques.
+
+El ejemplo 8-11 muestra cómo configurar esas tres comprobaciones adicionales. Tenga en cuenta que puede configurar una, dos o las tres opciones: simplemente configure el comando `ip arp inspección` validar nuevamente con todas las opciones que desee en un comando y reemplazará el comando de configuración global anterior. El ejemplo muestra las tres opciones, con la opción src-mac (mac de origen) configurada.
+
+```
+SW2# configure terminal 
+Enter configuration commands, one per line.  End with CNTL/Z.
+
+SW2(config)# ip arp inspection validate ?   
+	dst-mac  Validate destination MAC address   
+	ip       Validate IP addresses   
+	src-mac  Validate source MAC address
+
+SW2(config)# ip arp inspection validate src-mac S
+W2(config)# ^Z
+
+SW2#
+SW2# show ip arp inspection
+
+Source Mac Validation      : Enabled
+Destination Mac Validation : Disabled
+IP Address Validation      : Disabled
+```
+
+### Resumen de configuración de inspección de IP ARP
+La siguiente lista de verificación de configuración resume los comandos incluidos en esta sección sobre cómo configurar la inspección ARP de IP dinámica:
+	**Paso 1**. Utilice el comando global `ip arp Inspection vlan vlan-list` para habilitar la inspección dinámica ARP (DAI) en el switch para las VLAN especificadas.
+	**Paso 2**. Aparte de la configuración de DAI, configure también DHCP Snooping y/o ARP ACL para uso de DAI.
+	**Paso 3**. Configure el subcomando `ip arp Inspection Trust`  para anular la configuración predeterminada de no confiable.
+	**Paso 4**. (Opcional): Configure los límites de tasa de DAI y la recuperación deshabilitada por errores:
+		**A**. (Opcional): Configure el subcomando `ip arp inspection limit rate number [burts interval seconds]` para establecer un límite de mensajes ARP por segundo, o mensajes ARP para cada intervalo configurado.
+		**B**. (Opcional): Configure el subcomando `ip arp Inspection limit rate none` interface para deshabilitar los límites de velocidad.
+		**C**. (Opcional): Configure el comando global `errdisable recovery cause arp-inspection` para habilitar la función de recuperación automática desde el modo de error deshabilitado, suponiendo que el conmutador colocó el puerto en estado de error deshabilitado debido a que excedió los límites de velocidad de DAI.
+		**D**. (Opcional): Configure globalmente  `errdisable recovery interval seconds` para establecer el tiempo de espera antes de recuperarse de un estado de error deshabilitado de interfaz (independientemente de la causa del estado de error deshabilitado).
+	**Paso 5**. (Opcional): Configure el comando global `ip arp Inspection validar {[dst-mac] [src-mac] [ip]}` para agregar pasos de validación de DAI.
+
+### Comandos de referencia
+
+| **Command**                                          | **Mode/Purpose/Description**                                                                                                                                                                                    |
+| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ip dhcp snooping**                                 | Global command that enables DHCP Snooping if combined with enabling it on one or more VLANs                                                                                                                     |
+| **i p dhcp snooping vlan** _vlan-list_               | Global command that lists VLANs on which to enable DHCP Snooping, assuming the **ip dhcp snooping** command is also configured                                                                                  |
+| [**no****]** **ip dhcp snooping information option** | Command that enables (or disables with **no** option) the feature of inserting DHCP option 82 parameters by the switch when also using DHCP Snooping                                                            |
+| [**no**] **ip dhcp snooping trust**                  | Interface subcommand that sets the DHCP Snooping trust state for an interface (default **no**, or untrusted)                                                                                                    |
+| **ip dhcp snooping limit rate** _number_             | Interface subcommand that sets a limit to the number of incoming DHCP messages processed on an interface, per second, before DHCP Snooping discards all other incoming<br><br>DHCP messages in that same second |
+| **err-disable recovery cause dhcp-rate-limit**       | Global command that enables the switch to automatically recover an err-disabled interface if set to that state because of exceeding a DHCP rate limit setting                                                   |
+| **err-disable recovery interval** _seconds_          | Global command that sets the number of seconds IOS waits before recovering any err-disabled interfaces which, per various configuration settings, should be recovered automatically                             |
+| **err-disable recovery cause arp-inspection**        | Global command that enables the switch to automatically recover an err-disabled interface if set to that state because of an ARP Inspection violation                                                           |
+| **show ip dhcp snooping**                            | Lists a large variety of DHCP Snooping configuration settings                                                                                                                                                   |
+| **s how ip dhcp snooping statistics**                | Lists counters regarding DHCP Snooping behavior on the switch                                                                                                                                                   |
+| **s how ip dhcp snooping binding**                   | Displays the contents of the dynamically created<br><br>DHCP Snooping binding table                                                                                                                             |
+| **s how ip arp inspection**                          | Lists both configuration settings for Dynamic ARP Inspection (DAI) as well as counters for ARP messages processed and filtered                                                                                  |
+| **s how ip arp inspection statistics**               | Lists the subset of the **show ip arp inspection** command output that includes counters                                                                                                                        |
