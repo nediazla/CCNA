@@ -188,11 +188,12 @@ En este capítulo ya se han presentado todos los pasos de configuración por par
 access-list _access-list-number_ {deny | permit} _source_ [_source-wildcard_]
 ```
 
-|             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------  |
-| **Paso 1.** | Planifique la ubicación (router e interfaz) y la dirección (entrada o salida) en esa interfaz:<br><br>1.     Las ACL estándar deben colocarse cerca del destino de los paquetes para que no descarten involuntariamente paquetes que no deben descartarse.<br><br>2.     Debido a que las ACL estándar solo pueden coincidir con la dirección IP de origen de un paquete, identifique las direcciones IP de origen de los paquetes a medida que avanzan en la dirección que la ACL está examinando. |
-| **Paso 2.** | Configure uno o más  comandos de configuración global **de lista de acceso** para crear la ACL, teniendo en cuenta lo siguiente:<br><br>1.     La búsqueda en la lista se realiza secuencialmente, utilizando la lógica de primera coincidencia.<br><br>2.     La acción predeterminada, si un paquete no coincide con ninguno de los  **comandos access-list**, es **denegar** (descartar) el paquete.|
-| **Paso 3.** | Habilite la ACL en la interfaz del router elegida, en la dirección correcta, utilizando el  **subcomando ip access-group** _number_ {**in \| out**} interface .|
+|             |                                                                                                                                                                                                                                              |
+|             |
+--------------------------------------------------------------------------------------------  |
+| **Paso 1.** | Planifique la ubicación (router e interfaz) y la dirección (entrada o salida) en esa interfaz:<br><br>1.     Las ACL estándar deben colocarse cerca del destino de los paquetes para que no descarten involuntariamente paquetes que no deben descartarse.<br><br>2.     Debido a que las ACL estándar solo pueden coincidir con la dirección IP de origen de un paquete, identifique las direcciones IP de origen de los paquetes a medida que avanzan en la dirección que la ACL está examinando.                                                                   |
+| **Paso 2.** | Configure uno o más  comandos de configuración global **de lista de acceso** para crear la ACL, teniendo en cuenta lo siguiente:<br><br>1.     La búsqueda en la lista se realiza secuencialmente, utilizando la lógica de primera coincidencia.<br><br>2.     La acción predeterminada, si un paquete no coincide con ninguno de los  **comandos access-list**, es **denegar** (descartar) el paquete. |
+| **Paso 3.** | Habilite la ACL en la interfaz del router elegida, en la dirección correcta, utilizando el  **subcomando ip access-group** _number_ {**in \| out**} interface .                                                                            |
 
 El resto de esta sección muestra un par de ejemplos.
 #### Ejemplo 1 de ACL numerada estándar
@@ -354,8 +355,8 @@ En la Tabla 2-2 se enumeran los criterios para varios problemas de práctica. Su
 | 8           | Packets from subnet 172.20.112.0/26                         |
 | 9           | Packets from subnet 192.168.9.64/28                         |
 | 10          | Packets from subnet 192.168.9.64/30                         |
-### Ingeniería inversa de ACL a rango de direcciones
 
+### Ingeniería inversa de ACL a rango de direcciones
 En algunos casos, es posible que no esté creando su propia ACL. En su lugar, es posible que tenga que interpretar algunos  **comandos de lista de acceso** existentes  . Para responder a este tipo de preguntas en los exámenes, debe determinar el rango de direcciones IP que coinciden con una combinación particular de dirección/máscara comodín en cada instrucción de ACL.
 
 Bajo ciertas suposiciones que son razonables para las certificaciones CCNA, calcular el rango de direcciones que coinciden con una ACL puede ser relativamente simple. Básicamente, el rango de direcciones comienza con la dirección configurada en el comando ACL. El rango de direcciones termina con la suma del campo de dirección y la máscara de comodín. Eso es todo.
@@ -403,9 +404,9 @@ Las matemáticas para encontrar el rango de direcciones se basan en el hecho de 
 
 | Coamando                                                                         | Descripcion                                                                                                   |
 | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `access-list access-list-number {deny \| permit} source [source-wildcard] [log]` | Global command for standard numbered access lists. Use a number between 1 and 99 or 1300 and 1999, inclusive. |
-| `access-list access-list-number remark text`                                     | Command that defines a remark to help you remember what the ACL is supposed to do.                            |
-| `ip access-group number {in \| out}`                                             | Interface subcommand to enable access lists.                                                                  |
-| `show ip interface [type number]`                                                | Includes a reference to the access lists enabled on the interface                                             |
-| `show access-lists [access-list-number \| access-list-name]`                     | Shows details of configured access lists for all protocols                                                    |
-| `show ip access-lists [access-list-number \| access-list-name`                   | Shows IP access lists                                                                                         |
+| `access-list access-list-number {deny \| permit} source [source-wildcard] [log]` | Global command for standard numbered access lists. Use a number between 1 and 99 or 1300 and 1999, inclusive.                                                                           |
+| `access-list access-list-number remark text`                                     | Command that defines a remark to help you remember what the ACL is supposed to do.                                                                                               |
+| `ip access-group number {in \| out}`                                             | Interface subcommand to enable access lists.                                                                                                        |
+| `show ip interface [type number]`                                                | Includes a reference to the access lists enabled on the interface                                                                                                     |
+| `show access-lists [access-list-number \| access-list-name]`                     | Shows details of configured access lists for all protocols                                                                                                     |
+| `show ip access-lists [access-list-number \| access-list-name`                   | Shows IP access lists                                                                                                         |
