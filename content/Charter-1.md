@@ -23,7 +23,8 @@ Sin embargo, no permita que la falta de servicios de UDP le haga pensar que UDP 
 
 La Tabla 1-2 enumera las características principales admitidas por TCP/UDP. Tenga en cuenta que UDP solo admite el primer elemento enumerado en la tabla, mientras que TCP admite todos los elementos de la tabla.
 
-| Funcion                                                 | Descripcion                                                                                         |
+| Funcion                                                 | Descripcion                                                                                                                                                                                           |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Multiplexación mediante puertos                         | Función que permite a los hosts receptores elegir la aplicación correcta a la que se destinan los datos, en función del número de puerto                                                              |
 | Recuperación de errores (confiabilidad)                 | Proceso de numeración y acuse de recibo de datos con campos de encabezado de secuencia y confirmación                                                                                        |
 | Control de caudal mediante ventanas                     | Proceso que utiliza tamaños de ventana para proteger el espacio de búfer y los dispositivos de enrutamiento para que no se sobrecarguen con el tráfico                                             |
