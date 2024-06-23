@@ -188,12 +188,10 @@ En este capítulo ya se han presentado todos los pasos de configuración por par
 access-list _access-list-number_ {deny | permit} _source_ [_source-wildcard_]
 ```
 
-|             |                                                                                                                                                                                                                                              |
-|             |
---------------------------------------------------------------------------------------------  |
+|             |                                                                               |
 | **Paso 1.** | Planifique la ubicación (router e interfaz) y la dirección (entrada o salida) en esa interfaz:<br><br>1.     Las ACL estándar deben colocarse cerca del destino de los paquetes para que no descarten involuntariamente paquetes que no deben descartarse.<br><br>2.     Debido a que las ACL estándar solo pueden coincidir con la dirección IP de origen de un paquete, identifique las direcciones IP de origen de los paquetes a medida que avanzan en la dirección que la ACL está examinando.                                                                   |
 | **Paso 2.** | Configure uno o más  comandos de configuración global **de lista de acceso** para crear la ACL, teniendo en cuenta lo siguiente:<br><br>1.     La búsqueda en la lista se realiza secuencialmente, utilizando la lógica de primera coincidencia.<br><br>2.     La acción predeterminada, si un paquete no coincide con ninguno de los  **comandos access-list**, es **denegar** (descartar) el paquete. |
-| **Paso 3.** | Habilite la ACL en la interfaz del router elegida, en la dirección correcta, utilizando el  **subcomando ip access-group** _number_ {**in \| out**} interface .                                                                            |
+| **Paso 3.** | Habilite la ACL en la interfaz del router elegida, en la dirección correcta, utilizando el  **subcomando ip access-group** _number_ {**in \| out**} interface.                                                                             |
 
 El resto de esta sección muestra un par de ejemplos.
 #### Ejemplo 1 de ACL numerada estándar
