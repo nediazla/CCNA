@@ -1,6 +1,5 @@
 ![](img/switch-1.png)
 # Introducción al transporte TCP/IP y aplicaciones
-
 Este capítulo cubre los siguientes temas del examen:
 - Fundamentos de la red
 - Comparar TCP con UDP
@@ -15,9 +14,7 @@ Este capítulo comienza examinando las funciones de dos protocolos de capa de tr
 Protocolo de control de transmisión (TCP) y Protocolo de datagramas de usuario (UDP). el segundo mayor.
 La sección del capítulo examina la capa de aplicación TCP/IP, incluyendo alguna discusión sobre
 cómo funciona la resolución de nombres del Sistema de nombres de dominio (DNS).
-
 ## Protocolos TCP/IP de capa 4: TCP y UDP
-
 La capa de transporte OSI (Capa 4) define varias funciones, las más importantes de las cuales son la recuperación de errores y el control de flujo. Asimismo, los protocolos de la capa de transporte TCP/IP también implementan estos mismos tipos de características. Tenga en cuenta que tanto el modelo OSI como el modelo TCP/IP llaman a esta capa capa de transporte. Pero como es habitual, cuando se hace referencia al modelo TCP/IP, el nombre y el número de la capa se basan en OSI, por lo que cualquier protocolo de la capa de transporte TCP/IP se considera protocolo de Capa 4.
 
 La diferencia clave entre TCP y UDP es que TCP proporciona una amplia variedad de servicios a las aplicaciones, mientras que UDP no. Por ejemplo, los enrutadores descartan paquetes por muchas razones, incluidos errores de bits, congestión y casos en los que no se conocen rutas correctas. Como ya leyó, la mayoría de los protocolos de enlace de datos detectan errores (un proceso llamado detección de errores) pero luego descartan las tramas que tienen errores. TCP proporciona retransmisión (recuperación de errores) y ayuda a evitar la congestión (control de flujo), mientras que UDP no. Como resultado, muchos protocolos de aplicación optan por utilizar TCP.
@@ -26,12 +23,11 @@ Sin embargo, no permita que la falta de servicios de UDP le haga pensar que UDP 
 
 La Tabla 1-2 enumera las características principales admitidas por TCP/UDP. Tenga en cuenta que UDP solo admite el primer elemento enumerado en la tabla, mientras que TCP admite todos los elementos de la tabla.
 
-| Funcion                                                 | Descripcion                                                                                                                                                                                           |
-| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Funcion                                                 | Descripcion                                                                                         |
 | Multiplexación mediante puertos                         | Función que permite a los hosts receptores elegir la aplicación correcta a la que se destinan los datos, en función del número de puerto                                                              |
-| Recuperación de errores (confiabilidad)                 | Proceso de numeración y acuse de recibo de datos con campos de encabezado de secuencia y confirmación                                                                                                 |
-| Control de caudal mediante ventanas                     | Proceso que utiliza tamaños de ventana para proteger el espacio de búfer y los dispositivos de enrutamiento para que no se sobrecarguen con el tráfico                                                |
-| Establecimiento y terminación de la conexión            | Proceso utilizado para inicializar los números de puerto y la secuencia y Campos de confirmación                                                                                                      |
+| Recuperación de errores (confiabilidad)                 | Proceso de numeración y acuse de recibo de datos con campos de encabezado de secuencia y confirmación                                                                                        |
+| Control de caudal mediante ventanas                     | Proceso que utiliza tamaños de ventana para proteger el espacio de búfer y los dispositivos de enrutamiento para que no se sobrecarguen con el tráfico                                             |
+| Establecimiento y terminación de la conexión            | Proceso utilizado para inicializar los números de puerto y la secuencia y Campos de confirmación                                                                                        |
 | Transferencia de datos ordenada y segmentación de datos | Flujo continuo de bytes de un proceso de capa superior que se "segmenta" para su transmisión y se entrega a los procesos de capa superior en el dispositivo receptor, con los bytes en el mismo orden |
 
 ## Protocolo de control de transmisión
