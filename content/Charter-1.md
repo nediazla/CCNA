@@ -32,7 +32,6 @@ La Tabla 1-2 enumera las características principales admitidas por TCP/UDP. Ten
 | Transferencia de datos ordenada y segmentación de datos | Flujo continuo de bytes de un proceso de capa superior que se "segmenta" para su transmisión y se entrega a los procesos de capa superior en el dispositivo receptor, con los bytes en el mismo orden |
 
 ## Protocolo de control de transmisión
-
 Normalmente, cada aplicación TCP/IP elige utilizar TCP o UDP en función de los requisitos de la aplicación. Por ejemplo, TCP proporciona recuperación de errores, pero para ello, consume más ancho de banda y utiliza más ciclos de procesamiento. UDP no realiza la recuperación de errores, pero ocupa menos ancho de banda y utiliza menos ciclos de procesamiento. Independientemente de cuál de estos dos protocolos de capa de transporte TCP/IP elija usar la aplicación, debe comprender los conceptos básicos de cómo funciona cada uno de estos protocolos de capa de transporte.
 
 TCP, tal como se define en la solicitud de comentarios (RFC) 793, realiza las funciones enumeradas en la tabla 1-2 a través de mecanismos en los equipos de punto final. TCP se basa en IP para la entrega de los datos de extremo a extremo, incluidos los problemas de enrutamiento. En otras palabras, TCP realiza solo una parte de las funciones necesarias para entregar los datos entre aplicaciones. Además, el papel que desempeña está dirigido a proporcionar servicios para las aplicaciones que se encuentran en los equipos de punto final. Independientemente de si dos computadoras están en la misma Ethernet o están separadas por todo Internet, TCP realiza sus funciones de la misma manera.
@@ -40,8 +39,8 @@ TCP, tal como se define en la solicitud de comentarios (RFC) 793, realiza las fu
 La figura 1-1 muestra los campos en el encabezado TCP. Aunque no es necesario memorizar los nombres de los campos ni sus ubicaciones, el resto de esta sección hace referencia a varios de los campos, por lo que todo el encabezado se incluye aquí como referencia.
 
 ![](1.1.png)
-### Multiplexación mediante números de puerto TCP
 
+### Multiplexación mediante números de puerto TCP
 TCP y UDP utilizan un concepto llamado _multiplexación_. Por lo tanto, esta sección comienza con una explicación de la multiplexación con TCP y UDP. A continuación, se exploran las características únicas de TCP.
 La multiplexación por TCP y UDP implica el proceso de cómo piensa una computadora cuando recibe datos. Es posible que el equipo esté ejecutando muchas aplicaciones, como un explorador web, un paquete de correo electrónico o una aplicación VoIP de Internet (por ejemplo, Skype). La multiplexación TCP y UDP indica al ordenador receptor a qué aplicación debe dar los datos recibidos.
 
@@ -83,7 +82,6 @@ Los números de puerto son una parte vital del concepto de socket. Los servidore
 
 En los equipos cliente, donde se originan las solicitudes, se puede asignar cualquier número de puerto no utilizado localmente. El resultado es que cada cliente del mismo host utiliza un número de puerto diferente, pero un servidor utiliza el mismo número de puerto para todas las conexiones. Por ejemplo, 100 exploradores web en el mismo equipo host podrían conectarse a un servidor web, pero el servidor web con 100 clientes conectados a él tendría solo un socket y, por lo tanto, solo un número de puerto (puerto 80, en este caso). El servidor puede saber qué paquetes se envían desde cuál de los 100 clientes observando el puerto de origen de los segmentos TCP recibidos. El servidor puede enviar datos al cliente web correcto (navegador) enviando datos al mismo número de puerto que figura como puerto de destino. La combinación de sockets de origen y destino permite a todos los hosts participantes distinguir entre el origen y el destino de los datos. Aunque en el ejemplo se explica el concepto utilizando 100 conexiones TCP, el mismo concepto de numeración de puertos se aplica a las sesiones UDP de la misma manera.
 ## Aplicaciones TCP/IP populares
-
 A lo largo de su preparación para el examen CCNA, se encontrará con una variedad de aplicaciones TCP/IP. Al menos debe conocer algunas de las aplicaciones que se pueden utilizar para ayudar a administrar y controlar una red.
 
 La aplicación World Wide Web (WWW) existe a través de navegadores web que acceden al contenido disponible en los servidores web. Aunque a menudo se piensa en ella como una aplicación de usuario final, en realidad puede utilizar WWW para gestionar un router o un conmutador. Habilita una función de servidor web en el enrutador o conmutador y utiliza un navegador para acceder al enrutador o conmutador.
@@ -98,9 +96,8 @@ Algunas de estas aplicaciones usan TCP y otras usan UDP. Por ejemplo, el Protoco
 
 Independientemente del protocolo de capa de transporte que se utilice, las aplicaciones utilizan un número de puerto conocido para que los clientes sepan a qué puerto intentar conectarse. La Tabla 1-3 enumera varias aplicaciones populares y sus números de puerto conocidos.
 
-|                 |              |                 |
-| --------------- | ------------ | --------------- |
 | **Port Number** | **Protocol** | **Application** |
+| --------------- | ------------ | --------------- |
 | 20              | TCP          | FTP data        |
 | 21              | TCP          | FTP control     |
 | 22              | TCP          | SSH             |
@@ -113,11 +110,12 @@ Independientemente del protocolo de capa de transporte que se utilice, las aplic
 | 80              | TCP          | HTTP (WWW)      |
 | 110             | TCP          | POP3            |
 | **Port Number** | **Protocol** | **Application** |
+| --------------- | ------------ | --------------- |
 | 161             | UDP          | SNMP            |
 | 443             | TCP          | SSL             |
 | 514             | UDP          | Syslog          |
-### Connection Establishment and Termination
 
+### Connection Establishment and Termination
 TCP  connection establishment occurs before any of the other TCP features can begin their work. Connection establishment refers to the process of initializing Sequence and Acknowledgment fields and agreeing on the port numbers used. Figure 1-5 shows an example of connection establishment flow.
 
 ![](1.5.png)
