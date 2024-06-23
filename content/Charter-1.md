@@ -8,8 +8,10 @@ Este capítulo cubre los siguientes temas del examen:
 
 El examen CCNA se centra principalmente en funciones en las capas inferiores de TCP/IP, que definen
 cómo las redes IP pueden enviar paquetes IP de un host a otro mediante LAN y WAN. Este capítulo explica los conceptos básicos de algunos temas que reciben menos atención en los exámenes: TCP/IP.
+
 capa de transporte y la capa de aplicación TCP/IP. Las funciones de estas capas superiores desempeñan un papel importante.
 Papel importante en redes TCP/IP reales. Además, muchos de los temas de seguridad de las Partes I y II de este resumen, y algunos de los temas de servicios IP de la Parte III, requieren que usted conozca los conceptos básicos de cómo funcionan las capas de transporte y aplicación de TCP/IP. Este capítulo sirve como eso introducción.
+
 Este capítulo comienza examinando las funciones de dos protocolos de capa de transporte:
 Protocolo de control de transmisión (TCP) y Protocolo de datagramas de usuario (UDP). el segundo mayor.
 La sección del capítulo examina la capa de aplicación TCP/IP, incluyendo alguna discusión sobre
@@ -23,8 +25,8 @@ Sin embargo, no permita que la falta de servicios de UDP le haga pensar que UDP 
 
 La Tabla 1-2 enumera las características principales admitidas por TCP/UDP. Tenga en cuenta que UDP solo admite el primer elemento enumerado en la tabla, mientras que TCP admite todos los elementos de la tabla.
 
-| Funcion                                                 | Descripcion                                                                                                                                                                                           |
-| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Funcion                                                 | Descripcion                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Multiplexación mediante puertos                         | Función que permite a los hosts receptores elegir la aplicación correcta a la que se destinan los datos, en función del número de puerto                                                              |
 | Recuperación de errores (confiabilidad)                 | Proceso de numeración y acuse de recibo de datos con campos de encabezado de secuencia y confirmación                                                                                        |
 | Control de caudal mediante ventanas                     | Proceso que utiliza tamaños de ventana para proteger el espacio de búfer y los dispositivos de enrutamiento para que no se sobrecarguen con el tráfico                                             |

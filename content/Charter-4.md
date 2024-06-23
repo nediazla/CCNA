@@ -4,16 +4,13 @@
 
 **En este capítulo se tratan los siguientes temas del examen:**
 ### Fundamentos de seguridad
-
 - Definir conceptos clave de seguridad (amenazas, vulnerabilidades, exploits y técnicas de mitigación)
 - Describir los elementos del programa de seguridad (concienciación del usuario, formación y control de acceso físico)
 - Describir los elementos de las políticas de contraseñas de seguridad, como la administración, la complejidad y las alternativas de contraseñas (autenticación multifactor, certificados y biometría)
 - Diferenciar los conceptos de autenticación, autorización y contabilidad
 
-A medida que ha aprendido sobre varias tecnologías de red, es probable que su atención se haya centrado en el uso de dispositivos de red para construir redes funcionales. Al fin y al cabo, las redes deben permitir que los datos fluyan libremente para que todos los usuarios conectados tengan una buena experiencia, ¿verdad? El hecho desafortunado es que no se puede confiar en que todos los usuarios conectados obedezcan las reglas y sean buenos ciudadanos de la red. En este capítulo, aprenderá sobre muchos aspectos de una red empresarial que se pueden explotar, así como algunas formas de protegerlos.
-
+A medida que ha aprendido sobre varias tecnologías de red, es probable que su atención se haya centrado en el uso de dispositivos de red para construir redes funcionales. Al fin y al cabo, las redes deben permitir que los datos fluyan libremente para que todos los usuarios conectados tengan una buena experiencia, ¿verdad? El hecho desafortunado es que no se puede confiar en que todos los usuarios conectados obedezcan las reglas y sean buenos ciudadanos de la red. En este capítulo, aprenderá sobre muchos aspectos de una red empresarial que se pueden explotar, así como algunas formas de protegerlos
 ### Terminología de seguridad
-
 En un mundo perfecto, se podría construir una red que admita a todos los usuarios de una empresa, con la suposición de que todos los usuarios son conocidos, que todos los usuarios están aprobados para acceder a todo lo que hay en la red y que todos los usuarios utilizarán los recursos disponibles exactamente de acuerdo con algunas directrices corporativas. La red que se muestra en la Figura 4-1 podría representar este escenario. Incluso este sistema ideal y cerrado no es completamente seguro porque un usuario puede decidir comportarse mal para molestar a un compañero de trabajo o para ver información en el servidor corporativo que debería estar restringida o confidencial.
 
 ![](img/4.1.png)
@@ -34,15 +31,11 @@ El hecho de que exista una vulnerabilidad significa que nada está necesariament
 Técnicamente, un exploit como la palanca no es muy efectivo por sí mismo. Alguien debe recogerlo y usarlo contra la vulnerabilidad. En la parte D de la Figura 4-3, un usuario malintencionado posee la palanca y tiene la intención de usarla para abrir la puerta cerrada. Ahora existe la posibilidad real de entrar, destruir, robar o modificar algo sin permiso. Esto se conoce como _amenaza_.
 
 En el mundo de TI de redes, sistemas, estaciones de trabajo y aplicaciones, hay muchas, muchas vulnerabilidades y exploits diferentes que pueden ser aprovechados por usuarios malintencionados para convertirse en amenazas para una organización y sus datos. El resto de este capítulo proporciona una descripción general de muchos de ellos, junto con algunas técnicas que puede aprovechar para contrarrestar o prevenir la actividad maliciosa. Estas medidas se conocen como _técnicas de mitigación_. Es posible que esté pensando en algunas formas en que el propietario del edificio de la Figura 4-3 podría mitigar las amenazas a las que se enfrenta. Tal vez podría agregar cerraduras más fuertes y seguras a la puerta, un marco de puerta más robusto para resistir las fuerzas indiscretas o un sistema de alarma para detectar una intrusión y alertar a las autoridades.
-
 ### Amenazas comunes a la seguridad
-
 Dado que las redes empresariales modernas suelen estar formadas por muchas partes que funcionan juntas, protegerlas puede convertirse en una tarea muy compleja. Al igual que con la simple analogía de la caja, no se puede intentar protegerla eficazmente hasta que se hayan identificado muchas de las vulnerabilidades, se hayan evaluado los numerosos exploits que existen y se haya dado cuenta de dónde podrían provenir las amenazas. Sólo entonces se podrán implementar las contramedidas y mitigaciones adecuadas.
 
 También debe considerar algunos atributos importantes de los recursos empresariales que deben protegerse y preservarse. A medida que analiza las numerosas amenazas que se analizan en este capítulo, piense en la vulnerabilidad y el exploit que hace posible la amenaza. Observe cuántas partes diferentes de la red empresarial presentan vulnerabilidades y cómo se diseñan las amenazas para aprovechar las debilidades.
-
 ### Ataques que falsifican direcciones
-
 Cuando los sistemas se comportan normalmente, se puede confiar en los parámetros y servicios y utilizarlos de forma eficaz. Por ejemplo, cuando una máquina envía un paquete IP, todos esperan que la dirección IP de origen sea la propia dirección IP de la máquina. La dirección MAC de origen en la trama Ethernet.
 
 Se espera que sea la dirección MAC del propio remitente. Incluso servicios como DHCP y DNS deberían hacer lo mismo; Si una máquina envía una solicitud DHCP o DNS, espera que cualquier respuesta DHCP o DNS provenga de un servidor legítimo y confiable.
@@ -56,9 +49,7 @@ Por ejemplo, un atacante puede enviar paquetes con una dirección IP de origen f
 Un atacante también puede enviar direcciones MAC falsificadas para agregar información falsa a las tablas de reenvío utilizadas por los conmutadores de capa 2 o a las tablas ARP utilizadas por otros hosts y enrutadores. Las solicitudes DHCP con direcciones MAC falsificadas también se pueden enviar a un servidor DHCP legítimo, llenando su tabla de arrendamiento de direcciones y sin dejar direcciones IP libres para uso normal.
 
 Tenga en cuenta que el Capítulo 6, “Implementación de la seguridad del puerto del conmutador”, analiza una herramienta que se puede utilizar para ayudar a mitigar la suplantación de direcciones MAC. En el Capítulo 8, “Snooping DHCP e inspección ARP”, puede obtener más información sobre la inspección ARP dinámica (DAI) y cómo utilizarla para mitigar la suplantación de direcciones IP mediante ARP.
-
 ### Ataques de denegación de servicio
-
 En el funcionamiento normal de una aplicación empresarial, los clientes abren conexiones a servidores corporativos para intercambiar información. Esto podría ocurrir en forma de sesiones basadas en web que están abiertas tanto a usuarios internos como a usuarios externos en la Internet pública. El proceso es simple: los usuarios abren un navegador web en el sitio corporativo, que luego abre una conexión TCP con el servidor web corporativo; entonces puede tener lugar alguna transacción. Si todos los usuarios se portan bien y realizan transacciones legítimas, los servidores corporativos (con suerte) no estarán estresados y muchos clientes podrán hacer negocios con normalidad.
 
 Ahora supongamos que un usuario malintencionado encuentra una manera de abrir una conexión anormal al mismo servidor corporativo. La conexión TCP comienza cuando el usuario malintencionado envía un indicador SYN al servidor, pero la dirección IP de origen se reemplaza por una dirección falsa. El servidor agrega la conexión TCP a su tabla de conexiones de clientes y responde a la dirección falsa con un SYN-ACK. Debido a que la dirección falsa no está involucrada en la conexión TCP, no hay una respuesta ACK para completar el protocolo de enlace de tres vías TCP. La conexión incompleta permanece en la tabla del servidor hasta que finalmente expira y se elimina. 
@@ -70,9 +61,7 @@ Durante este tiempo, el atacante puede intentar abrir muchas, muchas más conexi
 Cuando un atacante puede agotar un recurso del sistema, los servicios y sistemas dejan de estar disponibles o fallan. Esto se denomina ataque de denegación de servicio (DoS) porque niega el servicio a usuarios u operaciones legítimos. Los ataques DoS pueden involucrar algo tan simple como paquetes de eco (ping) ICMP, una avalancha de paquetes UDP y conexiones TCP, como el ataque de inundación TCP SYN descrito anteriormente. Estos ataques pueden tener éxito siempre que un sistema tenga una vulnerabilidad en el protocolo o tipo de tráfico que se explota.
 
 Los atacantes pueden llevar la idea de DoS aún más lejos al reclutar a muchos otros sistemas para que participen. Para hacer esto, el atacante configura una computadora de control maestro en algún lugar de Internet. A continuación, muchas computadoras deben infectarse primero con código malicioso o malware aprovechando las vulnerabilidades presentes en esas máquinas. Luego, cada máquina se convierte silenciosamente en un "robot", que parece funcionar normalmente, mientras espera órdenes del control maestro. Cuando llega el momento de comenzar un ataque, el control maestro envía un comando a cada robot y le dice que inicie un ataque de denegación de servicio contra un único host objetivo. Esto se denomina ataque distribuido de denegación de servicio (DDoS) porque el ataque se distribuye entre una gran cantidad de bots, todos inundando o atacando al mismo objetivo.
-
 ### Ataques de reflexión y amplificación
-
 Recuerde que en un ataque de suplantación de identidad, el atacante envía paquetes con una dirección de origen falsificada a un objetivo. El objetivo es obligar al objetivo a lidiar con el tráfico falsificado y enviar el tráfico de retorno hacia una fuente inexistente. Al atacante no le importa adónde va el tráfico de retorno o que no pueda entregarse con éxito.
 
 En un ataque algo relacionado, el atacante vuelve a enviar paquetes con una dirección de origen falsificada hacia un host activo. Sin embargo, el anfitrión no es el objetivo previsto; el objetivo es lograr que el host refleje el intercambio hacia la dirección falsificada que es el objetivo. Esto se conoce como ataque de reflexión, como se ilustra en la Figura 4-6, y el host que refleja el tráfico hacia el objetivo se llama reflector. El atacante también podría enviar los paquetes falsificados a múltiples reflectores, lo que provocaría que el objetivo recibiera múltiples copias del tráfico inesperado.
@@ -82,9 +71,7 @@ En un ataque algo relacionado, el atacante vuelve a enviar paquetes con una dire
 El impacto de un ataque de reflexión puede parecer limitado porque la víctima es un único host objetivo y la cantidad de tráfico que se refleja hacia el objetivo es proporcional a los paquetes enviados por el atacante. Si un atacante puede enviar una pequeña cantidad de tráfico a un reflector y
 Si se aprovecha un protocolo o servicio para generar un gran volumen de tráfico hacia un objetivo, entonces se ha producido un ataque de amplificación. En efecto, tal ataque amplifica los esfuerzos del atacante.
 para perturbar el objetivo. Otro resultado es que se pueden consumir grandes cantidades de ancho de banda de la red reenviando el tráfico amplificado hacia el objetivo, especialmente si hay muchos reflectores involucrados. Algunos mecanismos de DNS y NTP se han explotado en el pasado para establecer nuevos registros de enorme consumo de ancho de banda durante un ataque de amplificación
-
 ### Ataques de intermediario  (Man in the middle)
-
 Muchos tipos de ataques tienen como objetivo interrumpir o comprometer directamente los sistemas específicos, a menudo con resultados notables. A veces, un atacante podría querer espiar los datos que pasan de una máquina a otra, evitando ser detectado. Un ataque de intermediario hace precisamente eso, al permitir que el atacante se introduzca silenciosamente en la ruta de comunicación como intermediario entre dos sistemas objetivo.
 
 Un tipo de ataque de intermediario explota la tabla ARP que mantiene cada host para comunicarse con otros hosts en su segmento de red local. Normalmente, si un host necesita enviar datos a otro, busca el host de destino en su tabla ARP. Si se encuentra una entrada, la trama Ethernet se puede enviar directamente a la dirección MAC de destino; de lo contrario, el remitente debe transmitir una solicitud ARP que contenga la dirección IP del destino y esperar a que el destino responda con una respuesta ARP y su propia dirección MAC.
@@ -99,7 +86,6 @@ Este proceso envenena efectivamente la entrada de la tabla ARP en cualquier sist
 
 Una vez que un atacante se ha insertado entre dos hosts, puede escuchar e inspeccionar pasivamente todo el tráfico que pasa entre ellos. El atacante también podría desempeñar un papel activo y modificar los datos que pasan.
 ### Resumen del ataque de suplantación de direcciones
-
 A medida que analiza los distintos tipos de ataques de suplantación de direcciones, recuerde que el objetivo del atacante es disfrazar su identidad y engañar a otros sistemas de forma maliciosa. Utilice la Tabla 4-2 para revisar los conceptos y características de cada tipo de ataque.
 
 | **Goal**                                                      | **DoS/DDoS** | **Reflection** | **Amplification** | **Man-inthe-Middle** |
@@ -108,21 +94,20 @@ A medida que analiza los distintos tipos de ataques de suplantación de direccio
 | Trick an unwitting accomplice host to send traffic to target  | No           | Yes            | Yes               | No                   |
 | Eavesdrop on traffic                                          | No           | No             | No                | Yes                  |
 | Modify traffic passing through                                | No           | No             | No                | Yes                  |
-### Ataques de reconocimiento
 
+### Ataques de reconocimiento
 Cuando un atacante tiene la intención de lanzar un ataque contra un objetivo, es posible que desee identificar algunas vulnerabilidades para que el ataque pueda centrarse y ser más eficaz. Se puede utilizar un ataque de reconocimiento para descubrir más detalles sobre el objetivo y sus sistemas antes de un ataque real.
+
 Durante un ataque de reconocimiento, el atacante puede utilizar algunas herramientas comunes para descubrir detalles públicos como quién posee un dominio y qué rangos de direcciones IP se utilizan allí. Por ejemplo, el comando nslookup existe en muchos sistemas operativos y puede realizar una búsqueda de DNS para resolver una dirección IP de un nombre de dominio completo. Si un atacante conoce el nombre de dominio de una empresa, nslookup puede revelar el propietario del dominio y el espacio de direcciones IP registrado en él. Los comandos whois y dig son herramientas complementarias que pueden consultar información DNS para revelar información detallada sobre los propietarios de dominios, información de contacto, servidores de correo, servidores de nombres autorizados, etc.
 
 Luego, el atacante puede avanzar y utilizar barridos de ping para enviar pings a cada dirección IP en el rango objetivo. Los hosts que responden al barrido de ping se convierten en objetivos activos. Las herramientas de escaneo de puertos pueden luego recorrer una variedad de puertos UDP y TCP para ver si un host de destino responde en algún número de puerto. Cualquier respuesta indica que se está ejecutando un servicio correspondiente en el objetivo.
 anfitrión.
 Tenga en cuenta que un ataque de reconocimiento no es un ataque verdadero porque, como resultado, no se explota nada. Se utiliza para recopilar información sobre sistemas y servicios de destino para que las vulnerabilidades puedan descubrirse y explotarse mediante otros tipos de ataques.
 ### Ataques de desbordamiento de búfer
-
 Los sistemas operativos y las aplicaciones normalmente leen y escriben datos utilizando buffers y espacio de memoria temporal. Los buffers también son importantes cuando un sistema se comunica con otro, ya que los paquetes IP y las tramas Ethernet van y vienen. Siempre que el espacio de memoria se mantenga adecuadamente y los datos se coloquen dentro de los límites correctos del búfer, todo debería funcionar como se esperaba.
 
 Sin embargo, algunos sistemas y aplicaciones tienen vulnerabilidades que pueden permitir que los buffers se desborden. Esto significa que algunos datos entrantes podrían almacenarse en ubicaciones de memoria inesperadas si se permite que un búfer se llene más allá de su límite. Un atacante puede aprovechar esta condición enviando datos mayores de lo esperado. Si existe una vulnerabilidad, el sistema objetivo podría almacenar esos datos, desbordando su búfer hacia otra área de la memoria y eventualmente colapsando un servicio o todo el sistema. El atacante también podría crear especialmente el mensaje grande insertando código malicioso en él. Si el sistema de destino almacena esos datos como resultado de un desbordamiento del búfer, entonces puede ejecutar el código malicioso sin darse cuenta.
-### malware
-
+### Malware
 Algunos tipos de amenazas a la seguridad pueden presentarse en forma de software malicioso o malware. Por ejemplo, un caballo de Troya es un software malicioso que está oculto y empaquetado dentro de otro software que parece normal y legítimo. Si un usuario bien intencionado decide instalarlo, el software troyano también se instala silenciosamente. Entonces, el malware puede ejecutar sus propios ataques en el sistema local o contra otros sistemas. El malware troyano puede propagarse de una computadora a otra solo mediante la interacción del usuario, como abrir archivos adjuntos de correo electrónico, descargar software de Internet e insertar una unidad USB en una computadora.
 Por el contrario, los virus son malware que pueden propagarse más fácilmente entre sistemas. Para propagarse, el software antivirus debe inyectarse en otra aplicación y luego depender de los usuarios para transportar el software de la aplicación infectada a otras víctimas.
 Otro tipo de malware es capaz de propagarse e infectar otros sistemas por sí solo. Un atacante desarrolla software de gusano y lo deposita en un sistema. A partir de ese momento, el gusano se replica y se propaga a otros sistemas a través de sus vulnerabilidades, luego se replica y se propaga una y otra vez.
@@ -133,8 +118,8 @@ En resumen, la Tabla 4-3 enumera las ideas clave detrás de cada tipo de malware
 | Packaged inside other software    | Yes              | No        | No       |
 | Self-injected into other software | No               | Yes       | No       |
 | Propagates automatically          | No               | No        | Yes      |
-### Vulnerabilidades humanas
 
+### Vulnerabilidades humanas
 Muchos tipos de ataques deben aprovechar una vulnerabilidad en un sistema operativo, servicio u otros tipos de software de aplicación. En otras palabras, un atacante o el malware involucrado debe encontrar una debilidad en el sistema informático objetivo. Todavía hay muchos otros ataques que pueden tener éxito aprovechando las debilidades de los humanos que utilizan los sistemas informáticos.
 
 Un ataque bastante sencillo se llama ingeniería social, donde la confianza humana y los comportamientos sociales pueden convertirse en vulnerabilidades de seguridad. Por ejemplo, un atacante podría hacerse pasar por un miembro del personal de TI e intentar contactar a los usuarios finales reales a través de llamadas telefónicas, correos electrónicos y redes sociales. El objetivo final podría ser convencer a los usuarios de que revelen sus credenciales o establezcan sus contraseñas en un valor "temporal" debido a algún mantenimiento de TI ficticio que se llevará a cabo, lo que permitirá al atacante obtener fácil acceso a sistemas seguros. Los atacantes también pueden estar físicamente presentes y observar en secreto a los usuarios mientras ingresan sus credenciales.
@@ -158,6 +143,7 @@ Puede consultar la Tabla 4-4 para revisar las ideas clave detrás de cada tipo d
 | Smishing           | Uses SMS text messages                                       |
 | Pharming           | Uses legitimate services to send users to a compromised site |
 | Watering hole      | Targets specific victims who visit a compromised site        |
+
 ### Vulnerabilidades de contraseña
 La mayoría de los sistemas de una red empresarial utilizan alguna forma de autenticación para otorgar o denegar el acceso de los usuarios. Cuando los usuarios acceden a un sistema, normalmente intervienen un nombre de usuario y una contraseña. Puede resultar bastante fácil adivinar el nombre de usuario de alguien basándose en su nombre real. Si la contraseña del usuario está configurada con algún valor predeterminado o con una palabra o cadena de texto que sea fácil de adivinar, un atacante también podría obtener acceso fácilmente al sistema.
 Piense como un atacante por un momento y vea si puede adivinar algunas contraseñas que podría probar si quisiera iniciar sesión en un sistema aleatorio. Quizás haya pensado en contraseñas como contraseña, contraseña123, 123456, etc. Quizás podrías probar con el nombre de usuario admin y la contraseña admin.
@@ -167,9 +153,7 @@ Un atacante puede lanzar un ataque en línea ingresando cada contraseña adivina
 Los atacantes también pueden utilizar software para realizar ataques de diccionario para descubrir la contraseña de un usuario. El software intentará iniciar sesión automáticamente con contraseñas tomadas de un diccionario o lista de palabras. Es posible que tenga que realizar miles o millones de intentos antes de descubrir la contraseña real. Además, el software puede realizar un ataque de fuerza bruta probando todas las combinaciones posibles de cadenas de letras, números y símbolos. Los ataques de fuerza bruta requieren recursos informáticos muy potentes y una gran cantidad de tiempo.
 
 Para mitigar los ataques a contraseñas, una empresa debe implementar políticas de contraseñas para todos los usuarios. Dicha política podría incluir pautas que requieran una cadena de contraseña larga compuesta por una combinación de caracteres en mayúsculas y minúsculas junto con números y algunos caracteres especiales. El objetivo es exigir que todas las contraseñas sean cadenas complejas que sean difíciles de adivinar o revelar mediante un ataque de contraseña. Además, la gestión de contraseñas debería exigir que todas las contraseñas se cambien periódicamente, de modo que ni siquiera los ataques prolongados de fuerza bruta puedan recuperar una contraseña antes de volver a cambiarla.
-
 #### Alternativas de contraseña
-
 Una cadena de contraseña simple es el único factor que un usuario debe ingresar para ser autenticado.
 
 Debido a que una contraseña debe recordarse y no anotarse en ningún lado, es posible que
@@ -192,8 +176,8 @@ En resumen, la Tabla 4-5 enumera las ideas clave utilizadas en cada alternativa 
 | Something you know     | yes               | yes            |                          |               |
 | Something you have     |                   | yes            | yes                      |               |
 | Something you are      |                   |                |                          | yes           |
-### Controlar y monitorear el acceso de los usuarios
 
+### Controlar y monitorear el acceso de los usuarios
 Puede gestionar la actividad del usuario hacia y a través de sistemas con mecanismos de autenticación, autorización y contabilidad (AAA, también pronunciado "triple-A"). AAA utiliza métodos estandarizados para solicitar a los usuarios sus credenciales antes de permitir o autorizar el acceso. Los protocolos de contabilidad también pueden registrar la actividad de los usuarios en los sistemas empresariales. AAA se usa comúnmente para controlar y monitorear el acceso a dispositivos de red como enrutadores, conmutadores, firewalls, etc.
 
 En pocas palabras, puedes pensar en AAA de la siguiente manera:
@@ -216,7 +200,6 @@ Tanto TACACS+ como RADIUS están organizados como un modelo cliente/servidor, do
 ![](img/4.9.png)
 
 ### Desarrollo de un programa de seguridad para educar a los usuarios
-
 Un enfoque eficaz que una empresa puede adoptar para mejorar la seguridad de la información es educar a su comunidad de usuarios a través de un programa de seguridad corporativo. Es posible que la mayoría de los usuarios no tengan experiencia en TI, por lo que es posible que no reconozcan las vulnerabilidades o no se den cuenta de las consecuencias de sus propias acciones. Por ejemplo, si los usuarios corporativos reciben un mensaje de correo electrónico que contiene un mensaje sobre una orden legal para su arresto o una amenaza de exponer algún supuesto comportamiento ilegal, podrían verse tentados a seguir un enlace a un sitio malicioso. Una acción de este tipo podría infectar la computadora de un usuario y luego abrir una puerta trasera o introducir malware o un gusano que luego podría afectar las operaciones comerciales.
 
 Un programa de seguridad eficaz debe tener los siguientes elementos básicos:
