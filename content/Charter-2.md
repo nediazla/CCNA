@@ -235,7 +235,7 @@ Standard IP access list 1
 
     10 permit 10.1.1.1 (107 matches)
     20 deny   10.1.1.0, wildcard bits 0.0.0.255 (4 matches)
-	30 permit 10.0.0.0, wildcard bits 0.255.255.255 (10 matches)
+    30 permit 10.0.0.0, wildcard bits 0.255.255.255 (10 matches)
 
 R2# show access-lists
 
@@ -263,7 +263,7 @@ Internet address is 10.1.2.2/24
 
 El resultado de estos comandos muestra dos elementos de interés. La primera línea de salida en este caso indica el tipo (estándar) y el número. Si existiera más de una ACL, vería varias estrofas de salida, una por ACL, cada una con una línea de encabezado como esta. A continuación, estos comandos enumeran los recuentos de paquetes para el número de paquetes que el router ha hecho coincidir con cada comando. Por ejemplo, hasta ahora 107 paquetes han coincidido con la primera línea de la ACL.
 
-Finalmente, al final del ejemplo se muestra el resultado del  **comando show ip interface**. Este comando enumera, entre muchos otros elementos, el número o el nombre de cualquier ACL IP habilitada en la interfaz según el  subcomando `ip access-group` interface.
+Finalmente, al final del ejemplo se muestra el resultado del  comando `show ip interface`. Este comando enumera, entre muchos otros elementos, el número o el nombre de cualquier ACL IP habilitada en la interfaz según el  subcomando `ip access-group`.
 #### Ejemplo 2 de ACL numerada estándar
 Para el segundo ejemplo, use la Figura 2-8 e imagine que su jefe le da algunos requisitos apresuradamente en el pasillo. Al principio, le dice que quiere filtrar los paquetes que van desde los servidores de la derecha hacia los clientes de la izquierda. A continuación, dice que quiere que permita el acceso de los hosts A, B y otros hosts de su misma subred al servidor S1, pero deniegue el acceso a ese servidor a los hosts de la subred del host C. A continuación, le dice que, además, a los hosts de la subred del host A se les debe denegar el acceso al servidor S2, pero a los hosts de la subred del host C se les debe permitir el acceso al servidor S2, todo filtrando los paquetes que van solo de derecha a izquierda. A continuación, le dice que coloque la ACL entrante en la interfaz F0/0 de R2.
 
@@ -276,7 +276,7 @@ Si revisas todos los comentarios del jefe, los requisitos podrían reducirse a l
 3.      Denegar los paquetes del servidor S1 que van a los hosts de la subred de C.
 4.      Permitir que los paquetes del servidor S2 vayan a los hosts de la subred de C.
 5.      Denegar los paquetes del servidor S2 que van a los hosts de la subred de A.
-6.      (No hubo ningún comentario sobre qué hacer de forma predeterminada; use el valor predeterminado implícito **de denegar todo** ).
+6.      (No hubo ningún comentario sobre qué hacer de forma predeterminada; use el valor predeterminado implícito `denny any`).
 
 Resulta que no puedes hacer todo lo que tu jefe te pidió con un ACL estándar. Por ejemplo, considere el comando obvio para el requisito número 2: `access-list 2 permit 10.2.2.1`. Esto permite todo el tráfico cuya IP de origen es 10.2.2.1 (servidor S1). El siguiente requisito le pide que filtre (deniegue) los paquetes procedentes de esa misma dirección IP. Incluso si agregara otro comando que verificara la dirección IP de origen 10.2.2.1, el router nunca llegaría a ella, porque los routers utilizan la lógica de primera coincidencia al buscar la ACL. No puede comprobar la dirección IP de destino y la de origen, ya que las ACL estándar no pueden comprobar la dirección IP de destino.
 
@@ -298,13 +298,13 @@ interface F0/0  ip access-group 2 out !
 interface F0/1  ip access-group 3 out
 ```
 
-Como se destaca en el ejemplo, la solución con ACL número 2 permite todo el tráfico del servidor S1, con esa lógica habilitada para los paquetes que salen de la interfaz F0/0 de R1. El resto del tráfico se descartará debido a la **denegación implícita**  de todo al final de la ACL. Además, ACL 3 permite el tráfico del servidor S2, que luego puede salir de la interfaz F0/1 de R1. Además, tenga en cuenta que la solución muestra el uso del  **parámetro access-list remark**, que le permite dejar documentación de texto que permanece con la ACL.
+Como se destaca en el ejemplo, la solución con ACL número 2 permite todo el tráfico del servidor S1, con esa lógica habilitada para los paquetes que salen de la interfaz F0/0 de R1. El resto del tráfico se descartará debido a la **denegación implícita**  de todo al final de la ACL. Además, ACL 3 permite el tráfico del servidor S2, que luego puede salir de la interfaz F0/1 de R1. Además, tenga en cuenta que la solución muestra el uso del  parámetro `access-list remark`, que le permite dejar documentación de texto que permanece con la ACL.
 ### Consejos para la solución de problemas y la verificación
 La solución de problemas de ACL IPv4 requiere cierta atención a los detalles. En particular, debe estar preparado para mirar la dirección y la máscara de comodín y predecir con confianza las direcciones que coinciden con esos dos parámetros combinados. Los próximos problemas de práctica un poco más adelante en este capítulo pueden ayudarte a prepararte para esa parte del trabajo. Pero algunos otros consejos también pueden ayudarlo a verificar y solucionar problemas de ACL en los exámenes.
 
 En primer lugar, puede saber si el router está haciendo coincidir los paquetes o no con un par de herramientas. Ejemplo
 
-2-2 ya mostró que IOS mantiene estadísticas sobre los paquetes coincidentes por cada línea de una ACL. Además, si agrega la  palabra clave log al final de un  **comando access-list**, IOS emite mensajes de registro con estadísticas ocasionales sobre las coincidencias de esa línea particular de la ACL. Tanto las estadísticas como los mensajes de registro pueden ser útiles para decidir qué línea de la ACL coincide con un paquete.
+2-2 ya mostró que IOS mantiene estadísticas sobre los paquetes coincidentes por cada línea de una ACL. Además, si agrega la  palabra clave log al final de un comando `access-list`, IOS emite mensajes de registro con estadísticas ocasionales sobre las coincidencias de esa línea particular de la ACL. Tanto las estadísticas como los mensajes de registro pueden ser útiles para decidir qué línea de la ACL coincide con un paquete.
 
 Por ejemplo, el Ejemplo 2-4 muestra una versión actualizada de ACL 2 del Ejemplo 2-3, esta vez con la  palabra clave log agregada. A continuación, la parte inferior del ejemplo muestra un mensaje de registro típico, que muestra la coincidencia resultante basada en un paquete con la dirección IP de origen 10.2.2.1 (coincidente con la ACL) con la dirección de destino 10.1.1.1 .
 
@@ -333,7 +333,7 @@ Esta sección proporciona algunos problemas prácticos y consejos, desde dos per
 ### Práctica Creación de comandos de lista de acceso
 En esta sección, practique familiarizarse con la sintaxis del  comando **access-list**, especialmente con la elección de la lógica de coincidencia correcta. Estas habilidades serán útiles cuando lea sobre las ACL extendidas y con nombre en el próximo capítulo.
 
-En primer lugar, la siguiente lista resume algunos consejos importantes que se deben tener en cuenta a la hora de elegir parámetros coincidentes con cualquier  **comando de lista de acceso**:
+En primer lugar, la siguiente lista resume algunos consejos importantes que se deben tener en cuenta a la hora de elegir parámetros coincidentes con cualquier comando `access-list`:
 
 - Para que coincida con una dirección específica, simplemente indique la dirección.
 - Para hacer coincidir todas y cada una de las direcciones, utilice la  **palabra clave** any.
@@ -360,12 +360,12 @@ En algunos casos, es posible que no esté creando su propia ACL. En su lugar, es
 
 Bajo ciertas suposiciones que son razonables para las certificaciones CCNA, calcular el rango de direcciones que coinciden con una ACL puede ser relativamente simple. Básicamente, el rango de direcciones comienza con la dirección configurada en el comando ACL. El rango de direcciones termina con la suma del campo de dirección y la máscara de comodín. Eso es todo.
 
-Por ejemplo, con el comando **access-list 1 permit 172.16.200.0 0.0.7.255**, el extremo inferior del rango es simplemente 172.16.200.0, tomado directamente del propio comando. Luego, para encontrar el extremo superior del rango, simplemente agregue este número a la máscara de WC, de la siguiente manera:
+Por ejemplo, con el comando `access-list 1 permit 172.16.200.0 0.0.7.255`, el extremo inferior del rango es simplemente 172.16.200.0, tomado directamente del propio comando. Luego, para encontrar el extremo superior del rango, simplemente agregue este número a la máscara de WC, de la siguiente manera:
 
 ```
- 172.16.200.0
-+  0. 0.  7.255
- 172.16.207.255
+ 172. 16.200. 0
++ 0 . 0 . 7 .255
+ 172. 16.207.255
 ```
 
 Para esta última práctica, observe los  comandos **de lista de acceso existentes**  en la Tabla 2-3. En cada caso, haga una anotación sobre la dirección IP exacta, o el rango de direcciones IP, que coincida con el comando.
@@ -381,9 +381,9 @@ Para esta última práctica, observe los  comandos **de lista de acceso existen
 | 7           | **access-list 7 permit 10.1.192.0 0.0.1.255**              |
 | 8           | **access-list 8 permit 10.1.192.0 0.0.63.255**             |
 
-Curiosamente, IOS permite al usuario de CLI escribir un  **comando access-list** en modo de configuración, e IOS potencialmente cambiará el parámetro de dirección antes de colocar el comando en el archivo running-config. Este proceso de solo encontrar el rango de direcciones que coinciden con el  `comando access-list` espera que el  comando `access-list` provenga del router, de modo que dichos cambios se hayan completado.
+Curiosamente, IOS permite al usuario de CLI escribir un comando `access-list` en modo de configuración, e IOS potencialmente cambiará el parámetro de dirección antes de colocar el comando en el archivo running-config. Este proceso de solo encontrar el rango de direcciones que coinciden con el  comando `access-list` espera que el  comando `access-list` provenga del router, de modo que dichos cambios se hayan completado.
 
-El cambio que IOS puede hacer con un  `comando access-list` es convertir a 0 cualquier octeto de una dirección para la cual el octeto de la máscara comodín sea 255. Por ejemplo, con una máscara comodín de 0.0.255.255, IOS ignora los dos últimos octetos. IOS espera que el campo de dirección termine con dos ceros. De lo contrario, IOS aún acepta el  `comando access-list`, pero IOS cambia los dos últimos octetos de la dirección a 0s. El ejemplo 2-5 muestra un ejemplo, donde la configuración muestra la dirección 10.1.1.1, pero la máscara comodín 0.0.255.255.
+El cambio que IOS puede hacer con un comando `access-list` es convertir a 0 cualquier octeto de una dirección para la cual el octeto de la máscara comodín sea 255. Por ejemplo, con una máscara comodín de 0.0.255.255, IOS ignora los dos últimos octetos. IOS espera que el campo de dirección termine con dos ceros. De lo contrario, IOS aún acepta el comando `access-list`, pero IOS cambia los dos últimos octetos de la dirección a 0s. El ejemplo 2-5 muestra un ejemplo, donde la configuración muestra la dirección 10.1.1.1, pero la máscara comodín 0.0.255.255.
 
 ```
 R2#configure terminal
