@@ -291,10 +291,13 @@ En el ejemplo 2-3 se muestra la configuración que completa estos requisitos.
 
 ```
 access-list 2 remark This ACL permits server S1 traffic to host A's subnet 
-access-list 2 permit 10.2.2.1 ! 
+access-list 2 permit 10.2.2.1 
+! 
 access-list 3 remark This ACL permits server S2 traffic to host C's subnet 
-access-list 3 permit 10.2.2.2 ! 
-interface F0/0  ip access-group 2 out !
+access-list 3 permit 10.2.2.2 
+! 
+interface F0/0  ip access-group 2 out 
+!
 interface F0/1  ip access-group 3 out
 ```
 

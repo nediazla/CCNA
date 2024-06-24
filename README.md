@@ -34,7 +34,7 @@ Con los siguientes temas:
 
 [Chapter 15](content/Charter-15.md), “Cloud Architecture,” explica los conceptos básicos y luego analiza en general el impacto que tiene la computación en la nube en una red empresarial típica, incluidos los conceptos fundamentales de la virtualización de servidores.
 
-Chapter 16, “Introduction to Controller-Based Networking,” analiza muchos conceptos y términos relacionados con cómo las redes definidas por software (SDN) y la programabilidad de la red están impactando las redes empresariales típicas.
+[Chapter 16](content/Charter-16.md), “Introduction to Controller-Based Networking,” analiza muchos conceptos y términos relacionados con cómo las redes definidas por software (SDN) y la programabilidad de la red están impactando las redes empresariales típicas.
 
 Chapter 17, “Cisco Software-Defined Access (SDA),” analiza la oferta de redes definidas por software (SDN) de Cisco para la empresa, incluido el controlador DNA Center.
 
