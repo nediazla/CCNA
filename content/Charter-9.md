@@ -148,3 +148,67 @@ Log Buffer (8192 bytes):
 *Oct 21 20:07:24.312: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to up
 ```
 
+### El comando de depuración y los mensajes de registro
+De los ocho niveles de gravedad de los mensajes de registro, un nivel, el nivel de depuración (7), tiene un propósito especial: para los mensajes generados como resultado de que un usuario haya iniciado sesión en el enrutador o conmutador y emita un comando de depuración.
+
+El comando `debug EXEC` le brinda al ingeniero de red una forma de pedirle a IOS que supervise ciertos eventos internos, y que el proceso de monitoreo continúe a lo largo del tiempo, de modo que IOS pueda emitir mensajes de registro cuando ocurran esos eventos. El ingeniero puede iniciar sesión, emitir el comando de depuración y continuar con otros trabajos. El usuario puede incluso cerrar sesión en el dispositivo y la depuración permanece habilitada. IOS continúa monitoreando la solicitud en ese comando de depuración y genera mensajes de registro sobre cualquier evento relacionado. La depuración permanece activa hasta que algún usuario emite el comando no debug con los mismos parámetros, deshabilitando la depuración.
+
+La mejor manera de ver cómo funciona el comando `debug` y cómo utiliza los mensajes de registro es ver un ejemplo. El ejemplo 9-5 muestra un ejemplo de depuración de mensajes de saludo OSPF para el enrutador R1 en la Figura 9-4. El enrutador (R1) habilita OSPF en dos interfaces y ha establecido una relación de vecino OSPF con el enrutador R2 (RID 2.2.2.2). El resultado de la depuración muestra un mensaje de registro para el saludo enviado en cada una de las cuatro interfaces habilitadas para OSPF, así como mensajes de registro para los mensajes de saludo recibidos de cada uno de los tres vecinos OSPF.
+
+```
+R1# debug ip ospf hello 
+OSPF hello debugging is on
+R1#
+*Aug 10 13:38:19.863: OSPF-1 HELLO Gi0/1: Send hello to 224.0.0.5 area 0 from
+172.16.1.1
+*Aug 10 13:38:21.199: OSPF-1 HELLO Gi0/2: Rcv hello from 2.2.2.2 area 0 172.16.2.2|
+*Aug 10 13:38:22.843: OSPF-1 HELLO Gi0/2: Send hello to 224.0.0.5 area 0 from
+172.16.2.1
+R1#
+```
+
+El usuario de la consola ve los mensajes de registro creados en nombre de ese comando de depuración una vez que se completa el comando de depuración. Según la configuración anterior en el Ejemplo 9-2, el comando de registro de la consola 7 del R1 nos dice que el usuario de la consola recibirá los niveles de gravedad del 0 al 7, que incluyen mensajes de depuración de nivel 7. Tenga en cuenta que con la configuración actual, estos mensajes de depuración no estarían en el búfer de mensajes de registro local debido al nivel en el comando `login buffered warning`, ni se enviarían al servidor syslog debido al comando de nivel `logging trap 4`.
+
+Tenga en cuenta que el usuario de la consola ve automáticamente los mensajes de registro como se muestra en el Ejemplo 9-4. Sin embargo, como se indica en el texto que describe la Figura 9-1, un usuario que se conecte al R1 también deberá emitir el comando `terminal monitor` para ver esos mensajes de depuración. Por ejemplo, cualquiera que haya iniciado sesión con SSH en el momento en que se recopiló el resultado del Ejemplo 9-4 no habría visto el resultado, incluso con el comando `logging monitor debug` configurado en el enrutador R1, sin antes emitir un comando `terminal monitor`.
+
+Tenga en cuenta que todas las opciones de depuración habilitadas utilizan la CPU del enrutador, lo que puede causar problemas al enrutador. Puede monitorear el uso de la CPU con el comando `show Process cpu`, pero debe tener cuidado al usar los comandos de depuración con cuidado en dispositivos de producción. Además, tenga en cuenta que cuantos más usuarios de CLI reciban mensajes de depuración, más CPU se consumirá. Por lo tanto, algunas instalaciones optan por no incluir mensajes de registro a nivel de depuración para el registro de la consola y del terminal, lo que requiere que los usuarios busquen esos mensajes en el búfer de registro o syslog, solo para reducir la carga de la CPU del enrutador.
+### Protocolo de tiempo de red (NTP)
+Cada dispositivo de red tiene algún concepto de fecha y reloj de hora. Por ejemplo, los mensajes de registro analizados en la primera sección principal de este capítulo tenían una marca de tiempo con la fecha y hora del día indicadas. Ahora imagine mirar todos los mensajes de registro de todos los enrutadores y conmutadores almacenados en un servidor syslog. Todos esos mensajes tienen una fecha y una marca de tiempo, pero ¿cómo se asegura de que las marcas de tiempo sean consistentes? ¿Cómo se asegura de que todos los dispositivos sincronicen sus relojes de hora del día para poder entender todos los mensajes de registro en el servidor syslog? ¿Cómo podrías entender los mensajes de un evento que afectó a dispositivos en tres zonas horarias diferentes?
+
+Por ejemplo, considere los mensajes en dos enrutadores, R1 y R2, como se muestra en el Ejemplo 9-6. Los enrutadores R1 y R2 no sincronizan sus relojes. Sigue ocurriendo un problema en el enlace serie entre los dos enrutadores. Un ingeniero de redes examina todos los mensajes de registro almacenados en el servidor syslog. Sin embargo, cuando el ingeniero ve algunos mensajes de R1, a las 13:38:39 (alrededor de la 1:40 p. m.), no piensa en buscar mensajes de R2 que tengan una marca de tiempo de alrededor de las 9:45 a. m.
+
+```
+*Oct 19 13:38:37.568: %OSPF-5-ADJCHG: Process 1, Nbr 2.2.2.2 on Serial0/0/0 from FULL to DOWN, Neighbor Down: Interface down or detached
+
+*Oct 19 13:38:40.568: %LINEPROTO-5-UPDOWN: Line protocol on Interface Serial0/0/0, changed state to down
+```
+```
+! These messages happened on router R2
+Oct 19 09:44:09.027: %LINK-3-UPDOWN: Interface Serial0/0/1, changed state to down
+Oct 19 09:44:09.027: %OSPF-5-ADJCHG: Process 1, Nbr 1.1.1.1 on Serial0/0/1 from FULL to DOWN, Neighbor Down: Interface down or detached
+```
+
+En realidad, los mensajes en ambas partes del Ejemplo 9-6 ocurrieron con una diferencia de 0,5 segundos entre sí porque emití un comando de apagado en uno de los enrutadores. Sin embargo, los relojes horarios de los dos enrutadores no estaban sincronizados, lo que hace que los mensajes en los dos enrutadores parezcan no relacionados. Con relojes sincronizados, los dos enrutadores habrían enumerado marcas de tiempo prácticamente idénticas de casi exactamente la misma hora en la que ocurrieron estos mensajes, lo que haría mucho más fácil leer y correlacionar los mensajes.
+
+Los enrutadores, conmutadores, otros dispositivos de red y prácticamente todos los dispositivos conocidos en el mundo de la TI tienen un reloj con la hora del día. Por diversas razones, tiene sentido sincronizar esos relojes para que todos los dispositivos tengan la misma hora del día, además de las diferencias en la zona horaria. El protocolo de tiempo de red (NTP) proporciona los medios para hacer precisamente eso.
+
+NTP ofrece a cualquier dispositivo una forma de sincronizar sus relojes de hora del día. NTP proporciona mensajes de protocolo que los dispositivos utilizan para conocer la marca de tiempo de otros dispositivos. Los dispositivos se envían marcas de tiempo entre sí con mensajes NTP, intercambiando mensajes continuamente, y un dispositivo cambia su reloj para que coincida con el del otro, y finalmente sincroniza los relojes. Como resultado, las acciones que se benefician de la sincronización, como las marcas de tiempo en los mensajes de registro, funcionan mucho mejor.
+### Configuración de la hora y la zona horaria
+El trabajo de NTP es sincronizar los relojes, pero NTP funciona mejor si configura el reloj del dispositivo a una hora razonablemente cercana antes de habilitar la función de cliente NTP con el comando `ntp server`. Por ejemplo, mi reloj de pulsera marca las 8:52 p.m. ahora mismo. Antes de iniciar NTP en un nuevo enrutador o conmutador para que se sincronice con otro dispositivo, debo configurar la hora en 8:52 p. m., configurar la fecha y zona horaria correctas e incluso decirle al dispositivo que se ajuste al horario de verano y luego habilitar NTP. Configurar la hora correctamente le da a NTP un buen comienzo para la sincronización.
+
+El ejemplo 9-7 muestra cómo configurar la fecha, hora, zona horaria y horario de verano. Curiosamente, utiliza dos comandos de configuración (para la zona horaria y el horario de verano) y un comando EXEC para configurar la fecha y la hora en el enrutador.
+
+```
+R1# configure terminal
+Enter configuration commands, one per line. End with CNTL/Z.
+R1(config)# clock timezone EST -5
+R1(config)# clock summer-time EDT recurring
+R1(config)# ^Z
+R1#
+R1# clock set 20:52:49 21 October 2015
+Oct 21 20:52:49.000: %SYS-6-CLOCKUPDATE: System clock has been updated from 00:36:38
+UTC Thu Oct 22 2015 to 20:52:49 UTC Wed Oct 21 2015, configured from console by console. 
+R1# show clock
+20:52:55.051 EDT Wed Oct 21 2015
+```
+
