@@ -212,3 +212,217 @@ R1# show clock
 20:52:55.051 EDT Wed Oct 21 2015
 ```
 
+Concéntrese primero en los dos comandos de configuración. Debe configurar los dos primeros comandos antes de configurar la hora del día con el comando EXEC `clock set` porque los dos comandos de configuración afectan la hora configurada. En el primer comando, `clock timezone` define el comando y una palabra clave. El siguiente parámetro, `EST` en este caso, es cualquier valor que elija, pero elija el nombre de la zona horaria del dispositivo. Este valor aparece en los comandos `show`, por lo que aunque usted invente el valor, el valor debe ser significativo para todos. Elegí EST, el acrónimo de Hora estándar del este de EE. UU. El parámetro “-5” significa que este dispositivo tiene un retraso de 5 horas en la hora universal coordinada (UTC).
+
+`clock summer-time` La parte del segundo comando define qué hacer, nuevamente siendo el `EDT` un campo en el que podría haber usado cualquier valor. Sin embargo, debe utilizar un valor significativo. Este es el valor que se muestra con la hora en los comandos `show` cuando el horario de verano está vigente, así que elegí EDT porque es el acrónimo de horario de verano en esa misma zona horaria EST. Finalmente, la palabra clave recurrente le dice al enrutador que avance una hora y retroceda una hora automáticamente a lo largo de los años.
+
+El comando EXEC `clock set` establece la hora, el día del mes, el mes y el año. Sin embargo, tenga en cuenta que IOS interpreta la hora escrita en el comando en el contexto de la zona horaria y el horario de verano. En el ejemplo, el comando `clock set` muestra una hora de 20:52:49 (el comando usa una sintaxis de hora con un formato de 24 horas, no con un formato de 12 horas más a.m./p.m.). Como resultado de esa hora más los dos comandos de configuración anteriores, el comando `show clock` (emitido segundos después) enumera esa hora, pero también anota la hora como EDT, en lugar de hora UTC.
+### Configuración NTP básica
+Con NTP, los servidores proporcionan información sobre la hora del día a los clientes y los clientes reaccionan ajustando sus relojes para que coincidan. El proceso requiere pequeños ajustes repetidos a lo largo del tiempo para mantener esa sincronización. La configuración en sí puede ser simple o extensa una vez que agrega la configuración de seguridad y la redundancia.
+
+Cisco proporciona dos comandos de configuración ntp que dictan cómo funciona NTP en un enrutador o conmutador, de la siguiente manera:
+
+-  **ntp master** {_stratum-level_}**:** NTP server mode—el dispositivo actúa sólo como servidor NTP y no como cliente NTP. El dispositivo obtiene la información horaria del reloj interno del dispositivo.
+
+- **ntp server** {_address_ | _hostname_}**:** NTP client/server mode—el dispositivo actúa como cliente y servidor. Primero, actúa como un cliente NTP, para sincronizar la hora con un servidor. Una vez sincronizado, el dispositivo puede actuar como un servidor NTP, para suministrar tiempo a otros clientes NTP.
+
+Para ver un ejemplo que muestra la sintaxis de configuración básica y los comandos `show`, considere la Figura 9-5. Con esta sencilla configuración:
+-  R3 acts as an NTP server only.
+- R2 acts in client/server mode—primero como cliente NTP para sincronizar la hora con el servidor NTP R3, luego como servidor para suministrar hora al cliente NTP R1.
+- R1 acts in client/server mode—primero como cliente NTP para sincronizar la hora con el servidor NTP R2. (R1 estará dispuesto a actuar como servidor, pero en este ejemplo ningún dispositivo hace referencia a R1 como servidor NTP).
+
+![](img/9.5.png)
+
+Como puede ver, NTP requiere poca configuración para que funcione con un único comando de configuración en cada dispositivo. El ejemplo 9-8 recopila la configuración de los dispositivos que se muestran en la figura para facilitar su consulta.
+
+```
+! Configuration on R1: 
+ntp server 172.16.2.2
+```
+```
+! Configuration on R2: 
+ntp server 172.16.3.3
+```
+```
+! Configuration on R3:
+ntp master 2
+```
+
+El ejemplo 9-9 enumera el resultado del comando `show ntp status` en R1, y la primera línea de resultado incluye algunos elementos de estado importantes. Primero, muestra un estado de sincronizado, que confirma que el cliente NTP ha completado el proceso de cambiar su hora para que coincida con la hora del servidor. Cualquier enrutador que actúe como cliente NTP incluirá "no sincronizado" en esa primera línea hasta que se complete el proceso de sincronización NTP con al menos un servidor. También confirma la dirección IP del servidor (el reloj de referencia de este dispositivo) con la dirección IP configurada en el Ejemplo 9-8 (172.16.2.2).
+
+```
+R1# show ntp status 
+Clock is synchronized, stratum 4, reference is 172.16.2.2 nominal freq is 250.0000 Hz, actual freq is 250.0000 Hz, precision is 2**21 
+ntp uptime is 1553800 (1/100 of seconds), resolution is 4000 
+reference time is DA5E7147.56CADEA7 (19:54:31.339 EST Thu Feb 4 2016) 
+clock offset is 0.0986 msec, root delay is 2.46 msec 
+root dispersion is 22.19 msec, peer dispersion is 5.33 msec 
+loopfilter state is 'CTRL' (Normal Controlled Loop), drift is 0.000000009 s/s 
+system poll interval is 64, last update was 530 sec ago.
+```
+
+A continuación, observe el resultado del comando `show ntp Associations` de R1 y R2, como se muestra en el Ejemplo 9-10. Este comando enumera todos los servidores NTP que el dispositivo local puede intentar usar, con información de estado sobre la asociación entre el dispositivo local (cliente) y los distintos servidores NTP. Comenzando con R1, tenga en cuenta que tiene una asociación (es decir, una relación con un servidor NTP), basada en el comando de configuración one ntp server 172.16.2.2 en R1. El * significa que R1 se comunicó exitosamente con el servidor. Verá datos similares del mismo resultado de comando tomado del enrutador R2.
+
+```
+R1# show ntp associations 
+! This output is taken from router R1, acting in client/server mode    
+address      ref clock     st  when poll  reach  delay  offset  disp 
+*~172.16.2.2 172.16.3.3    3   50    64   377    1.223  0.090   4.469
+
+* sys.peer, # selected, + candidate, - outlyer, x falseticker, ~ configured
+```
+```
+R2# show ntp associations
+! This output is taken from router R2, acting in client/server mode  
+address       ref clock    st  when poll  reach  delay  offset  disp 
+*~172.16.3.3  127.127.1.1  2   49    64   377    1.220  -7.758  3.695
+
+* sys.peer, # selected, + candidate, - outlyer, x falseticker, ~ configured
+```
+
+### Reloj y estrato de referencia NTP
+Los servidores NTP deben aprender la hora de algún dispositivo. Para dispositivos que actúan en modo cliente/servidor NTP, el dispositivo utiliza la función de cliente NTP para aprender la hora. Sin embargo, los dispositivos que actúan únicamente como servidor NTP obtienen su tiempo del hardware interno del dispositivo o de algún reloj externo utilizando mecanismos distintos de NTP.
+
+Por ejemplo, cuando se configura con el comando `ntp master`, un enrutador/conmutador Cisco utiliza el hardware de su dispositivo interno para determinar la hora. Todas las computadoras, incluidos los dispositivos de red, necesitan algún medio para mantener el tiempo por innumerables razones, por lo que incluyen componentes de hardware y procesos de software para mantener el tiempo incluso durante períodos en los que el dispositivo pierde energía.
+
+Además, los servidores y clientes NTP utilizan un número para mostrar la precisión percibida de los datos de su reloj de referencia según el nivel del estrato. Cuanto más bajo sea el nivel del estrato, más preciso se considera el reloj de referencia. Un servidor NTP que utiliza su hardware interno o un reloj de referencia externo establece su propio nivel de estrato. Luego, un cliente NTP agrega 1 al nivel de estrato que aprende de su servidor NTP, de modo que el nivel de estrato aumenta cuanto más saltos se alejan de la fuente de reloj original.
+
+Por ejemplo, en la Figura 9-5, puede ver el servidor primario NTP (R3) con un estrato de 2. R2, que hace referencia a R3, agrega 1 por lo que tiene un estrato de 3. R1 usa R2 como su servidor NTP. por lo tanto, R1 agrega 1 para tener un estrato de 4. Estos niveles de estrato crecientes permiten que los dispositivos hagan referencia a varios servidores NTP y luego usen información de tiempo del mejor servidor NTP, siendo el mejor el servidor con el nivel de estrato más bajo.
+
+Los enrutadores y conmutadores utilizan el nivel de estrato predeterminado de 8 para su reloj de referencia interno según la configuración predeterminada de 8 para el nivel de estrato en el comando `ntp master [stratum-level]`. El comando le permite establecer un valor del 1 al 15; En el ejemplo 9-8, el comando `ntp master 2` configuró el nivel de estrato del enrutador R3 en 2.
+
+Para ver la evidencia, consulte el Ejemplo 9-10, que muestra dos comandos basados ​​en la misma configuración en el Ejemplo 9-8 y la Figura 9-5. El resultado destaca detalles sobre relojes de referencia y niveles de estrato, de la siguiente manera:
+
+**R1**: según el comando `ntp server 172.16.2.2` configurado, el comando `show` enumera la misma dirección (que es la dirección del enrutador R2). Los campos ref clock (reloj de referencia) y st (estrato) representan el reloj de referencia de R2 como 172.16.3.3; en otras palabras, el servidor NTP de R2, que es R3 en este caso. El valor del primer campo de 3 muestra el estrato de R2.
+**R2**: según el comando `ntp server 172.16.3.3` configurado, el comando `show` enumera 172,16,3,3, que es una dirección en el enrutador R3. La salida señala el reloj de referencia de R3 como
+127.127.1.1: una indicación de que el servidor (R3) obtiene su reloj internamente. Enumera el valor st (estrato) de R3 de 2, consistente con el comando ntp master 2 configurado en R3 (según el Ejemplo 9-8).
+
+En el servidor primario NTP (R3 en este caso), la salida tiene más marcadores que indican el uso del reloj interno. El ejemplo 9-11 muestra la salida de R3, con un reloj de referencia de la dirección de loopback 127.127.1.1, que se usa para referirse al hecho de que este enrutador obtiene sus datos de reloj internamente. Además, en el resultado del comando `show ntp Associations` en la parte inferior, observe la misma dirección, junto con un valor de reloj de referencia de ".LOCL". De hecho, R3, según el comando de configuración `ntp master`, tiene una asociación con su reloj interno.
+
+```
+R3# show ntp status 
+Clock is synchronized, stratum 2, reference is 127.127.1.1    
+nominal freq is 250.0000 Hz, actual freq is 250.0000 Hz, precision is 2**20 
+ntp uptime is 595300 (1/100 of seconds), resolution is 4000 
+reference time is E0F9174C.87277EBB (16:13:32.527 daylight Sat Aug 10 2019) 
+clock offset is 0.0000 msec, root delay is 0.00 msec 
+root dispersion is 0.33 msec, peer dispersion is 0.23 msec 
+loopfilter state is 'CTRL' (Normal Controlled Loop), drift is 0.000000000 s/s 
+system poll interval is 16, last update was 8 sec ago.
+
+R3# show ntp associations   
+address           ref clock         st   when   poll reach  delay  offset   disp
+*~127.127.1.1     .LOCL.             1     15     16   377  0.000   0.000  0.232
+
+* sys.peer, # selected, + candidate, - outlyer, x falseticker, ~ configured
+```
+
+### Configuración NTP redundante
+En lugar de utilizar un dispositivo de red como reloj de referencia para la empresa, puede consultar mejores fuentes de tiempo en Internet o comprar un servidor NTP especialmente diseñado que tenga un mejor hardware de reloj. Por ejemplo, una empresa podría utilizar NTP para hacer referencia a servidores NTP que utilizan un reloj atómico como fuente de referencia, como los servidores primarios NTP de la Figura 9-6, que son administrados por el Instituto Nacional de Estándares y Tecnología (NIST) de EE. UU. (ver tf.nist.gov).
+
+![](img/9.6.png)
+
+Para un buen diseño, la configuración NTP empresarial debe hacer referencia a al menos dos servidores NTP externos para lograr redundancia. Además, solo unos pocos dispositivos empresariales deberían hacer referencia a esos servidores NTP externos y luego actuar como cliente y servidor NTP. La mayoría de los dispositivos de la empresa, como los que se muestran en la parte inferior de la figura, actuarían como clientes NTP. El ejemplo 9-12 muestra la configuración en los enrutadores R1 y R2 en la figura para lograr este diseño.
+
+```
+ntp server time-a-b-nist.gov 
+ntp server time-a-g.nist.gov
+```
+
+Además de hacer referencia a servidores primarios NTP redundantes, algunos enrutadores de la empresa deben estar preparados para suministrar datos de reloj si esos servidores primarios NTP se vuelven inaccesibles. Existe una exposición con la configuración del Ejemplo 9-12 porque si los enrutadores R1 y R2 ya no escuchan los mensajes NTP de los servidores NTP en Internet, perderán su único reloj de referencia. Después de perder su reloj de referencia, R1 y R2 ya no podrían ser servidores NTP útiles para el resto de la empresa.
+Para superar este posible problema, los enrutadores también se pueden configurar con el comando `ntp master`, lo que da como resultado esta lógica:
+1. Establezca una asociación con los servidores NTP según el comando `ntp server`.
+2. Establezca una asociación con su reloj interno usando el comando `ntp master stratum`.
+3. Establezca el nivel de estrato del reloj interno (según el comando `ntp master {stratum-level}`) en un nivel de estrato más alto (peor) que el de los servidores NTP basados ​​en Internet.
+4. Sincronice con la mejor fuente de hora (la más baja) conocida, que será uno de los servidores NTP de Internet en este escenario.
+
+La lógica tiene algunos pasos, pero la configuración en sí es simple, como se muestra en el Ejemplo 9-13. En comparación con el ejemplo 9-12, simplemente agregue el comando `ntp master`. Los servidores NTP utilizados en este ejemplo tienen un nivel de estrato 1, por lo que el uso del comando `ntp master 7`, con un estrato mucho más alto, hará que los enrutadores R1 y R2 utilicen uno de los servidores NTP NIST cuando esté disponible y utilicen el nivel de estrato 1. fuente de reloj solo cuando se pierde la conectividad con los servidores NIST.
+
+```
+ntp server time-a-b-nist.gov 
+ntp server time-a-g.nist.gov 
+ntp master 7
+```
+
+### NTP utilizando una interfaz de bucle invertido para una mejor disponibilidad
+Un servidor NTP aceptará mensajes NTP que lleguen a cualquiera de sus direcciones IPv4 de forma predeterminada. Sin embargo, los clientes hacen referencia a una dirección IP específica en el servidor NTP. Eso crea un problema de disponibilidad.
+
+Por ejemplo, considere la topología en la Figura 9-7, con el enrutador R4 a la derecha actuando como servidor NTP y los otros enrutadores actuando como clientes. R4 tiene tres direcciones IP que los clientes pueden ingresar en los comandos de dirección de su servidor ntp. Ahora considere lo que sucede cuando falla una interfaz en R4, pero solo una. No importa cuál de las tres interfaces falle, esa dirección IP en esa interfaz no se puede usar para enviar y recibir paquetes. En ese caso, para cualquier cliente NTP que haya hecho referencia a esa dirección IP específica
+- Probablemente todavía habría una ruta para llegar a la propia R4.
+- El cliente NTP no podría enviar paquetes a la dirección configurada porque esa interfaz está inactiva.
+![](img/9.7.png)
+
+Lo que se necesita es una forma de enviar un paquete a R4, una forma que no esté ligada al estado de ninguna interfaz. Es decir, siempre que haya alguna ruta para enviar paquetes al propio R4, permita que NTP siga funcionando. El objetivo es evitar el caso en el que una falla de una sola interfaz en el enrutador R4 también provoque una falla en NTP.
+
+Cisco utiliza la interfaz loopback del enrutador para satisfacer esa necesidad exacta. Las interfaces de bucle invertido son interfaces virtuales internas de Cisco IOS, creadas mediante el comando `interface loopback`, donde el número es un número entero. Una vez configurada, esa interfaz de bucle invertido existe dentro de ese enrutador y no está vinculada a ninguna interfaz física. A una interfaz de bucle invertido se le puede asignar una dirección IP, los protocolos de enrutamiento pueden anunciar sobre la subred y usted puede hacer ping/trazar la ruta a esa dirección. Actúa como otras interfaces físicas en muchos sentidos, pero una vez configurada, permanece en estado activo siempre que
+
+El ejemplo 9-14 muestra el pequeño cambio de configuración que agrega la interfaz loopback a la configuración NTP, que se basa en la Figura 9-5. En este caso, la configuración del Ejemplo 9-14 cambia ligeramente la configuración mostrada anteriormente en el Ejemplo 9-8. R1, que aún actúa como cliente, ahora apunta a la nueva dirección IP de la interfaz loopback de R2: 172.16.9.9. R2 ahora tiene configuración para una nueva interfaz de bucle invertido (bucle invertido 0). R2 también tiene un comando que le indica que use la dirección IP de esa interfaz loopback 0 como dirección de origen al enviar paquetes NTP.
+
+```
+! Configuration on R1, a client 
+ntp server 172.16.9.9
+```
+```
+! Configuration on R2 for its server function 
+interface loopback 0    
+	ip address 172.16.9.9 255.255.255.0 
+!
+ntp master 4 
+ntp source loopback 0 
+! Verification on router R2
+
+R2# show interfaces loopback 0 
+Loopback0 is up, line protocol is up
+   Hardware is Loopback
+   Internet address is 172.16.9.9/24
+! lines omitted for brevity
+```
+
+Las interfaces loopback tienen una amplia gama de usos en todas las funciones de IOS. Se mencionan aquí con NTP porque NTP es una característica que puede beneficiarse del uso de interfaces loopback. (Como recordatorio, OSPF utiliza interfaces de bucle invertido con la configuración de OSPF para un propósito completamente diferente).
+### Análisis de topología mediante CDP y LLDP
+Las dos primeras secciones principales de este capítulo mostraron dos características (syslog y NTP) que funcionan de la misma manera tanto en enrutadores como en conmutadores. Esta sección final muestra otra característica común a los enrutadores y conmutadores, con dos protocolos similares: el Protocolo de descubrimiento de Cisco (CDP) y el Protocolo de descubrimiento de capa de enlace (LLDP). Esta sección se centra en CDP, seguida de LLDP.
+### Examinar la información obtenida por CDP
+CDP descubre información básica sobre enrutadores y conmutadores vecinos sin necesidad de conocer las contraseñas de los dispositivos vecinos. Para descubrir información, los enrutadores y conmutadores envían mensajes CDP a cada una de sus interfaces. Básicamente, los mensajes anuncian información sobre el dispositivo que envió el mensaje CDP. Los dispositivos que admiten CDP obtienen información sobre otros escuchando los anuncios enviados por otros dispositivos.
+CDP descubre varios detalles útiles de los dispositivos Cisco vecinos:
+- **Identificador del dispositivo**: normalmente el nombre del host
+- **Lista de direcciones**: direcciones de red y de enlace de datos
+- **Identificador de puerto**: la interfaz en el enrutador remoto o conmutador en el otro extremo del enlace que envió el anuncio CDP.
+- **Lista de capacidades**: información sobre qué tipo de dispositivo es (por ejemplo, un enrutador o un conmutador)
+- **Plataforma**: el modelo y el nivel del sistema operativo que se ejecuta en el dispositivo CDP desempeña dos funciones generales: proporcionar información a los dispositivos para admitir alguna función y proporcionar información a los ingenieros de red que administran los dispositivos. Por ejemplo, los teléfonos IP de Cisco utilizan CDP para conocer los ID de VLAN de voz y datos configurados en el conmutador de acceso. Para esa segunda función, CDP tiene comandos show que enumeran información sobre dispositivos vecinos, así como información sobre cómo está funcionando CDP. La Tabla 9-3 describe los tres comandos show que enumeran la información CDP más importante.
+
+| **Command**                            | **Description**                                                                                                                         |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **show cdp neighbors** [_type number_] | Lists one summary line of information about each neighbor or just the neighbor found on a specific interface if an interface was listed |
+| **show cdp neighbors detail**          | Lists one large set (approximately 15 lines) of information, one set for every neighbor                                                 |
+| **show cdp entry** _name_              | Lists the same information as the **show cdp neighbors detail** command, but only for the named neighbor (case sensitive)               |
+
+El siguiente ejemplo muestra el poder de la información en los comandos CDP. El ejemplo utiliza la red que se muestra en la Figura 9-8, y el Ejemplo 9-15 enumera el resultado de varios comandos `show cdp`.
+
+![](img/9.8.png)
+
+```
+SW2#  show cdp neighbors
+Capability Codes:   R - Router, T - Trans Bridge, B - Source Route Bridge 
+					S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone,
+					D - Remote, C - CVTA, M - Two-port Mac Relay
+
+Device ID          Local Intrfce     Holdtme    Capability  Platform  Port ID
+SW1                Gig 1/0/21         155             S I   WS-C2960X Gig 1/0/24
+R1                 Gig 1/0/2          131            R S I  C1111-8P  Gig 0/0/1
+
+Total cdp entries displayed : 2
+```
+
+El comando `show cdp neighbours` enumera una línea por vecino. (Busque la columna ID del dispositivo y la lista que incluye SW1 y R1). Cada una de esas dos líneas enumera la información de topología más importante sobre cada vecino: el nombre del host del vecino (ID del dispositivo), la interfaz del dispositivo local y el nombre del dispositivo vecino. interfaz (bajo el encabezado Puerto).
+
+Preste mucha atención a la interfaz del dispositivo local y a la interfaz del dispositivo vecino, comparando el ejemplo con la figura. Por ejemplo, el comando `show cdp neighbours` de SW2 enumera una entrada para SW1, con la interfaz local de SW2 de Gi0/2 y la interfaz de SW1 de Gi0/1 bajo el título "ID de puerto".
+
+Este comando también enumera la plataforma, identificando el modelo específico del enrutador o conmutador vecino. Entonces, incluso usando esta información básica, podría construir una figura como la Figura 9-8 o confirmar que los detalles de la figura son correctos.
+
+La Figura 9-8 y el Ejemplo 9-15 proporcionan un buen contexto de por qué los dispositivos aprenden sobre vecinos directos con CDP, pero no sobre otros vecinos. Primero, CDP define la encapsulación que utiliza el encabezado del enlace de datos, pero no el encabezado IP. Para garantizar que todos los dispositivos reciban un mensaje CDP, el encabezado Ethernet utiliza una dirección MAC de destino de multidifusión (0100.0CCC.CCCC). Sin embargo, cuando cualquier dispositivo que admita CDP recibe un mensaje CP, el dispositivo procesa el mensaje y luego lo descarta, en lugar de reenviarlo. Entonces, por ejemplo, cuando el enrutador R1 envía un mensaje CDP a la dirección de multidifusión Ethernet 0100.0CCC.CCCC, el conmutador SW2 lo recibe, lo procesa, pero no lo reenvía al conmutador SW1, por lo que SW1 no incluirá al enrutador R1 como vecino CDP.
+
+A continuación, considere el comando `show cdp Neighbours Detail` como se muestra en el ejemplo 9-16, nuevamente tomado del conmutador SW2. Este comando enumera más detalles, como habrás adivinado. El detalle enumera el nombre completo del modelo de conmutador (WS-2960XR-24TS-I) y la dirección IP configurada en el dispositivo vecino. Hay que mirar con atención, pero el ejemplo tiene un largo grupo de mensajes para cada uno de los dos vecinos; el ejemplo incluye una línea de comentario resaltada en gris para ayudarle a encontrar el punto divisorio entre grupos de mensajes.
+
+```
+
+```
