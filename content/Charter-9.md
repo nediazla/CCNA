@@ -592,7 +592,7 @@ Además, tómese un momento para observar el resultado en busca de similitudes c
 LLDP utiliza un modelo de configuración similar al de CDP, pero con algunas diferencias clave. En primer lugar, los dispositivos Cisco de forma predeterminada desactivan LLDP. Además, LLDP separa el envío y la recepción de mensajes LLDP como funciones separadas. Por ejemplo, el procesamiento de soporte LLDP recibe mensajes LLDP en una interfaz para que el conmutador o enrutador conozca el dispositivo vecino sin transmitir mensajes LLDP al dispositivo vecino. Para admitir ese modelo, los comandos incluyen opciones para activar/desactivar la transmisión de mensajes LLDP por separado del procesamiento de mensajes recibidos.
 
 Los tres comandos de configuración de LLDP son los siguientes:
-- `[no] lldp run`: un comando de configuración global que establece el modo predeterminado de operación LLDP para cualquier interfaz que no tenga subcomandos LLDP más específicos (lldp transmitir, lldp recibir). El comando global `lldp run` habilita LLDP en ambas direcciones en esas interfaces, mientras que `no lldp run` deshabilita LLDP.
+- `[no] lldp run`: un comando de configuración global que establece el modo predeterminado de operación LLDP para cualquier interfaz que no tenga subcomandos LLDP más específicos (`lldp transmit`, `lldp receive`). El comando global `lldp run` habilita LLDP en ambas direcciones en esas interfaces, mientras que `no lldp run` deshabilita LLDP.
 - `[no] lldp transmit`: un subcomando de interfaz que define la operación de LLDP en la interfaz independientemente del comando global `[no] lldp run`. El subcomando `lldp transmit` hace que el dispositivo transmita mensajes LLDP, mientras que` no lldp transmit` hace que no transmita mensajes LLDP.
 - `[no] lldp receive`: un subcomando de interfaz que define la operación de LLDP en la interfaz independientemente del comando global `[no] lldp run`. El subcomando `lldp receive` hace que el dispositivo procese los mensajes LLDP recibidos, mientras que `no receive lldp` hace que no procese los mensajes LLDP recibidos.
 
@@ -609,3 +609,88 @@ interface gigabitEthernet1/0/18 
 	no lldp receive
 ```
 
+El ejemplo 9-21 agrega otro ejemplo que nuevamente comienza con un interruptor con todas las configuraciones predeterminadas. En este caso, la configuración no habilita LLDP para todas las interfaces con el comando `lldp run`, lo que significa que todas las interfaces no transmiten ni reciben mensajes LLDP de forma predeterminada. El ejemplo muestra cómo habilitar LLDP para ambas direcciones en una interfaz y en una dirección para una segunda interfaz.
+
+```
+interface gigabitEthernet1/0/19  
+	lldp transmit  
+	lldp receive 
+! 
+interface gigabitEthernet1/0/20  
+	lldp receive
+```
+
+Finalmente, verificar el estado de LLDP utiliza exactamente los mismos comandos que CDP, como se enumera en la Tabla 9-4, aparte del hecho de que utiliza la palabra clave lldp en lugar de cdp. Por ejemplo, `show lldp interface` enumera las interfaces en las que LLDP está habilitado. El ejemplo 9-22 muestra algunos ejemplos del conmutador SW2 basado en la Figura 9-8 anterior (la misma figura utilizada en los ejemplos de CDP), con LLDP habilitado en ambas direcciones en todas las interfaces con el comando global `cdp run`.
+
+```
+SW2#  show lldp
+Global LLDP Information:
+    Status: ACTIVE
+    LLDP advertisements are sent every 30 seconds
+    LLDP hold time advertised is 120 seconds     
+    LLDP interface reinitialisation delay is 2 seconds
+
+SW2# show lldp interface g1/0/2
+
+GigabitEthernet1/0/2:
+    Tx: enabled
+    Rx: enabled
+    Tx state: IDLE
+    Rx state: WAIT FOR FRAME
+
+SW2# show lldp traffic
+
+LLDP traffic statistics:
+    Total frames out: 259
+    Total entries aged: 0
+    Total frames in: 257
+    Total frames received in error: 0
+    Total frames discarded: 0
+    Total TLVs discarded: 0
+    Total TLVs unrecognized: 0
+```
+
+Además, tenga en cuenta que, al igual que CDP, LLDP utiliza un temporizador de envío y un temporizador de retención para los mismos fines que CDP. El ejemplo muestra la configuración predeterminada de 30 segundos para el temporizador de envío y 120 segundos para el temporizador de espera. Puede anular los valores predeterminados con los comandos globales `lldp timer [segundos]` y `lldp holdtime [segundos]`, respectivamente.
+
+### Comandos de referencia
+
+| **Command**                                                   | **Description**                                                                                                                                                                                     |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **[no] logging console**                                      | Global command that enables (or disables with the **no** option) logging to the console device.                                                                                                     |
+| **[no] logging monitor**                                      | Global command that enables (or disables with the **no** option) logging to users connected to the device with SSH or Telnet.                                                                       |
+| **[no] logging buffered**                                     | Global command that enables (or disables with the **no** option) logging to an internal buffer.                                                                                                     |
+| **logging** [**host**] _ip-address_ **\|**<br><br>_hostname_  | Global command that enables logging to a syslog server.                                                                                                                                             |
+| **logging console** _level-name_ **\|** _level-number_        | Global command that sets the log message level for console log messages.                                                                                                                            |
+| **logging monitor** _level-name_ **\|** _level-number_        | Global command that sets the log message level for log messages sent to SSH and Telnet users.                                                                                                       |
+| **logging buffered** _level-name \| level-number_             | Global command that sets the log message level for buffered log messages displayed later by the **show logging** command.                                                                           |
+| **logging trap** _level-name_ **\|** _level-_<br><br>_number_ | Global command that sets the log message level for messages sent to syslog servers.                                                                                                                 |
+| **[no]  service sequence-numbers**                            | Global command to enable or disable (with the **no** option) the use of sequence numbers in log messages.                                                                                           |
+| **clock timezone** _name +–number_                            | Global command that names a timezone and defines the +/– offset versus UTC.                                                                                                                         |
+| **clock summertime** _name_ **recurring**                     | Global command that names a daylight savings time for a timezone and tells IOS to adjust the clock automatically.                                                                                   |
+| **ntp server** _address \| hostname_                          | Global command that configures the device as an NTP client by referring to the address or name of an NTP server.                                                                                    |
+| **ntp master** _stratum-level_                                | Global command that configures the device as an NTP server and assigns its local clock stratum level.                                                                                               |
+| **ntp source** _name/number_                                  | Global command that tells NTP to use the listed interface (by name/number) for the source IP address for NTP messages.                                                                              |
+| **interface loopback** _number_                               | Global command that, at first use, creates a loopback interface. At all uses, it also moves the user into interface configuration mode for that interface.                                          |
+| **[no]  cdp run**                                             | Global command that enables and disables (with the **no** option) CDP for the entire switch or router.                                                                                              |
+| **[no]  cdp enable**                                          | Interface subcommand to enable and disable (with the **no** option) CDP for a particular interface.                                                                                                 |
+| **cdp timer** _seconds_                                       | Global command that changes the CDP send timer (the frequency at which CDP sends messages).                                                                                                         |
+| **cdp holdtime** _seconds_                                    | Global command that changes how long CDP waits since the last received message from a neighbor before believing the neighbor has failed, removing the neighbor’s information from the CDP table.    |
+| **Command**                                                   | **Description**                                                                                                                                                                                     |
+| **[no]  lldp run**                                            | Global command to enable and disable (with the **no** option) LLDP for the entire switch or router.                                                                                                 |
+| **[no]  lldp transmit**                                       | Interface subcommand to enable and disable (with the **no** option) the transmission of LLDP messages on the interface.                                                                             |
+| **[no]  lldp receive**                                        | Interface subcommand to enable and disable (with the **no** option) the processing of received LLDP messages on the interface.                                                                      |
+| **lldp timer** _seconds_                                      | Global command that changes the LLDP send timer (the frequency at which LLDP sends messages).                                                                                                       |
+| **lldp holdtime** _seconds_                                   | Global command that changes how long LLDP waits since the last received message from a neighbor before believing the neighbor has failed, removing the neighbor’s information from the LLDP table.  |
+| **show logging**                                              | Lists the current logging configuration and lists buffered log messages at the end                                                                                                                  |
+| **terminal monitor**<br><br> **terminal no monitor**          | For a user (SSH or Telnet) session, toggles on (**terminal monitor**) or off (**terminal no monitor**) the receipt of log messages, for that one session, if **logging monitor** is also configured |
+| **[no]  debug {**_various_**}**                               | EXEC command to enable or disable (with the **no** option) one of a multitude of debug options                                                                                                      |
+| **show clock**                                                | Lists the time-of-day and the date per the local device                                                                                                                                             |
+| **show ntp associations**                                     | Shows all NTP clients and servers with which the local device is attempting to synchronize with NTP                                                                                                 |
+| **show ntp status**                                           | Shows current NTP client status in detail                                                                                                                                                           |
+| **show interfaces loopback** _number_                         | Shows the current status of the listed loopback interface                                                                                                                                           |
+| **show cdp \| lldp neighbors** [_type number_]                | Lists one summary line of information about each neighbor; optionally, lists neighbors off the listed interface                                                                                     |
+| **show cdp \| lldp neighbors detail**                         | Lists one large set of information (approximately 15 lines) for every neighbor                                                                                                                      |
+| **show cdp \| lldp entry** _name_                             | Displays the same information as **show cdp\|lldp neighbors detail** but only for the named neighbor                                                                                                |
+| **show cdp \| lldp**                                          | States whether CDP or LLDP is enabled globally and lists the default update and holdtime timers                                                                                                     |
+| **show cdp \| lldp interface** [_type number_]                | States whether CDP or LDP is enabled on each interface or a single interface if the interface is listed                                                                                             |
+| **show cdp \| lldp traffic**                                  | Displays global statistics for the number of CDP or LDP advertisements sent and received                                                                                                            |
