@@ -424,5 +424,188 @@ La Figura 9-8 y el Ejemplo 9-15 proporcionan un buen contexto de por qué los di
 A continuación, considere el comando `show cdp Neighbours Detail` como se muestra en el ejemplo 9-16, nuevamente tomado del conmutador SW2. Este comando enumera más detalles, como habrás adivinado. El detalle enumera el nombre completo del modelo de conmutador (WS-2960XR-24TS-I) y la dirección IP configurada en el dispositivo vecino. Hay que mirar con atención, pero el ejemplo tiene un largo grupo de mensajes para cada uno de los dos vecinos; el ejemplo incluye una línea de comentario resaltada en gris para ayudarle a encontrar el punto divisorio entre grupos de mensajes.
 
 ```
+SW2# show cdp neighbors detail
+-------------------------
+
+Device ID: SW1 
+Entry address(es):
+  IP address: 1.1.1.1
+Platform: cisco WS-C2960XR-24TS-I,  Capabilities: Switch IGMP Interface: GigabitEthernet1/0/21,  Port ID (outgoing port): GigabitEthernet1/0/24
+Holdtime : 144 sec
+
+Version :
+Cisco IOS Software, C2960X Software (C2960X-UNIVERSALK9-M), Version 15.2(6)E2, RELEASE SOFTWARE (fc4)
+Technical Support: http://www.cisco.com/techsupport 
+Copyright (c) 1986-2018 by Cisco Systems, Inc. 
+Compiled Thu 13-Sep-18 03:43 by prod_rel_team
+
+advertisement version: 2
+Protocol Hello:  OUI=0x00000C, Protocol ID=0x0112; payload len=27, value=00000000FFFFF
+FFF01022501000000000000BCC4938BA180FF0000 
+VTP Management Domain: 'fred'
+Native VLAN: 1
+Duplex: full 
+Management address(es):
+  IP address: 1.1.1.1
+
+-------------------------
+Device ID: R1 
+Entry address(es):
+  IP address: 10.12.25.5
+Platform: cisco C1111-8P,  Capabilities: Router Switch IGMP Interface: GigabitEthernet1/0/2,  Port ID (outgoing port): GigabitEthernet0/0/1
+Holdtime : 151 sec
+
+Version :
+Cisco IOS Software [Fuji], ISR Software (ARMV8EB_LINUX_IOSD-UNIVERSALK9_IAS-M), Version 16.8.1, RELEASE SOFTWARE (fc3) 
+Technical Support: http://www.cisco.com/techsupport 
+Copyright (c) 1986-2018 by Cisco Systems, Inc. 
+Compiled Tue 27-Mar-18 10:56 by mcpre
+
+advertisement version: 2
+VTP Management Domain: ''
+Duplex: full 
+Management address(es):
+  IP address: 10.12.25.5
+
+Total cdp entries displayed : 2
+```
+
+Como puede ver, puede sentarse en un dispositivo y descubrir mucha información sobre un dispositivo vecino, un hecho que en realidad crea una exposición a la seguridad. Cisco recomienda desactivar CDP en cualquier interfaz que no necesite CDP. Para los conmutadores, cualquier puerto de conmutador conectado a otro conmutador, un enrutador o un teléfono IP debe utilizar CDP.
+
+Finalmente, tenga en cuenta que CDP muestra información sobre los vecinos conectados directamente. Por ejemplo, mostrar cdp vecinos en SW1 enumeraría una entrada para SW2 en este caso, pero no para R1, porque R1 no está conectado directamente a SW1.
+### Configuración y verificación de CDP
+La mayor parte del trabajo que realiza con CDP se relaciona con lo que CDP puede decirle con los comandos `show`. Sin embargo, es una característica de IOS, por lo que puede configurar CDP y usar algunos comandos `show` para examinar el estado del propio CDP.
+
+Normalmente, IOS habilita CDP globalmente y en cada interfaz de forma predeterminada. Luego puede deshabilitar CDP por interfaz con el subcomando `no cdp enable` y luego volver a habilitarlo con el subcomando `cdp enable`. Para deshabilitar y volver a habilitar CDP globalmente en el dispositivo, use los comandos globales `no cdp run` y `cdp run`, respectivamente.
+Para examinar el estado del propio CDP, utilice los comandos de la Tabla 9-4.
+
+| **Command**                            | **Description**                                                                                                                                              |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **show cdp**                           | States whether CDP is enabled globally and lists the default update and holdtime timers                                                                      |
+| **show cdp interface** [_type number_] | States whether CDP is enabled on each interface, or a single interface if the interface is listed, and states update and holdtime timers on those interfaces |
+| **show cdp traffic**                   | Lists global statistics for the number of CDP advertisements sent and received                                                                               |
+El ejemplo 9-17 enumera el resultado de muestra de cada uno de los comandos de la Tabla 9-4, según el interruptor SW2 de la Figura 9-8.
 
 ```
+SW2#  show cdp
+Global CDP information:
+	Sending CDP packets every 60 seconds
+	Sending a holdtime value of 180 seconds
+	Sending CDPv2 advertisements is enabled
+
+SW2#  show cdp interface GigabitEthernet1/0/2
+GigabitEthernet1/0/2 is up, line protocol is up
+  Encapsulation ARPA   Sending CDP packets every 60 seconds
+  Holdtime is 180 seconds
+
+SW2#  show cdp traffic
+CDP counters :
+	Total packets output: 304, Input: 305 
+	Hdr syntax: 0, Chksum error: 0, Encaps failed: 0
+	No memory: 0, Invalid packet: 0,
+	CDP version 1 advertisements output: 0, Input: 0
+	CDP version 2 advertisements output: 304, Input: 305
+```
+
+Los dos primeros comandos del ejemplo enumeran dos configuraciones relacionadas sobre cómo funciona CDP: el tiempo de envío y el tiempo de espera. CDP envía mensajes cada 60 segundos de forma predeterminada, con un tiempo de espera de 180 segundos. El tiempo de espera le indica al dispositivo cuánto tiempo debe esperar después de dejar de recibir noticias de un dispositivo antes de eliminar esos detalles de las tablas CDP. Puede anular los valores predeterminados con los comandos globales `cdp timer [segundos]` y `cdp holdtime [segundos]`, respectivamente.
+### Examinar la información aprendida por LLDP
+Cisco creó el CDP, propiedad de Cisco, antes de que existiera cualquier estándar para un protocolo similar. CDP tiene muchos beneficios. Como protocolo de Capa 2, ubicado sobre Ethernet, no depende de un protocolo de Capa 3 que funcione. Proporciona información del dispositivo que puede resultar útil de diversas formas. Cisco tenía una necesidad pero no veía un estándar que la satisficiera, por lo que creó un protocolo, como ha sido el caso muchas veces a lo largo de la historia con muchas empresas y protocolos.
+
+El Protocolo de descubrimiento de capa de enlace (LLDP), definido en el estándar IEEE 802.1AB, proporciona un protocolo estandarizado que proporciona las mismas características generales que CDP. LLDP tiene una configuración similar y comandos `show` prácticamente idénticos en comparación con CDP.
+
+Todos los ejemplos de LLDP utilizan la misma topología utilizada en los ejemplos de CDP según la Figura 9-8 (la misma figura utilizada en los ejemplos de CDP). El ejemplo 9-18 enumera los vecinos LLDP del conmutador SW2 tal como se descubrieron después de que se habilitó LLDP en todos los dispositivos y puertos en esa figura. El ejemplo resalta los elementos que coinciden con un resultado similar del comando `show cdp neighbours` que se enumera al final del ejemplo, también del conmutador SW2.
+
+```
+SW2#  show lldp neighbors
+Capability codes:
+    (R) Router, (B) Bridge, (T) Telephone, (C) DOCSIS Cable Device
+    (W) WLAN Access Point, (P) Repeater, (S) Station, (O) Other
+
+Device ID             Local Intf     Hold-time  Capability       Port ID
+R1                     Gi1/0/2         120         R                 Gi0/0/1
+SW1                    Gi1/0/21        120         B                 Gi1/0/24
+
+Total entries displayed: 2
+
+SW2#  show cdp neighbors
+CapabilityCodes: R - Router, T - Trans Bridge, B - Source Route Bridge 
+				 S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone,
+				 D - Remote, C - CVTA, M - Two-port Mac Relay
+
+Device ID          Local Intrfce     Holdtme    Capability  Platform  Port ID
+SW1                Gig 1/0/21         155             S I   WS-C2960X Gig 1/0/24
+R1                 Gig 1/0/2          131            R S I  C1111-8P  Gig 0/0/1
+Total entries displayed: 2
+```
+
+La conclusión más importante del resultado es la coherencia entre CDP y LLDP en la forma en que se refieren a las interfaces. Tanto el comando `show cdp neighbours` como el `show lldp neighbours` tienen columnas “local intf” (interfaz) e “port ID”. Estas columnas se refieren a la interfaz del dispositivo local y a la interfaz del dispositivo vecino, respectivamente.
+
+Sin embargo, la salida LLDP del ejemplo difiere de la CDP en algunos aspectos importantes:
+- LLDP utiliza B como código de capacidad para conmutación, en referencia a puente, un término para el tipo de dispositivo que existía antes de los conmutadores que realizaban las mismas funciones básicas.
+- LLDP no identifica IGMP como una capacidad, mientras que CDP sí (I).
+- CDP enumera la plataforma del vecino, un código que define el tipo de dispositivo, mientras que LLDP no.
+- LLDP enumera capacidades con diferentes convenciones (consulte el próximo Ejemplo 9-19).
+
+Los primeros tres elementos de la lista son relativamente sencillos, pero el último elemento requiere una mirada más cercana y con más detalle. Curiosamente, CDP enumera todas las capacidades del vecino en la salida del comando `show cdp neighbours`, sin importar si el dispositivo habilita actualmente todas esas funciones. En cambio, LLDP enumera las capacidades habilitadas (configuradas), en lugar de todas las capacidades admitidas, en el resultado del comando `show lldp neighbours`.
+
+LLDP marca la diferencia en las capacidades totales de un vecino y las capacidades configuradas con los comandos `show lldp Neighbours Detail` y `Show lldp Entry Hostname`. Estos comandos proporcionan resultados detallados idénticos: el primer comando proporciona detalles para todos los vecinos y el segundo proporciona detalles para el vecino único de la lista. El ejemplo 9-19 muestra el detalle del vecino R1.
+
+```
+SW2#  show lldp entry R1
+
+Capability codes:
+    (R) Router, (B) Bridge, (T) Telephone, (C) DOCSIS Cable Device     
+    (W) WLAN Access Point, (P) Repeater, (S) Station, (O) Other 
+ ------------------------------------------------
+
+Local Intf: Gi1/0/2 
+Chassis id: 70ea.1a9a.d300
+Port id: Gi0/0/1 Port Description: GigabitEthernet0/0/1
+System Name: R1
+
+System Description:
+Cisco IOS Software [Fuji], ISR Software (ARMV8EB_LINUX_IOSD-UNIVERSALK9_IAS-M),
+Version 16.8.1, RELEASE SOFTWARE (fc3)
+Technical Support: http://www.cisco.com/techsupport 
+Copyright (c) 1986-2018 by Cisco Systems, Inc. 
+Compiled Tue 27-Mar-18 10:56 by mcpre
+Time remaining: 100 seconds
+System Capabilities: B,R
+Enabled Capabilities: R 
+Management Addresses:
+    IP: 10.12.25.5
+Auto Negotiation - not supported
+Physical media capabilities - not advertised 
+Media Attachment Unit type - not advertised
+Vlan ID: - not advertised
+
+Total entries displayed: 1
+```
+
+Primero, con respecto a las capacidades del dispositivo, tenga en cuenta que el resultado del comando LLDP enumera dos líneas sobre las capacidades del vecino:
+**Capacidades del sistema**: Qué puede hacer el dispositivo
+**Capacidades habilitadas**: Qué hace el dispositivo ahora con su configuración actual
+Por ejemplo, en el Ejemplo 9-19, el R1 vecino afirma tener la capacidad de realizar enrutamiento y conmutación (códigos R y B), pero también afirma estar utilizando actualmente solo su capacidad de enrutamiento, como se indica en la línea "capacidades habilitadas".
+
+Además, tómese un momento para observar el resultado en busca de similitudes con CDP. Por ejemplo, este resultado enumera detalles para el vecino, R1, que usa su puerto local G0/0/1, con un nombre de host de R1. El resultado también indica el nombre y la versión de IOS, de los cuales una persona experimentada puede inferir el número de modelo, pero no hay ninguna mención explícita del modelo.
+### Configuración y verificación de LLDP
+LLDP utiliza un modelo de configuración similar al de CDP, pero con algunas diferencias clave. En primer lugar, los dispositivos Cisco de forma predeterminada desactivan LLDP. Además, LLDP separa el envío y la recepción de mensajes LLDP como funciones separadas. Por ejemplo, el procesamiento de soporte LLDP recibe mensajes LLDP en una interfaz para que el conmutador o enrutador conozca el dispositivo vecino sin transmitir mensajes LLDP al dispositivo vecino. Para admitir ese modelo, los comandos incluyen opciones para activar/desactivar la transmisión de mensajes LLDP por separado del procesamiento de mensajes recibidos.
+
+Los tres comandos de configuración de LLDP son los siguientes:
+- `[no] lldp run`: un comando de configuración global que establece el modo predeterminado de operación LLDP para cualquier interfaz que no tenga subcomandos LLDP más específicos (lldp transmitir, lldp recibir). El comando global `lldp run` habilita LLDP en ambas direcciones en esas interfaces, mientras que `no lldp run` deshabilita LLDP.
+- `[no] lldp transmit`: un subcomando de interfaz que define la operación de LLDP en la interfaz independientemente del comando global `[no] lldp run`. El subcomando `lldp transmit` hace que el dispositivo transmita mensajes LLDP, mientras que` no lldp transmit` hace que no transmita mensajes LLDP.
+- `[no] lldp receive`: un subcomando de interfaz que define la operación de LLDP en la interfaz independientemente del comando global `[no] lldp run`. El subcomando `lldp receive` hace que el dispositivo procese los mensajes LLDP recibidos, mientras que `no receive lldp` hace que no procese los mensajes LLDP recibidos.
+
+Por ejemplo, considere un conmutador que no tiene ningún comando de configuración LLDP. El ejemplo 9-20 agrega una configuración que primero habilita LLDP para todas las interfaces (en ambas direcciones) con el comando global` lldp run`. Luego muestra cómo deshabilitar LLDP en ambas direcciones en Gi1/0/17 y cómo deshabilitar LLDP en una dirección en Gi1/0/18.
+
+```
+lldp run
+!
+interface gigabitEthernet1/0/17  
+	no lldp transmit  
+	no lldp receive !
+
+interface gigabitEthernet1/0/18  
+	no lldp receive
+```
+
