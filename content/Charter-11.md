@@ -193,7 +193,6 @@ También existen otros campos de marcado en otros encabezados. La Tabla 11-2 enu
 | CoS            | 802.1Q        | 3                 | Over VLAN trunk   |
 | TID            | 802.11        | 3                 | Over Wi-Fi        |
 | EXP            | MPLS Label    | 3                 | Over MPLS WAN     |
-
 ### Definición de límites de confianza
 El dispositivo del usuario final puede marcar el campo DSCP e incluso el campo CoS si se utiliza enlace troncal en el enlace. ¿Confiaría usted, como ingeniero de redes, en esas configuraciones y dejaría que sus dispositivos de red confiaran y reaccionaran a esas marcas para sus diversas acciones de QoS?
 
@@ -232,7 +231,6 @@ La Figura 11-12 muestra la idea principal junto con los ocho valores CS, tanto e
 ![](img/11.12.png)
 
 Esta sección sobre clasificación y marcado ha proporcionado una base sólida para comprender las herramientas exploradas en las siguientes tres secciones principales de este capítulo: colas, configuración/vigilancia y prevención de congestiones.
-
 ### Directrices para los valores de marcado DSCP
 Incluso con esta introducción a los distintos valores de marcado DSCP, se podría imaginar que una empresa necesita seguir una convención sobre cómo utilizar las marcas. Con tantos valores diferentes, tener diferentes usos de diferentes valores DSCP por diferentes dispositivos en la misma empresa haría que la implementación de QoS fuera, en el mejor de los casos, bastante difícil.
 
