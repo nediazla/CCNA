@@ -55,9 +55,7 @@ Primero, ¿qué incluye un servidor físico para funciones de red? Normalmente t
 
 A continuación, piense en las máquinas virtuales. Normalmente, un sistema operativo tiene una NIC, tal vez más. Para que el sistema operativo funcione normalmente, cada VM tiene (al menos) una NIC, pero para una VM, es una NIC virtual. (Por ejemplo, en los sistemas de virtualización de VMware, la NIC virtual de la VM se llama vNIC).
 
-Finalmente, el servidor debe combinar las ideas de las NIC físicas con las vNIC utilizadas por el
-
-VM en algún tipo de red. La mayoría de las veces, cada servidor utiliza algún tipo de interfaz interna.
+Finalmente, el servidor debe combinar las ideas de las NIC físicas con las vNIC utilizadas por la VM en algún tipo de red. La mayoría de las veces, cada servidor utiliza algún tipo de interfaz interna.
 
 Concepto de conmutador Ethernet, a menudo llamado conmutador virtual o vSwitch. La Figura 15-4 muestra un ejemplo con cuatro máquinas virtuales, cada una con una vNIC. El servidor físico tiene dos NIC físicas. Las vNIC y las NIC físicas se conectan internamente a un conmutador virtual.
 
